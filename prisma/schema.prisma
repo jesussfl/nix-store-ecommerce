@@ -1,0 +1,1040 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // uses connection pooling
+  // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+//#region User Models
+
+model Cuenta {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user Usuario @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("Account")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         Usuario  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Usuarios_Estados {
+  Activo
+  Bloqueado
+}
+
+enum Niveles_Usuarios {
+  Jefe_de_departamento
+  Encargado
+  Personal_civil
+  Personal_militar
+}
+
+model Usuario {
+  id                  String            @id @default(cuid())
+  nombre              String
+  cedula              String            @unique
+  tipo_cedula         Tipos_Cedulas?
+  intentos_fallidos   Int?
+  facial_pin          String?
+  email               String?           @unique
+  contrasena          String?           @map("password")
+  facialID            String?           @unique
+  emailVerified       DateTime?
+  image               String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  rol_nombre          String            @default("Basico")
+  accounts            Cuenta[]
+  sessions            Session[]
+  nivel               Niveles_Usuarios?
+  rol                 Rol               @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
+  auditoria           Auditoria[]
+  ultima_notificacion DateTime?
+  personal            Personal?
+  asistencias         Asistencia[]
+  estado              Usuarios_Estados?
+  fecha_eliminacion   DateTime?
+
+  @@map("User")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model Rol {
+  id          Int               @id @default(autoincrement())
+  rol         String            @unique
+  nivel       Niveles_Usuarios?
+  descripcion String
+  usuarios    Usuario[]
+
+  permisos             Roles_Permisos[]
+  fecha_eliminacion    DateTime?
+  ultima_actualizacion DateTime?        @updatedAt
+}
+
+model Roles_Permisos {
+  id                Int       @id @default(autoincrement())
+  rol_nombre        String
+  permiso_key       String
+  active            Boolean?
+  rol               Rol       @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
+  permiso           Permiso   @relation(fields: [permiso_key], references: [key], onDelete: Cascade, onUpdate: Cascade)
+  fecha_eliminacion DateTime?
+}
+
+model Permiso {
+  id          Int    @id @default(autoincrement())
+  permiso     String
+  descripcion String
+
+  key               String           @unique
+  roles             Roles_Permisos[]
+  fecha_eliminacion DateTime?
+}
+
+//#endregion
+
+enum Servicios {
+  Armamento
+  Abastecimiento
+}
+
+model Renglon {
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
+  descripcion String
+
+  servicio Servicios?
+
+  stock_actual Int     @default(0)
+  tipo         String?
+  stock_minimo Int     @default(1)
+  peso         Float   @default(0)
+
+  stock_maximo         Int?
+  numero_parte         String?
+  estado               RenglonStates? @default(ACTIVO)
+  fecha_creacion       DateTime       @default(now())
+  ultima_actualizacion DateTime       @updatedAt
+  imagen               String?
+
+  unidadEmpaqueId Int?
+  unidad_empaque  UnidadEmpaque? @relation(fields: [unidadEmpaqueId], references: [id], onDelete: Cascade)
+  clasificacionId Int
+  clasificacion   Clasificacion  @relation(fields: [clasificacionId], references: [id])
+  categoriaId     Int
+  categoria       Categoria      @relation(fields: [categoriaId], references: [id])
+  id_subsistema   Int?
+  subsistema      Subsistema?    @relation(fields: [id_subsistema], references: [id])
+  id_almacen      Int?
+  almacen         Almacen?       @relation(fields: [id_almacen], references: [id])
+
+  estante    String?
+  pasillo    String?
+  peldano    String?
+  referencia String?
+
+  fecha_eliminacion  DateTime?
+  tipo_medida_unidad Medidas   @default(KILOGRAMOS)
+
+  despachos    Despachos_Renglones[]
+  recepciones  Recepciones_Renglones[]
+  devoluciones Devoluciones_Renglones[]
+  seriales     Serial[]
+  pedidos      Pedidos_Renglones[]
+  prestamos    Prestamos_Renglones[]
+}
+
+enum Medidas {
+  MILILITROS
+  LITROS
+  ONZAS
+  LIBRAS
+  TONELADAS
+  KILOGRAMOS
+  GRAMOS
+  UNIDADES
+}
+
+model UnidadEmpaque {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @unique
+  descripcion String
+  abreviacion String?
+  tipo_medida Medidas
+  peso        Float?
+  renglones   Renglon[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Categoria {
+  id               Int    @id @default(autoincrement())
+  nombre           String @unique
+  descripcion      String
+  id_clasificacion Int
+
+  renglones            Renglon[]
+  clasificacion        Clasificacion @relation(fields: [id_clasificacion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime      @default(now())
+  ultima_actualizacion DateTime      @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Clasificacion {
+  id                   Int         @id @default(autoincrement())
+  nombre               String      @unique
+  descripcion          String
+  renglones            Renglon[]
+  categorias           Categoria[]
+  fecha_creacion       DateTime    @default(now())
+  ultima_actualizacion DateTime    @updatedAt
+  fecha_eliminacion    DateTime?
+  abreviacion          String?
+}
+
+model Sistema {
+  id          Int          @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  subsistemas Subsistema[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Subsistema {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  id_sistema  Int
+  sistema     Sistema   @relation(fields: [id_sistema], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  renglones   Renglon[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+enum RenglonStates {
+  ACTIVO        @map("Activo")
+  ELIMINADO     @map("Eliminado")
+  EN_BORRADOR   @map("En Borrador")
+  DESHABILITADO @map("Deshabilitado")
+}
+
+model Almacen {
+  id                   Int        @id @default(autoincrement())
+  nombre               String
+  ubicacion            String
+  servicio             Servicios?
+  fecha_creacion       DateTime   @default(now())
+  ultima_actualizacion DateTime   @updatedAt
+
+  renglones         Renglon[]
+  armamento         Armamento[]
+  unidad            Unidad_Militar? @relation(fields: [id_unidad], references: [id])
+  id_unidad         Int?
+  fecha_eliminacion DateTime?
+}
+
+//#region Recepciones
+model Recepcion {
+  id                  Int                     @id @default(autoincrement())
+  fecha_recepcion     DateTime
+  motivo              String?
+  renglones           Recepciones_Renglones[]
+  servicio            Servicios?
+  cedula_destinatario String
+  cedula_autorizador  String
+  cedula_abastecedor  String
+  cedula_supervisor   String?
+
+  destinatario Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador  Profesional_Abastecimiento  @relation(name: "autorizador_recepcion", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor  Profesional_Abastecimiento  @relation(name: "abastecedor_recepcion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor   Profesional_Abastecimiento? @relation(name: "supervisor_recepcion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+
+  motivo_fecha         String?
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Recepciones_Renglones {
+  id                    Int     @id @default(autoincrement())
+  cantidad              Int     @default(0)
+  seriales_automaticos  Boolean @default(false)
+  es_recepcion_liquidos Boolean @default(false)
+  condicion_automatica  Boolean @default(false)
+  fabricante            String?
+  precio                Float?
+
+  id_recepcion     Int
+  id_renglon       Int
+  codigo_solicitud Int?
+  recepcion        Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  renglon          Renglon   @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pedido           Pedido?   @relation(fields: [codigo_solicitud], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  observacion String? @default("s/o")
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_fabricacion    DateTime?
+  fecha_vencimiento    DateTime?
+  fecha_eliminacion    DateTime?
+
+  seriales             Serial[]
+  recepciones_Seriales Recepciones_Seriales[]
+}
+
+//#endregion
+model Recepciones_Seriales {
+  id                    Int                   @id @default(autoincrement())
+  id_serial             Int
+  serial                Serial                @relation(fields: [id_serial], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_detalles_recepcion Int
+  detalles_recepcion    Recepciones_Renglones @relation(fields: [id_detalles_recepcion], references: [id])
+  peso_recibido         Float
+  fecha_creacion        DateTime              @default(now())
+}
+
+model Serial {
+  id          Int     @id @default(autoincrement())
+  serial      String  @unique
+  estado      String? @default("Disponible")
+  condicion   String  @default("Nuevo")
+  peso_actual Float?  @default(0)
+
+  id_renglon    Int
+  id_recepcion  Int
+  id_despacho   Int?
+  id_devolucion Int?
+
+  renglon    Renglon                 @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recepcion  Recepciones_Renglones   @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  despacho   Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onUpdate: Cascade)
+  devolucion Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onUpdate: Cascade)
+
+  fecha_creacion        DateTime               @default(now())
+  ultima_actualizacion  DateTime               @updatedAt
+  fecha_eliminacion     DateTime?
+  recepciones_Seriales  Recepciones_Seriales[]
+  despachos_Seriales    Despachos_Seriales[]
+  Prestamos_Renglones   Prestamos_Renglones?   @relation(fields: [prestamos_RenglonesId], references: [id])
+  prestamos_RenglonesId Int?
+  Prestamos_Seriales    Prestamos_Seriales[]
+}
+
+model Devolucion {
+  id               Int                      @id @default(autoincrement())
+  fecha_devolucion DateTime
+  motivo           String
+  renglones        Devoluciones_Renglones[]
+
+  cedula_destinatario  String
+  cedula_autorizador   String
+  cedula_abastecedor   String
+  cedula_supervisor    String?
+  servicio             Servicios?
+  destinatario         Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador          Profesional_Abastecimiento  @relation(name: "autorizador_devolucion", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor          Profesional_Abastecimiento  @relation(name: "abastecedor_devolucion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor           Profesional_Abastecimiento? @relation(name: "supervisor_devolucion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  motivo_fecha         String?
+  fecha_creacion       DateTime                    @default(now())
+  ultima_actualizacion DateTime                    @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Devoluciones_Renglones {
+  id                   Int        @id @default(autoincrement())
+  id_renglon           Int
+  renglon              Renglon    @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_devolucion        Int
+  devolucion           Devolucion @relation(fields: [id_devolucion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  seriales             Serial[]
+  observacion          String?
+  fecha_creacion       DateTime   @default(now())
+  ultima_actualizacion DateTime   @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Despacho {
+  id                   Int                         @id @default(autoincrement())
+  fecha_despacho       DateTime
+  motivo               String?
+  renglones            Despachos_Renglones[]
+  cedula_destinatario  String
+  cedula_autorizador   String
+  cedula_abastecedor   String
+  cedula_supervisor    String?
+  servicio             Servicios?
+  destinatario         Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador          Profesional_Abastecimiento  @relation(name: "autorizador", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor          Profesional_Abastecimiento  @relation(name: "abastecedor", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor           Profesional_Abastecimiento? @relation(name: "supervisor", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  motivo_fecha         String?
+  fecha_creacion       DateTime                    @default(now())
+  ultima_actualizacion DateTime                    @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Despachos_Renglones {
+  id Int @id @default(autoincrement())
+
+  id_renglon  Int
+  id_despacho Int
+
+  observacion String? @default("s/o")
+
+  manualSelection      Boolean @default(false)
+  es_despacho_liquidos Boolean @default(false)
+
+  cantidad Int
+
+  renglon  Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  despacho Despacho @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  seriales           Serial[]
+  despachos_Seriales Despachos_Seriales[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Despachos_Seriales {
+  id                   Int                 @id @default(autoincrement())
+  id_serial            Int
+  serial               Serial              @relation(fields: [id_serial], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_detalles_despacho Int
+  detalles_despacho    Despachos_Renglones @relation(fields: [id_detalles_despacho], references: [id])
+  peso_despachado      Float
+  fecha_creacion       DateTime            @default(now())
+}
+
+model Prestamo {
+  id                   Int                         @id @default(autoincrement())
+  fecha_prestamo       DateTime
+  motivo               String?
+  renglones            Prestamos_Renglones[]
+  cedula_destinatario  String
+  cedula_autorizador   String
+  cedula_abastecedor   String
+  cedula_supervisor    String?
+  estado               Estados_Prestamos?
+  servicio             Servicios?
+  destinatario         Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador          Profesional_Abastecimiento  @relation(name: "autorizador_prestamo", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor          Profesional_Abastecimiento  @relation(name: "abastecedor_prestamo", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor           Profesional_Abastecimiento? @relation(name: "supervisor_prestamo", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  motivo_fecha         String?
+  fecha_creacion       DateTime                    @default(now())
+  ultima_actualizacion DateTime                    @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Prestamos_Renglones {
+  id Int @id @default(autoincrement())
+
+  id_renglon  Int
+  id_prestamo Int
+
+  observacion String? @default("s/o")
+
+  cantidad        Int
+  manualSelection Boolean
+  renglon         Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  prestamo        Prestamo @relation(fields: [id_prestamo], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  seriales           Serial[]
+  prestamos_Seriales Prestamos_Seriales[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Prestamos_Seriales {
+  id                   Int                 @id @default(autoincrement())
+  id_serial            Int
+  serial               Serial              @relation(fields: [id_serial], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_detalles_prestamo Int
+  detalles_prestamo    Prestamos_Renglones @relation(fields: [id_detalles_prestamo], references: [id])
+  peso_despachado      Float
+  fecha_creacion       DateTime            @default(now())
+}
+
+model Pedidos_Renglones {
+  id          Int     @id @default(autoincrement())
+  cantidad    Int
+  id_renglon  Int
+  renglon     Renglon @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pedido      Pedido  @relation(fields: [id_pedido], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_pedido   Int
+  observacion String? @default("s/o")
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+enum Estados_Pedidos {
+  Cancelado
+  En_proceso
+  Recibido
+  Pendiente
+}
+
+enum Estados_Prestamos {
+  Devuelto
+  Prestado
+  Pendiente
+}
+
+enum Tipos_Proveedores {
+  Empresa
+  Persona
+  Unidad
+}
+
+model Pedido {
+  id              Int      @id @default(autoincrement())
+  fecha_solicitud DateTime
+
+  estado          Estados_Pedidos?
+  tipo_proveedor  Tipos_Proveedores
+  motivo          String
+  renglones       Pedidos_Renglones[]
+  servicio        Servicios?
+  id_destinatario Int?
+  destinatario    Destinatario?       @relation(fields: [id_destinatario], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_proveedor Int?
+  proveedor    Proveedor? @relation(fields: [id_proveedor], references: [id])
+
+  id_unidad Int?
+  unidad    Unidad_Militar? @relation(fields: [id_unidad], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_autorizador Int
+  id_abastecedor Int
+  id_supervisor  Int?
+
+  autorizador          Profesional_Abastecimiento  @relation(name: "autorizador_pedido", fields: [id_autorizador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor          Profesional_Abastecimiento  @relation(name: "abastecedor_pedido", fields: [id_abastecedor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  supervisor           Profesional_Abastecimiento? @relation(name: "supervisor_pedido", fields: [id_supervisor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  motivo_fecha         String?
+  fecha_creacion       DateTime                    @default(now())
+  ultima_actualizacion DateTime                    @updatedAt
+  recepciones          Recepciones_Renglones[]
+  fecha_eliminacion    DateTime?
+}
+
+model Proveedor {
+  id          Int     @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  direccion   String
+
+  sitio_web           String?
+  telefono            String
+  telefono_secundario String?
+  email               String?
+  pedidos             Pedido[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+enum Tipos_Cedulas {
+  V
+  E
+  J
+  G
+  R
+  P
+}
+
+enum Tipos_Destinatarios {
+  Civil
+  Militar
+}
+
+enum Generos {
+  Femenino
+  Masculino
+}
+
+model Destinatario {
+  id                Int                 @id @default(autoincrement())
+  tipo_cedula       Tipos_Cedulas
+  cedula            String              @unique
+  nombres           String
+  apellidos         String
+  telefono          String
+  cargo_profesional String?
+  direccion         String
+  tipo              Tipos_Destinatarios
+  sexo              Generos
+  servicio          String?
+  id_unidad         Int?
+  unidad            Unidad_Militar?     @relation(fields: [id_unidad], references: [id])
+  id_categoria      Int?
+  categoria         Categoria_Militar?  @relation(fields: [id_categoria], references: [id])
+  id_grado          Int?
+  grado             Grado_Militar?      @relation(fields: [id_grado], references: [id])
+  id_componente     Int?
+  componente        Componente_Militar? @relation(fields: [id_componente], references: [id])
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+
+  devoluciones Devolucion[]
+  recepciones  Recepcion[]
+  pedidos      Pedido[]
+  despachos    Despacho[]
+  prestamos    Prestamo[]
+
+  fecha_eliminacion DateTime?
+}
+
+model Profesional_Abastecimiento {
+  id                Int           @id @default(autoincrement())
+  tipo_cedula       Tipos_Cedulas
+  cedula            String        @unique
+  nombres           String
+  apellidos         String
+  telefono          String
+  cargo_profesional String?
+  direccion         String
+  sexo              Generos
+
+  id_unidad     Int?
+  unidad        Unidad_Militar?    @relation(fields: [id_unidad], references: [id])
+  id_categoria  Int
+  categoria     Categoria_Militar  @relation(fields: [id_categoria], references: [id])
+  id_grado      Int
+  grado         Grado_Militar      @relation(fields: [id_grado], references: [id])
+  id_componente Int
+  componente    Componente_Militar @relation(fields: [id_componente], references: [id])
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+
+  abastecedor Despacho[] @relation("abastecedor")
+  autorizador Despacho[] @relation("autorizador")
+  supervisor  Despacho[] @relation("supervisor")
+
+  abastecedor_recepcion Recepcion[] @relation("abastecedor_recepcion")
+  autorizador_recepcion Recepcion[] @relation("autorizador_recepcion")
+  supervisor_recepcion  Recepcion[] @relation("supervisor_recepcion")
+
+  abastecedor_devolucion Devolucion[] @relation("abastecedor_devolucion")
+  autorizador_devolucion Devolucion[] @relation("autorizador_devolucion")
+  supervisor_devolucion  Devolucion[] @relation("supervisor_devolucion")
+
+  abastecedor_pedido   Pedido[]   @relation("abastecedor_pedido")
+  autorizador_pedido   Pedido[]   @relation("autorizador_pedido")
+  supervisor_pedido    Pedido[]   @relation("supervisor_pedido")
+  abastecedor_prestamo Prestamo[] @relation("abastecedor_prestamo")
+  autorizador_prestamo Prestamo[] @relation("autorizador_prestamo")
+  supervisor_prestamo  Prestamo[] @relation("supervisor_prestamo")
+  fecha_eliminacion    DateTime?
+}
+
+model Componente_Militar {
+  id           Int            @id @default(autoincrement())
+  nombre       String         @unique
+  descripcion  String
+  estado       String?
+  // ultima_edicion   DateTime
+  // fecha_eliminado  DateTime
+  destinatario Destinatario[]
+
+  grados               Grados_Componentes[]
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
+  personal             Personal[]
+  fecha_eliminacion    DateTime?
+}
+
+model Grados_Componentes {
+  id                   Int                @id @default(autoincrement())
+  id_grado             Int
+  grado                Grado_Militar      @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_componente        Int
+  componente           Componente_Militar @relation(fields: [id_componente], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime           @default(now())
+  ultima_actualizacion DateTime           @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Grado_Militar {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique
+  abreviatura String
+  orden       Int?
+  estado      String?
+
+  // ultima_edicion   DateTime
+  // fecha_eliminado  DateTime
+  componentes          Grados_Componentes[]
+  categorias           Categorias_Grados[]
+  destinatario         Destinatario[]
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
+  personal             Personal[]
+  fecha_eliminacion    DateTime?
+}
+
+model Categorias_Grados {
+  id                   Int               @id @default(autoincrement())
+  id_categoria         Int
+  categoria            Categoria_Militar @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime          @default(now())
+  ultima_actualizacion DateTime          @updatedAt
+  id_grado             Int
+  grado                Grado_Militar     @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_eliminacion    DateTime?
+}
+
+model Categoria_Militar {
+  id                   Int                          @id @default(autoincrement())
+  nombre               String                       @unique
+  abreviatura          String
+  estado               String?
+  destinatario         Destinatario[]
+  grados               Categorias_Grados[]
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
+  personal             Personal[]
+  fecha_eliminacion    DateTime?
+}
+
+model Unidad_Militar {
+  id                   Int                          @id @default(autoincrement())
+  nombre               String                       @unique
+  descripcion          String
+  ubicacion            String
+  id_zodi              Int
+  zodi                 Zodi                         @relation(fields: [id_zodi], references: [id])
+  destinatarios        Destinatario[]
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
+
+  armamento         Armamento[]
+  almacenes         Almacen[]
+  personal          Personal[]
+  Pedido            Pedido[]
+  fecha_eliminacion DateTime?
+}
+
+model Zodi {
+  id                Int              @id @default(autoincrement())
+  nombre            String           @unique
+  descripcion       String
+  ubicacion         String
+  id_redi           Int
+  redi              Redi             @relation(fields: [id_redi], references: [id])
+  unidades          Unidad_Militar[]
+  fecha_eliminacion DateTime?
+}
+
+model Redi {
+  id                Int       @id @default(autoincrement())
+  nombre            String    @unique
+  descripcion       String
+  ubicacion         String
+  zodis             Zodi[]
+  fecha_eliminacion DateTime?
+}
+
+model Personal {
+  id                Int                 @id @default(autoincrement())
+  tipo_cedula       Tipos_Cedulas
+  cedula            String              @unique
+  nombres           String
+  apellidos         String
+  telefono          String
+  cargo_profesional String?
+  direccion         String
+  tipo              Tipos_Destinatarios
+  sexo              Generos
+
+  cedula_usuario String?             @unique
+  usuario        Usuario?            @relation(fields: [cedula_usuario], references: [cedula])
+  id_unidad      Int?
+  unidad         Unidad_Militar?     @relation(fields: [id_unidad], references: [id])
+  id_categoria   Int?
+  categoria      Categoria_Militar?  @relation(fields: [id_categoria], references: [id])
+  id_grado       Int?
+  grado          Grado_Militar?      @relation(fields: [id_grado], references: [id])
+  id_componente  Int?
+  componente     Componente_Militar? @relation(fields: [id_componente], references: [id])
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  guardias             Guardia[]
+  fecha_eliminacion    DateTime?
+}
+
+enum Acciones_Cortas {
+  CREAR
+  ELIMINAR
+  DESHABILITAR
+  ACTUALIZAR
+  INICIAR_SESION
+  ASISTENCIA_ENTRADA
+  ASISTENCIA_SALIDA
+  RECUPERAR
+}
+
+model Auditoria {
+  id                   Int              @id @default(autoincrement())
+  id_usuario           String
+  usuario              Usuario          @relation(fields: [id_usuario], references: [id])
+  accion               String
+  accion_corta         Acciones_Cortas?
+  fecha_realizado      DateTime         @default(now())
+  ultima_actualizacion DateTime         @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model reposos {
+  id String @id
+}
+
+model Marca_Armamento {
+  id                Int                @id @default(autoincrement())
+  nombre            String
+  modelos           Modelo_Armamento[]
+  fecha_eliminacion DateTime?
+}
+
+model Calibre {
+  id                Int                @id @default(autoincrement())
+  nombre            String
+  descripcion       String?
+  Modelo_Armamento  Modelo_Armamento[]
+  fecha_eliminacion DateTime?
+}
+
+model Parte_Arma {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  descripcion String
+
+  modelo            Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+  id_modelo         Int
+  fecha_eliminacion DateTime?
+}
+
+model Componente_Arma {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  descripcion String
+
+  modelo            Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+  id_modelo         Int
+  fecha_eliminacion DateTime?
+}
+
+model Accesorio_Arma {
+  id                Int               @id @default(autoincrement())
+  nombre            String
+  descripcion       String
+  modelo            Modelo_Armamento? @relation(fields: [id_modelo], references: [id])
+  id_modelo         Int?
+  fecha_eliminacion DateTime?
+}
+
+model Tipo_Armamento {
+  id                Int                @id @default(autoincrement())
+  nombre            String
+  descripcion       String
+  modelos           Modelo_Armamento[]
+  fecha_eliminacion DateTime?
+}
+
+model Modelo_Armamento {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  id_tipo_armamento Int
+  tipo              Tipo_Armamento  @relation(fields: [id_tipo_armamento], references: [id])
+  marca             Marca_Armamento @relation(fields: [id_marca], references: [id])
+  id_marca          Int
+  calibre           Calibre         @relation(fields: [id_calibre], references: [id])
+  id_calibre        Int
+
+  partes            Parte_Arma[]
+  accesorios        Accesorio_Arma[]
+  componentes       Componente_Arma[]
+  Armamento         Armamento[]
+  fecha_eliminacion DateTime?
+}
+
+enum Condiciones_Armamento {
+  Operativo
+  Inoperativo
+  Inutilizado
+}
+
+enum Colores_Armamento {
+  Amarillo
+  Anaranjado
+  Azul
+  Blanco
+  Camuflado
+  Gris
+  Marron
+  Multicolor
+  Negro
+  Rojo
+  Rosado
+  Verde
+  Cromado
+  Pixelado
+  Niquelado
+  Plateado
+  Olivo
+}
+
+enum Estados_Armamento {
+  Asignado
+  Robado
+  Hurtado
+  Extraviado
+  Perdido
+  Decomisado
+  Cadena_Abastecimiento
+  Reparacion
+}
+
+model Armamento {
+  descripcion String?
+
+  id        Int              @id @default(autoincrement())
+  id_modelo Int
+  modelo    Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+
+  serial_armazon    String
+  serial_canon      String
+  color             Colores_Armamento
+  fecha_fabricacion DateTime?
+  lugar_fabricacion String?
+  condicion         Condiciones_Armamento
+  estado            Estados_Armamento
+  numero_causa      String?
+
+  id_unidad Int
+  unidad    Unidad_Militar @relation(fields: [id_unidad], references: [id])
+
+  id_almacen        Int
+  almacen           Almacen   @relation(fields: [id_almacen], references: [id], onDelete: Cascade)
+  pasillo           String?
+  fecha_eliminacion DateTime?
+}
+
+model Image {
+  id Int @id @default(autoincrement())
+
+  image String
+}
+
+model Asistencia {
+  id Int @id @default(autoincrement())
+
+  id_usuario   String
+  usuario      Usuario   @relation(fields: [id_usuario], references: [id])
+  hora_entrada DateTime?
+  hora_salida  DateTime?
+
+  fecha_realizado   DateTime  @default(now())
+  fecha_eliminacion DateTime?
+}
+
+enum AdminPasswordStates {
+  Inhabilitada
+  Activa
+}
+
+model Admin {
+  id Int @id @default(autoincrement())
+
+  password String
+  state    AdminPasswordStates
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Guardia {
+  id Int @id @default(autoincrement())
+
+  estado    String
+  ubicacion String
+  fecha     DateTime
+
+  cedula_usuario String
+  personal       Personal @relation(fields: [cedula_usuario], references: [cedula])
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model AttendanceCredentials {
+  id Int @id @default(autoincrement())
+
+  show_credentials Boolean @default(true)
+}
