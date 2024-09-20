@@ -103,17 +103,17 @@ export const storefrontApiMutation = (ctx: { locale: string }) => {
   })('mutation', { scalars })
 }
 
-export const SSGQuery = (params: { locale: string; channel: string }) => {
+export const SSGQuery = (params: { locale: string }) => {
   const reqParams = {
     locale: params?.locale as string,
-    channel: params?.channel as string,
+    // channel: params?.channel as string,
   }
 
   const HOST = `${VENDURE_HOST}?languageCode=${reqParams.locale}`
   return VendureChain(HOST, {
     headers: {
       'Content-Type': 'application/json',
-      'vendure-token': reqParams.channel,
+      'vendure-token': reqParams.locale,
     },
   })('query', { scalars })
 }
