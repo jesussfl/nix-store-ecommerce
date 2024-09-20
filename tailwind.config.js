@@ -21,16 +21,16 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
+        sans: ['var(--font-montserrat)', ...fontFamily.sans],
       },
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
+        border: 'var(--border)',
+        input: 'var(--input)',
         ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
+          DEFAULT: '#641EC8',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
@@ -58,7 +58,7 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
         dark: {
-          DEFAULT: 'hsl(var(--dark-background))',
+          DEFAULT: 'var(--dark-background)',
           secondary: 'hsl(var(--dark-secondary))',
           foreground: 'hsl(var(--dark-foreground))',
           muted: 'hsl(var(--dark-muted-foreground))',

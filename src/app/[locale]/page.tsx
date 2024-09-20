@@ -5,8 +5,9 @@ import { SSGQuery } from '@/graphql/client'
 import { ProductSearchSelector } from '@/graphql/selectors'
 import { SortOrder } from '@/zeus'
 
+import Hero from '@/components/shared/hero'
+
 const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
-  const t = await getTranslations('homepage')
   const api = SSGQuery({ locale: lng })
 
   const products = await api({
@@ -25,7 +26,7 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
   console.log(products.search.items.length)
   return (
     <section className="pt-14">
-      <h1>{t('hero-h1')}</h1>
+      <Header />
       <Suspense
         fallback={<ProductSkeleton extraClassname="" numberProducts={18} />}
       >
@@ -40,3 +41,16 @@ const AllProducts = async () => {
 }
 
 export default Home
+
+const Header = async () => {
+  const t = await getTranslations('homepage')
+
+  return (
+    <header className="mx-2 flex flex-col overflow-hidden rounded-3xl md:mx-8 md:flex-row">
+      <Hero />
+      <div className="flex h-[550px] items-center justify-center bg-gray-200 md:w-[50%] lg:h-[650px]">
+        <p>Image</p>
+      </div>
+    </header>
+  )
+}

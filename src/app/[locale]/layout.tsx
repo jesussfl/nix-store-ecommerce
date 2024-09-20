@@ -1,36 +1,17 @@
 import '@/utils/styles/globals.css'
 import localFont from 'next/font/local'
 import { cn } from '@/libs/utils'
-import { Toaster } from '@/modules/common/components/toast/toaster'
+import { Toaster } from '@/components/shared/toast/toaster'
 
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 
-// export const fontSans = FontSans({
-//   weight: ['400', '500', '700'],
-//   subsets: ['latin-ext'],
-//   variable: '--font-sans',
-// })
-const fontSans = localFont({
-  src: [
-    {
-      path: '../../../public/fonts/Poppins-Regular.ttf',
-      weight: '400',
-    },
-    {
-      path: '../../../public/fonts/Poppins-Medium.ttf',
-      weight: '500',
-    },
-    {
-      path: '../../../public/fonts/Poppins-SemiBold.ttf',
-      weight: '600',
-    },
-    {
-      path: '../../../public/fonts/Poppins-Bold.ttf',
-      weight: '700',
-    },
-  ],
-  variable: '--font-sans',
+import { Montserrat } from 'next/font/google'
+
+// If loading a variable font, you don't need to specify the font weight
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
 })
 export default async function RootLayout({
   children,
@@ -44,7 +25,10 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={cn('bg-background font-sans antialiased', fontSans.variable)}
+        className={cn(
+          'bg-background font-sans antialiased',
+          montserrat.variable
+        )}
       >
         <NextIntlClientProvider messages={messages}>
           {children}

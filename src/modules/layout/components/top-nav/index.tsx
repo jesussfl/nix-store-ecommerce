@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { cn } from '@/libs/utils'
-import ToogleTheme from '@/modules/common/components/toogle-theme/toogle-theme'
+import ToogleTheme from '@/components/shared/toogle-theme/toogle-theme'
 
 const TopNav = () => {
   return (
