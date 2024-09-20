@@ -1,4 +1,4 @@
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 
 export const PageTemplate = ({
   className,
@@ -8,7 +8,7 @@ export const PageTemplate = ({
     <div
       style={{ scrollbarGutter: 'stable both-edges' }}
       className={cn(
-        'bg-background h-full overflow-y-auto rounded-md',
+        'h-full overflow-y-auto rounded-md bg-background',
         className
       )}
       {...props}
@@ -25,7 +25,7 @@ export const PageHeader = ({
   return (
     <div
       className={cn(
-        'flex items-center w-full justify-between mb-5 p-5 border-b bg-background',
+        'mb-5 flex w-full items-center justify-between border-b bg-background p-5',
         className
       )}
       {...props}
@@ -43,7 +43,7 @@ export const PageHeaderTitle = ({
   return (
     <h1
       className={cn(
-        'text-2xl font-semibold tracking-tight flex gap-2 items-center',
+        'flex items-center gap-2 text-2xl font-semibold tracking-tight',
         className
       )}
       {...props}
@@ -78,7 +78,7 @@ export const HeaderRightSide = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn('flex justify-end items-center space-x-4', className)}
+    className={cn('flex items-center justify-end space-x-4', className)}
     {...props}
   />
 )
@@ -89,7 +89,7 @@ export const PageContent = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     style={{ scrollbarGutter: 'stable both-edges' }}
-    className={cn('px-5 space-y-4', className)}
+    className={cn('space-y-4 px-5', className)}
     {...props}
   >
     {props.children}

@@ -12,7 +12,7 @@ import {
 import { Command as CommandPrimitive, useCommandState } from 'cmdk'
 import { useEffect, forwardRef } from 'react'
 import { Badge } from '@/modules/common/components/badge'
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 export interface Option {
   value: string
   label: string
@@ -367,7 +367,7 @@ const MultipleSelector = React.forwardRef<
             className
           )}
         >
-          <div className="flex flex-wrap gap-1 ">
+          <div className="flex flex-wrap gap-1">
             {selected.map((option) => {
               return (
                 <Badge
@@ -397,7 +397,7 @@ const MultipleSelector = React.forwardRef<
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className="h-3 w-3 hover:text-foreground text-white" />
+                    <X className="h-3 w-3 text-white hover:text-foreground" />
                   </button>
                 </Badge>
               )
@@ -429,14 +429,14 @@ const MultipleSelector = React.forwardRef<
               style={{ outline: 'none', border: 'none' }}
               className={cn(
                 inputProps?.className,
-                'ml-2 flex-1 text-sm border-transparent outline-none focus:outline-none focus:ring-0 focus:border-blue-500 bg-transparent '
+                'ml-2 flex-1 border-transparent bg-transparent text-sm outline-none focus:border-blue-500 focus:outline-none focus:ring-0'
               )}
             />
           </div>
         </div>
         <div className="relative mt-2">
           {open && (
-            <CommandList className="absolute max-h-56 top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+            <CommandList className="absolute top-0 z-10 max-h-56 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
               {isLoading ? (
                 <>{loadingIndicator}</>
               ) : (

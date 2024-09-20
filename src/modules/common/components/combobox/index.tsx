@@ -3,7 +3,7 @@
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import { Button } from '@/modules/common/components/button'
 import {
   Command,

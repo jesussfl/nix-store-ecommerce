@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import Link, { LinkProps } from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
@@ -105,8 +105,8 @@ export const TabsTrigger = (props: {
         context.selected === props.value
           ? 'active'
           : selected === props.value
-          ? 'active'
-          : 'inactive'
+            ? 'active'
+            : 'inactive'
       }
       href={context.hrefFor(hrefValue)}
       scroll={false}

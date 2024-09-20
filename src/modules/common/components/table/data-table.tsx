@@ -43,7 +43,7 @@ import { format } from 'date-fns'
 import { CalendarIcon } from '@radix-ui/react-icons'
 import { DateRange } from 'react-day-picker'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import { Button } from '@/modules/common/components/button'
 import { Calendar } from '@/modules/common/components/calendar'
 import {
@@ -52,7 +52,6 @@ import {
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
 import { FilterIcon } from 'lucide-react'
-import { STATUS_COLUMN } from '@/modules/layout/components/status-column/indext'
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>
@@ -149,7 +148,7 @@ export function DataTable<TData extends { id: any }, TValue>({
     // Crear una copia de tableColumns
     const columnsCopy = [...tableColumns]
     // Insertar STATUS_COLUMN en la penúltima posición
-    columnsCopy.splice(columnsCopy.length - 1, 0, STATUS_COLUMN)
+    // columnsCopy.splice(columnsCopy.length - 1, 0, STATUS_COLUMN)
     return columnsCopy
   }, [tableColumns])
   const table = useReactTable({
@@ -205,7 +204,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   }, [rows])
 
   return (
-    <div className="flex flex-col px-2 gap-2">
+    <div className="flex flex-col gap-2 px-2">
       {isMultipleDeleteEnabled ? (
         <DataTableFilters
           table={table}
@@ -225,7 +224,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           isMultipleDeleteEnabled={false}
         />
       )}
-      <div className="bg-background rounded-md border">
+      <div className="rounded-md border bg-background">
         <TableContainer>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -318,7 +317,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           </TableBody>
         </TableContainer>
       </div>
-      <div className=" flex flex-row justify-between items-center bg-background p-5">
+      <div className="flex flex-row items-center justify-between bg-background p-5">
         <DataTableRowsCounter
           selectedRows={table.getSelectedRowModel().rows.length}
           totalRows={table.getFilteredRowModel().rows.length}
@@ -415,7 +414,7 @@ function Filter({
             column.setFilterValue((old: [number, number]) => [value, old?.[1]])
           }
           placeholder={`Min.`}
-          className="flex-1 border rounded text-xs"
+          className="flex-1 rounded border text-xs"
         />
 
         <DebouncedInput
@@ -427,7 +426,7 @@ function Filter({
             column.setFilterValue((old: [number, number]) => [old?.[0], value])
           }
           placeholder={`Max.`}
-          className="flex-1 border rounded text-xs"
+          className="flex-1 rounded border text-xs"
         />
       </div>
     </div>
@@ -443,7 +442,7 @@ function Filter({
         value={(columnFilterValue ?? '') as string}
         onChange={(value) => column.setFilterValue(value)}
         placeholder={`Buscar...`}
-        className="flex-1 border rounded text-xs"
+        className="flex-1 rounded border text-xs"
         list={column.id + 'list'}
       />
     </>

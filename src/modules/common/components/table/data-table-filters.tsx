@@ -15,9 +15,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { KeyboardIcon, Search } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
-import Keyboard from 'react-simple-keyboard'
 import 'react-simple-keyboard/build/css/index.css'
-import { getCurrentLayout } from '@/utils/helpers/get-keyboard-layout'
 import {
   Select,
   SelectContent,
@@ -67,8 +65,8 @@ export default function DataTableFilters({
     setLanguage(selectedLanguage)
   }
   return (
-    <div className="flex flex-1 justify-between items-center py-4">
-      <div className="flex justify-start flex-1 gap-4">
+    <div className="flex flex-1 items-center justify-between py-4">
+      <div className="flex flex-1 justify-start gap-4">
         <div className="flex w-[50%] gap-4">
           <Input
             placeholder="Buscar..."
@@ -120,15 +118,6 @@ export default function DataTableFilters({
                     <SelectItem value="german">Alemán</SelectItem>
                   </SelectContent>
                 </Select>
-                <Keyboard
-                  onChange={(e) => {
-                    const value = e
-                    setFiltering(value)
-                  }}
-                  inputName={'keyboard'}
-                  value={inputValue}
-                  {...getCurrentLayout(language)}
-                />
               </div>
             </PopoverContent>
           </Popover>

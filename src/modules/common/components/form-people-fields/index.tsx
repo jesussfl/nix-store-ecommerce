@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/modules/common/components/form'
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useFormContext } from 'react-hook-form'

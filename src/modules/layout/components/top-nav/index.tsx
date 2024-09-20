@@ -1,13 +1,13 @@
 import React from 'react'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import ToogleTheme from '@/modules/common/components/toogle-theme/toogle-theme'
 
 const TopNav = () => {
   return (
     <div
       className={cn(
-        `sticky inset-x-0 top-0 z-30 w-full transition-all border-b bg-background`
+        `sticky inset-x-0 top-0 z-30 w-full border-b bg-background transition-all`
       )}
     >
       <div className="flex h-[56px] items-center justify-between px-4">

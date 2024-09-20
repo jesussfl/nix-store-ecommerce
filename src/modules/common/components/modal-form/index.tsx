@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 
 type Props = {
   children: React.ReactNode
@@ -93,7 +93,7 @@ export default function ModalForm({
       </DialogTrigger>
       <DialogContent
         className={cn(
-          `lg:max-w-screen-lg overflow-x-hidden p-0 max-h-[90vh] overflow-y-auto`,
+          `max-h-[90vh] overflow-y-auto overflow-x-hidden p-0 lg:max-w-screen-lg`,
           className
         )}
       >

@@ -10,7 +10,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import { Label } from '@/modules/common/components/label/label'
 
 const Form = FormProvider
@@ -195,7 +195,7 @@ const FormInstructionsDescription = ({
 }: React.HTMLAttributes<HTMLParagraphElement>) => (
   <p
     className={cn(
-      'text-center text-sm w-[600px] text-muted-foreground',
+      'w-[600px] text-center text-sm text-muted-foreground',
       className
     )}
     {...props}

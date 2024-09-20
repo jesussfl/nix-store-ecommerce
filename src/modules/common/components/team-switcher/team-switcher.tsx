@@ -7,7 +7,7 @@ import {
   PlusCircledIcon,
 } from '@radix-ui/react-icons'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/libs/utils'
 import {
   Avatar,
   AvatarFallback,
