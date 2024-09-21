@@ -23,8 +23,13 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-montserrat)', ...fontFamily.sans],
       },
+      backgroundImage: {
+        'button-primary': 'linear-gradient(180deg, #641EC8 0%, #46158D 100%)',
+        'footer-texture': "url('/footer/footer-bg.png')",
+      },
       colors: {
-        border: 'var(--border)',
+        border: { DEFAULT: 'var(--border)', button: 'var(--border-button)' },
+
         input: 'var(--input)',
         ring: 'hsl(var(--ring))',
         background: 'var(--background)',

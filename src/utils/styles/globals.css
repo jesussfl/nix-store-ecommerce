@@ -54,12 +54,11 @@
     --input: #fff;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
-
     --dark-background: #1A1A1A;
     --dark-foreground: 210 40% 98%;
     --dark-secondary: 230 63% 27%;
     --dark-muted-foreground: 142 5% 60%;
-
+    --border-button: #5515B0;
   }
 
   .dark {

@@ -2,6 +2,10 @@
     "homepage":{
         "hero-h1": "Compras online sin complicaciones en toda Venezuela",
         "hero-description": "Pide lo que más te guste de tus páginas favoritas o compra nuestros productos con disponibilidad inmediata.",
-        "hero-button": "Ver catálogo"
+        "hero-button": "Ver catálogo",
+        "footer":{
+            "slogan": "Compre, pague y vende en Venezuela",
+            "social-networks": "Nuestras redes sociales"
+        }
     }
 }

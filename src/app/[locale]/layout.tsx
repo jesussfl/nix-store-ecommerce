@@ -7,6 +7,8 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 
 import { Montserrat } from 'next/font/google'
+import Header from '@/components/shared/header'
+import Footer from '@/components/shared/footer'
 
 // If loading a variable font, you don't need to specify the font weight
 const montserrat = Montserrat({
@@ -30,10 +32,12 @@ export default async function RootLayout({
           montserrat.variable
         )}
       >
+        <Header />
         <NextIntlClientProvider messages={messages}>
           {children}
           <Toaster />
         </NextIntlClientProvider>
+        <Footer />
       </body>
     </html>
   )
