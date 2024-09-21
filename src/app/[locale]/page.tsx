@@ -6,22 +6,22 @@ import { ProductSearchSelector } from '@/graphql/selectors'
 import { SortOrder } from '@/zeus'
 
 const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
-  const api = SSGQuery({ locale: lng })
+  // const api = SSGQuery({ locale: lng })
 
-  const products = await api({
-    search: [
-      {
-        input: {
-          take: 4,
-          groupByProduct: true,
-          sort: { price: SortOrder.ASC },
-        },
-      },
-      { items: ProductSearchSelector },
-    ],
-  })
+  // const products = await api({
+  //   search: [
+  //     {
+  //       input: {
+  //         take: 4,
+  //         groupByProduct: true,
+  //         sort: { price: SortOrder.ASC },
+  //       },
+  //     },
+  //     { items: ProductSearchSelector },
+  //   ],
+  // })
 
-  console.log(products.search.items.length)
+  // console.log(products.search.items.length)
   return (
     <section className="pt-14">
       <Suspense
