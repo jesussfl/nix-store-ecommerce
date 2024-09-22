@@ -7,5 +7,28 @@
             "slogan": "Compre, pague y vende en Venezuela",
             "social-networks": "Nuestras redes sociales"
         }
-    }
-}
+    },
+    
+        "ApiRoute": {
+          "hello": "¡Hola {name}!"
+        },
+        "LocaleLayout": {
+          "description": "Tienda de accesorios",
+          "title": "Nix Store"
+        },
+        "LocaleSwitcher": {
+          "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
+        },
+        "Navigation": {
+          "about": "Acerca de (MDX)",
+          "client": "Página del cliente",
+          "home": "Inicio",
+          "nested": "Página anidada",
+          "newsArticle": "Noticias #{articleId}"
+        },
+
+        "NotFound": {
+          "title": "Esta página no se encontró (404)"
+        }
+  
+      }

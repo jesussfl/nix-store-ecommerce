@@ -46,5 +46,7 @@ export const routing = defineRouting({
 
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
+export type Pathnames = keyof typeof routing.pathnames
+export type Locale = (typeof routing.locales)[number]
 export const { Link, redirect, usePathname, useRouter } =
   createSharedPathnamesNavigation(routing)
