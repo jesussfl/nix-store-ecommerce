@@ -1,3 +1,4 @@
+import '@/utils/styles/globals.css'
 import { cn } from '@/libs/utils'
 import { Toaster } from '@/components/shared/toast/toaster'
 
