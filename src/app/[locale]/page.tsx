@@ -42,15 +42,15 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
           }}
           className="w-full"
         >
-          <CarouselContent className="">
+          <CarouselContent className="-ml-2 md:-ml-0">
             {Array.from({ length: 5 }).map((_, index) => (
               <CarouselItem
                 key={index}
-                className="basis-1/2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
+                className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
               >
                 <SingleProduct
                   product={{
-                    name: 'Shoes',
+                    name: 'Este es un nombre largo del producto',
                     priceInUSD: 200,
 
                     lastPriceInUSD: 300,
@@ -73,18 +73,19 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
           }}
           className="w-full"
         >
-          <CarouselContent className="">
+          <CarouselContent className="-ml-2 md:-ml-0">
             {Array.from({ length: 5 }).map((_, index) => (
               <CarouselItem
                 key={index}
-                className="basis-1/2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
+                className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
               >
                 <SingleProduct
                   product={{
-                    name: 'Shoes',
-                    priceInUSD: 100,
-                    lastPriceInUSD: 200,
-                    type: 'Por encargo',
+                    name: 'Este es un nombre largo del producto',
+                    priceInUSD: 200,
+
+                    lastPriceInUSD: 300,
+                    type: 'Disponibilidad inmediata',
                     image:
                       'https://images.unsplash.com/photo-1600185365483-26d7a4cc4a30?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                   }}
@@ -103,20 +104,21 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
           }}
           className="w-full"
         >
-          <CarouselContent className="">
+          <CarouselContent className="-ml-2 md:-ml-0">
             {Array.from({ length: 5 }).map((_, index) => (
               <CarouselItem
                 key={index}
-                className="basis-1/2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
+                className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
               >
                 <SingleProduct
                   product={{
-                    name: 'Shoes',
-                    priceInUSD: 100,
-                    lastPriceInUSD: 200,
-                    type: 'Personalizados',
+                    name: 'Este es un nombre largo del producto',
+                    priceInUSD: 200,
+
+                    lastPriceInUSD: 300,
+                    type: 'Disponibilidad inmediata',
                     image:
-                      'https://images.unsplash.com/photo-1614289371518-722f2615943d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
+                      'https://images.unsplash.com/photo-1600185365483-26d7a4cc4a30?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                   }}
                 />
               </CarouselItem>

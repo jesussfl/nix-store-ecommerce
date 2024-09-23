@@ -28,26 +28,34 @@ export const Section = ({
   variant,
   className,
 }: SectionProps) => {
+  const textStyle =
+    variant === 'dark' ? 'bg-dark-text-gradient' : 'bg-text-gradient'
   return (
     <section className={cn(sectionVariants({ variant }), className)}>
-      <div className="flex w-full justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex w-full flex-col items-center justify-center gap-4 md:flex-row md:justify-between">
+        <div className="flex items-center justify-center md:justify-start md:gap-2">
           <Image
-            src={`/assets/decoration${variant === 'dark' ? '-dark' : ''}.svg`}
+            src={`/assets/${variant === 'dark' ? 'decoration-dark.svg' : 'decoration.svg'}`}
             width={32}
             height={32}
             alt="Nix Logo"
             className="scale-75 md:scale-100"
           />
           <H2
-            className={`bg${variant === 'dark' ? '-dark' : ''}-text-gradient bg-clip-text text-transparent`}
+            className={`bg-clip-text text-transparent ${textStyle} text-center md:text-left`}
           >
             {title}
           </H2>
+          <Image
+            src={`/assets/${variant === 'dark' ? 'decoration-dark.svg' : 'decoration.svg'}`}
+            width={32}
+            height={32}
+            alt="Nix Logo"
+            className="scale-75 md:hidden md:scale-100"
+          />
         </div>
-        <Button variant="outline" size={'lg'}>
-          Ver más
-          <RiArrowRightLine className="ml-2 h-5 w-5" />
+        <Button variant="outline" className="w-auto" size={'lg'}>
+          Ver más <RiArrowRightLine className="ml-2 h-5 w-5" />
         </Button>
       </div>
       {children}
