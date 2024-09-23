@@ -16,9 +16,9 @@ import { HorizontalDivider, VerticalDivider } from '../divider'
 
 const Footer = async () => {
   return (
-    <footer className="flex flex-col gap-4 px-2 md:h-[560px] md:px-8">
+    <footer className="mt-24 flex flex-col gap-4 px-2 md:h-[560px] md:px-8">
       <div
-        className={`bg-footer-texture flex h-full flex-col rounded-sm border border-border bg-cover bg-left bg-no-repeat px-4 pb-3 md:rounded-md md:px-8 lg:rounded-lg lg:px-12`}
+        className={`flex h-full flex-col rounded-sm border border-border bg-footer-texture bg-cover bg-left bg-no-repeat px-4 pb-3 md:rounded-md md:px-8 lg:rounded-lg lg:px-12`}
       >
         <TopFooterContainer />
         <HorizontalDivider className="mt-4" />

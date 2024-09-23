@@ -6,7 +6,7 @@ import { RiArrowRightLine } from '@remixicon/react'
 import { cva, VariantProps } from 'class-variance-authority'
 import { cn } from '@/libs/utils'
 const sectionVariants = cva(
-  'flex flex-col items-center gap-12 px-4 pt-12 pb-32 md:items-start md:px-12 md:py-24 lg:px-36 lg:py-32',
+  'flex flex-col items-center gap-12 px-4 pt-12 pb-32 md:items-start md:px-12 md:py-24 lg:px-36 lg:py-32 ',
   {
     variants: {
       variant: {

@@ -23,7 +23,7 @@ export const SingleProduct = async ({
   product: ProductCardInfo
 }) => {
   return (
-    <Card className="flex flex-col gap-2 rounded-sm border-0 p-1 shadow-none md:rounded-md md:p-2">
+    <Card className="box-content flex cursor-pointer flex-col gap-2 rounded-sm border-0 p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
       <CardContent className="flex flex-col items-start gap-2 p-0 md:gap-4">
         <Badge
           variant={'secondary'}

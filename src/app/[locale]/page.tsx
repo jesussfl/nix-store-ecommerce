@@ -6,7 +6,6 @@ import { ProductSearchSelector } from '@/graphql/selectors'
 import { SortOrder } from '@/zeus'
 import Header from '@/components/shared/header'
 import { Section } from '@/components/shared/carousel/section'
-import * as motion from 'framer-motion/client'
 import {
   Carousel,
   CarouselContent,
@@ -15,6 +14,13 @@ import {
   CarouselPrevious,
 } from '@/components/shared/carousel'
 import { SingleProduct } from '@/components/products/single-product'
+import { Navbar } from '@/components/shared/floating-nav'
+export const navItems = [
+  { name: 'About', link: '#about' },
+  { name: 'Projects', link: '#projects' },
+  { name: 'Testimonials', link: '#testimonials' },
+  { name: 'Contact', link: '#contact' },
+]
 const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
   // const api = SSGQuery({ locale: lng })
 
@@ -33,7 +39,8 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
 
   // console.log(products.search.items.length)
   return (
-    <>
+    <div className="w-full">
+      <Navbar />
       <Header />
       <Section title="Disponibilidad inmediata">
         <Carousel
@@ -128,7 +135,7 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
           <CarouselNext />
         </Carousel>
       </Section>
-    </>
+    </div>
   )
 }
 // <section className="pt-14">
