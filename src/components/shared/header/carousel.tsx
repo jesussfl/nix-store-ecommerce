@@ -11,7 +11,21 @@ import Autoplay from 'embla-carousel-autoplay'
 
 import { Card, CardContent } from '@/components/shared/card/card'
 import Image from 'next/image'
-
+import { AspectRatio } from '../aspect-ratio'
+const slideshow = [
+  {
+    name: 'Collares',
+    image: '/assets/slideshow/slideshow1.png',
+  },
+  {
+    name: 'Pulseras',
+    image: '/assets/slideshow/slideshow2.png',
+  },
+  {
+    name: 'Franelas',
+    image: '/assets/slideshow/slideshow3.jpg',
+  },
+]
 export function CarouselPlugin() {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
@@ -25,24 +39,19 @@ export function CarouselPlugin() {
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {slideshow.map((slide, index) => (
           <CarouselItem key={index}>
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-6 md:h-[550px] lg:h-[650px]">
-                <Image
-                  src="https://images.unsplash.com/photo-1719937206255-cc337bccfc7d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  className=""
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  alt="Shoes"
-                ></Image>
-              </CardContent>
-            </Card>
+            <AspectRatio>
+              <Image
+                src={slide.image}
+                alt="Your image"
+                fill
+                className="object-cover"
+              />
+            </AspectRatio>
           </CarouselItem>
         ))}
       </CarouselContent>
-      {/* <CarouselPrevious /> */}
-      {/* <CarouselNext /> */}
     </Carousel>
   )
 }

@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/shared/card/card'
+import { Card, CardContent, CardTitle } from '@/components/shared/card/card'
 import Image from 'next/image'
 import { Badge } from '@/components/shared/badge'
 import { Button } from '@/components/shared/button'
@@ -17,24 +11,17 @@ type ProductCardInfo = {
   lastPriceInUSD: number
   type: string
 }
-export const SingleProduct = async ({
-  product,
-}: {
+type Props = {
   product: ProductCardInfo
-}) => {
+}
+export const SingleProduct = async ({ product }: Props) => {
   return (
-    <Card className="box-content flex cursor-pointer flex-col gap-2 rounded-sm border-0 p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
-      <CardContent className="flex flex-col items-start gap-2 p-0 md:gap-4">
+    <Card className="flex cursor-pointer flex-col gap-2 rounded-sm border-0 p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
+      <CardContent className="relative flex flex-col items-start gap-2 p-0 md:gap-4">
+        <HoverImage imageUrl={product.image} />
         <Badge
           variant={'secondary'}
-          className="absolute top-3 z-10 line-clamp-1 hidden rounded-full px-2 py-1 text-white md:right-2"
-        >
-          {product.type}
-        </Badge>
-        <HoverImage />
-        <Badge
-          variant={'secondary'}
-          className="line-clamp-1 rounded-full text-white md:right-2 md:hidden"
+          className="right-2 top-2 z-10 rounded-full px-2 py-1 text-white md:absolute md:inline"
         >
           <p className="line-clamp-1 text-[0.6rem] font-medium">
             {product.type}
@@ -58,7 +45,7 @@ export const SingleProduct = async ({
   )
 }
 
-const HoverImage = async () => {
+const HoverImage = async ({ imageUrl }: { imageUrl: string }) => {
   return (
     <AspectRatio
       className="group relative overflow-hidden rounded-sm"
@@ -66,7 +53,7 @@ const HoverImage = async () => {
     >
       {/* Image with blur and dark filter on hover */}
       <Image
-        src="https://images.unsplash.com/photo-1719937206255-cc337bccfc7d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src={imageUrl}
         alt="Your image"
         fill
         className="h-full w-full object-cover transition duration-300 md:group-hover:scale-125 md:group-hover:brightness-50"

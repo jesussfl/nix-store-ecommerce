@@ -1,10 +1,11 @@
-import { Suspense } from 'react'
-import ProductSkeleton from '@/components/skeletons/product-skeleton'
-import { getTranslations } from 'next-intl/server'
-import { SSGQuery } from '@/graphql/client'
-import { ProductSearchSelector } from '@/graphql/selectors'
-import { SortOrder } from '@/zeus'
 import Header from '@/components/shared/header'
+import { Navbar } from '@/components/shared/floating-nav'
+import {
+  CustomizedProductsSection,
+  CustomMadeProductsSection,
+  ImmediatelyAvailableProductsSection,
+} from '@/components/pages/homepage/featured-products'
+import { CategoriesSection } from '@/components/pages/homepage/categories'
 import { Section } from '@/components/shared/carousel/section'
 import {
   Carousel,
@@ -13,59 +14,51 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/shared/carousel'
-import { SingleProduct } from '@/components/products/single-product'
-import { Navbar } from '@/components/shared/floating-nav'
-export const navItems = [
-  { name: 'About', link: '#about' },
-  { name: 'Projects', link: '#projects' },
-  { name: 'Testimonials', link: '#testimonials' },
-  { name: 'Contact', link: '#contact' },
+import { AspectRatio } from '@/components/shared/aspect-ratio'
+import Image from 'next/image'
+import { WeOfferSection } from '@/components/pages/homepage/we-offer'
+const slideshow = [
+  {
+    name: 'Collares',
+    image: '/assets/slideshow/slideshow1.png',
+  },
+  {
+    name: 'Pulseras',
+    image: '/assets/slideshow/slideshow2.png',
+  },
+  {
+    name: 'Franelas',
+    image: '/assets/slideshow/slideshow3.jpg',
+  },
 ]
-const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
-  // const api = SSGQuery({ locale: lng })
-
-  // const products = await api({
-  //   search: [
-  //     {
-  //       input: {
-  //         take: 4,
-  //         groupByProduct: true,
-  //         sort: { price: SortOrder.ASC },
-  //       },
-  //     },
-  //     { items: ProductSearchSelector },
-  //   ],
-  // })
-
-  // console.log(products.search.items.length)
+const Home = async () => {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[90rem]">
       <Navbar />
       <Header />
-      <Section title="Disponibilidad inmediata">
+      <CategoriesSection />
+      <WeOfferSection />
+      <Section title={`Lo último`}>
         <Carousel
           opts={{
             align: 'start',
           }}
           className="w-full"
         >
-          <CarouselContent className="-ml-2 md:-ml-0">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem
-                key={index}
-                className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
-              >
-                <SingleProduct
-                  product={{
-                    name: 'Este es un nombre largo del producto',
-                    priceInUSD: 200,
-
-                    lastPriceInUSD: 300,
-                    type: 'Disponibilidad inmediata',
-                    image:
-                      'https://images.unsplash.com/photo-1600185365483-26d7a4cc4a30?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  }}
-                />
+          <CarouselContent>
+            {slideshow.map((slide, index) => (
+              <CarouselItem key={index} className="">
+                <AspectRatio
+                  className="group relative basis-1/3 overflow-hidden rounded-sm"
+                  ratio={16 / 9}
+                >
+                  <Image
+                    src={slide.image}
+                    alt="Your image"
+                    fill
+                    className="h-full w-full object-cover"
+                  />
+                </AspectRatio>
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -73,83 +66,28 @@ const Home = async ({ params: { lng } }: { params: { lng: string } }) => {
           <CarouselNext />
         </Carousel>
       </Section>
-      <Section title="Productos por encargo">
-        <Carousel
-          opts={{
-            align: 'start',
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-2 md:-ml-0">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem
-                key={index}
-                className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
-              >
-                <SingleProduct
-                  product={{
-                    name: 'Este es un nombre largo del producto',
-                    priceInUSD: 200,
-
-                    lastPriceInUSD: 300,
-                    type: 'Disponibilidad inmediata',
-                    image:
-                      'https://images.unsplash.com/photo-1600185365483-26d7a4cc4a30?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  }}
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </Section>
-      <Section title="Productos personalizados" variant={'dark'}>
-        <Carousel
-          opts={{
-            align: 'start',
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-2 md:-ml-0">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem
-                key={index}
-                className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
-              >
-                <SingleProduct
-                  product={{
-                    name: 'Este es un nombre largo del producto',
-                    priceInUSD: 200,
-
-                    lastPriceInUSD: 300,
-                    type: 'Disponibilidad inmediata',
-                    image:
-                      'https://images.unsplash.com/photo-1600185365483-26d7a4cc4a30?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  }}
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </Section>
+      <ImmediatelyAvailableProductsSection />
+      <CustomMadeProductsSection />
+      <CustomizedProductsSection />
     </div>
   )
 }
-// <section className="pt-14">
-
-/* <Suspense
-        fallback={<ProductSkeleton extraClassname="" numberProducts={18} />}
-      >
-        <AllProducts />
-      </Suspense> */
-
-/* </section> */
-
-const AllProducts = async () => {
-  return <p>Here will be all products</p>
-}
 
 export default Home
+
+// const api = SSGQuery({ locale: lng })
+
+// const products = await api({
+//   search: [
+//     {
+//       input: {
+//         take: 4,
+//         groupByProduct: true,
+//         sort: { price: SortOrder.ASC },
+//       },
+//     },
+//     { items: ProductSearchSelector },
+//   ],
+// })
+
+// console.log(products.search.items.length)

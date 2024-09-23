@@ -80,7 +80,7 @@ export default async function RootLayout({
           montserrat.variable
         )}
       >
-        <main className="relative mx-auto flex flex-col items-center justify-center overflow-hidden">
+        <main className="bg-black-100 relative mx-auto flex flex-col items-center justify-center">
           <NextIntlClientProvider messages={messages}>
             {children}
             <Toaster />

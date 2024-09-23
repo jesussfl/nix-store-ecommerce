@@ -45,13 +45,13 @@ const TopFooterContainer = async () => {
         <SocialButtons />
       </div>
       <VerticalDivider />
-      <div className="flex flex-col items-center justify-center gap-4 md:w-[50%]">
-        <div className="flex gap-2">
-          <Button size={'lg'} variant={'secondary'}>
+      <div className="flex h-[400px] flex-col items-center justify-center gap-4 md:w-[50%]">
+        <div className="flex flex-1 items-center justify-center gap-4">
+          <Button size={'lg'} variant={'outline'}>
             Catálogo
             <RiArrowRightUpLine className="ml-2 h-4 w-4" />
           </Button>
-          <Button size={'lg'} variant={'secondary'}>
+          <Button size={'lg'} variant={'outline'}>
             Colecciones
             <RiArrowRightUpLine className="ml-2 h-4 w-4" />
           </Button>
@@ -107,7 +107,7 @@ const ContactButtons = async () => {
         href={'https://www.instagram.com/nixstore.co/'}
         className={cn(
           'w-full',
-          buttonVariants({ variant: 'secondary', size: 'lg' })
+          buttonVariants({ variant: 'outline', size: 'lg' })
         )}
       >
         Whatsapp
@@ -117,7 +117,7 @@ const ContactButtons = async () => {
         href={'https://www.instagram.com/nixstore.co/'}
         className={cn(
           'w-full',
-          buttonVariants({ variant: 'secondary', size: 'lg' })
+          buttonVariants({ variant: 'outline', size: 'lg' })
         )}
       >
         Email

@@ -28,6 +28,7 @@ module.exports = {
         'text-gradient': 'linear-gradient(90deg, #000 0%, #641EC8 100%)',
         'dark-text-gradient': 'linear-gradient(90deg, #FFF 0%, #AD87E4 100%);',
         'footer-texture': "url('/footer/footer-bg.png')",
+        'feature-texture': "url('/feature-bg.png')",
       },
       colors: {
         border: { DEFAULT: 'var(--border)', button: 'var(--border-button)' },
