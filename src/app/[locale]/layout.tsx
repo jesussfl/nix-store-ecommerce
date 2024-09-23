@@ -12,7 +12,6 @@ import {
 } from 'next-intl/server'
 
 import { Montserrat } from 'next/font/google'
-import Header from '@/components/shared/header'
 import Footer from '@/components/shared/footer'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
@@ -81,11 +80,12 @@ export default async function RootLayout({
           montserrat.variable
         )}
       >
-        <Header />
-        <NextIntlClientProvider messages={messages}>
-          {children}
-          <Toaster />
-        </NextIntlClientProvider>
+        <main>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+            <Toaster />
+          </NextIntlClientProvider>
+        </main>
         <Footer />
       </body>
     </html>

@@ -31,7 +31,7 @@ export const H2 = async ({
   return (
     <h2
       className={cn(
-        `text-center text-2xl font-bold text-dark-foreground md:text-left md:text-3xl lg:text-4xl`,
+        `text-2xl font-bold md:text-left md:text-3xl lg:text-4xl`,
         className
       )}
     >
