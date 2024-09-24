@@ -22,9 +22,9 @@ const Home = async () => {
       <LatestNews />
       <ImmediatelyAvailableProductsSection />
       <CustomMadeProductsSection />
+      <BrandsSection />
       <CustomizedProductsSection />
       <FaqsSection />
-      <BrandsSection />
     </div>
   )
 }
