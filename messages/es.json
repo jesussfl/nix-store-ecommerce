@@ -14,6 +14,12 @@
             "offer-2-description": "Tu pedido llegará en cualquier estado en el que te encuentres",
             "offer-3-description": "Puedes encargar con solo el 50% y pagar el resto para retirar."
         },
+        "metrics-section":{
+          "title": "Métricas",
+          "satisfied-customers": "Clientes satisfechos",
+          "successful-orders": "Pedidos exitosos",
+          "custom-made-products": "Productos personalizados"
+        },
 
         "immediately-available-products-title": "Productos de disponibilidad inmediata",
         "custom-made-products-title": "Productos por encargo",

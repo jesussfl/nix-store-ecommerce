@@ -11,6 +11,8 @@ import { WeOfferSection } from '@/components/pages/homepage/we-offer'
 import { LatestNews } from '@/components/pages/homepage/latest-news'
 import { FaqsSection } from '@/components/pages/homepage/faqs'
 import BrandsSection from '@/components/pages/homepage/brands'
+import { MetricsSection } from '@/components/pages/homepage/metrics'
+import { CollectionsSection } from '@/components/pages/homepage/collections'
 
 const Home = async () => {
   return (
@@ -23,7 +25,10 @@ const Home = async () => {
       <ImmediatelyAvailableProductsSection />
       <CustomMadeProductsSection />
       <BrandsSection />
+      <MetricsSection />
+      <CategoriesSection />
       <CustomizedProductsSection />
+      <CollectionsSection />
       <FaqsSection />
     </div>
   )
