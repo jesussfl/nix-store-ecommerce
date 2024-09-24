@@ -17,6 +17,8 @@ import {
 } from '@/components/shared/carousel'
 import { ScrollArea, ScrollBar } from '../scroll-area/scroll-area'
 import { cn } from '@/libs/utils'
+import { RiUser2Line, RiUser3Line } from '@remixicon/react'
+import clsx from 'clsx'
 // import Search, { SearchSkeleton } from './search';
 export type Menu = {
   title: string
@@ -53,13 +55,10 @@ export async function Navbar() {
             <Image
               src="/assets/logo/nix-logo-color-dark.svg"
               alt="Nix Logo"
-              width={50}
-              height={250}
+              width={72}
+              height={50}
+              className="absolute left-1/2 -translate-x-1/2"
             />
-            {/* <LogoSquare /> */}
-            {/* <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
-              Nix Store
-            </div> */}
           </Link>
           {menu.length ? (
             <ul className="hidden gap-6 text-sm md:flex md:items-center md:gap-0">
@@ -82,12 +81,24 @@ export async function Navbar() {
             <Search />
           </Suspense> */}
         </div>
-        <div className="flex justify-end md:w-1/3">
+        <div className="flex justify-end gap-2 md:w-1/3">
           <CartModal />
+
+          <Button variant="outline" size={'icon'}>
+            <RiUser3Line
+              className={clsx('h-4 transition-all ease-in-out hover:scale-110')}
+            />
+
+            {/* {quantity ? (
+        <div className="absolute right-0 top-0 -mr-2 -mt-2 h-4 w-4 rounded bg-blue-600 text-[11px] font-medium text-white">
+          {quantity}
+        </div>
+      ) : null} */}
+          </Button>
         </div>
       </div>
 
-      <ScrollArea className="hidden w-full max-w-[90rem] whitespace-nowrap md:inline">
+      <ScrollArea className="hidden w-full max-w-[90rem] whitespace-nowrap pt-1 md:inline">
         <div className="flex w-max space-x-4 pb-4">
           {Array.from({ length: 20 }).map((_, index) => (
             <Button variant={'outline'} className="shrink-0" key={index}>

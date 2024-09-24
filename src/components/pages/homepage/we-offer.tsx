@@ -1,34 +1,56 @@
-import { Card, CardContent } from '@/components/shared/card/card'
-import { RiMotorbikeLine, RiPercentLine, RiTruckLine } from '@remixicon/react'
-const features = [
-  {
-    title: 'Delivery en toda maracay',
-    description: 'Podemos llevar tu pedido a cualquier zona de Maracay',
-    icon: <RiMotorbikeLine className="h-8 w-8" />,
-  },
-  {
-    title: 'Envíos nacionales en todo el país',
-    description:
-      'Tu pedido llegará en cualquier estado en el que te encuentres',
-    icon: <RiTruckLine className="h-8 w-8" />,
-  },
-  {
-    title: 'Paga el 50% en pedidos personalizados',
-    description:
-      'Puedes encargar con solo el 50% y pagar el resto para retirar.',
-    icon: <RiPercentLine className="h-8 w-8" />,
-  },
-]
-export const WeOfferSection = () => {
+import {
+  RiBankCard2Line,
+  RiMotorbikeLine,
+  RiPercentLine,
+  RiShieldCheckLine,
+  RiTimeLine,
+  RiTruckLine,
+} from '@remixicon/react'
+import { getTranslations } from 'next-intl/server'
+
+export const WeOfferSection = async () => {
+  const t = await getTranslations('homepage')
+
+  const features = [
+    {
+      title: t('we-offer-section.offer-1-title'),
+      description: t('we-offer-section.offer-1-description'),
+      icon: <RiMotorbikeLine className="h-8 w-8" />,
+    },
+    {
+      title: t('we-offer-section.offer-2-title'),
+      description: t('we-offer-section.offer-2-description'),
+      icon: <RiTruckLine className="h-8 w-8" />,
+    },
+    {
+      title: t('we-offer-section.offer-3-title'),
+      description: t('we-offer-section.offer-3-description'),
+      icon: <RiPercentLine className="h-8 w-8" />,
+    },
+  ]
   return (
-    <section className="mx-auto my-36 flex flex-col items-center gap-4">
-      <div className="flex w-[200px] flex-col items-center justify-center rounded-full border border-border bg-gray-50 py-2">
-        <p>Te ofrecemos</p>
+    <section className="mx-auto my-12 flex flex-col items-center gap-4 md:my-24">
+      <div className="flex w-[150px] flex-col items-center justify-center rounded-full border border-border bg-gray-50 py-2">
+        <p>{t('we-offer-section.title')}</p>
       </div>
-      <div className="flex flex-row flex-wrap justify-center gap-4">
+      <div className="grid grid-cols-3 items-stretch gap-x-1 px-1 md:gap-x-4">
         {features.map((feature, index) => (
           <FeatureCard {...feature} key={index} />
         ))}
+      </div>
+      <div className="flex flex-row flex-wrap justify-center gap-4">
+        <FeatureChip
+          title={`Compras seguras`}
+          icon={<RiShieldCheckLine className="h-4 w-4" />}
+        />
+        <FeatureChip
+          title={`Variedad en métodos de pago`}
+          icon={<RiBankCard2Line className="h-4 w-4" />}
+        />
+        <FeatureChip
+          title={`Entregas inmediatas`}
+          icon={<RiTimeLine className="h-4 w-4" />}
+        />
       </div>
     </section>
   )
@@ -39,16 +61,23 @@ type FeatureCardProps = {
   description: string
   icon: JSX.Element
 }
+
+const FeatureChip = ({ title, icon }: { title: string; icon: JSX.Element }) => {
+  return (
+    <div className="flex flex-row items-center justify-center gap-2 rounded-full border border-border bg-gray-50 px-4 py-2">
+      {icon}
+      <p className="text-xs md:text-lg">{title}</p>
+    </div>
+  )
+}
 const FeatureCard = ({ title, description, icon }: FeatureCardProps) => {
   return (
-    <div className="flex max-w-[200px] flex-col items-center justify-center gap-4 rounded-md border-2 border-border bg-gray-50 p-4 py-4 md:max-w-none md:flex-1 md:p-8">
-      <div className="flex h-12 w-12 items-center justify-center rounded-md border border-primary text-primary">
+    <div className="flex flex-1 flex-col items-center justify-start gap-4 rounded-md border-2 border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-1 md:p-4">
+      <div className="flex h-12 w-12 scale-75 items-center justify-center rounded-md border border-primary text-primary md:scale-100">
         {icon}
       </div>
-      <div className="">
-        <p className="text-center text-base font-semibold md:text-lg">
-          {title}
-        </p>
+      <div className="space-y-2">
+        <p className="text-center text-xs font-semibold md:text-lg">{title}</p>
         <p className="text-center text-xs md:text-sm">{description}</p>
       </div>
     </div>

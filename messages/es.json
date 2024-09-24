@@ -3,6 +3,21 @@
         "hero-h1": "Compras online sin complicaciones en toda Venezuela",
         "hero-description": "Pide lo que más te guste de tus páginas favoritas o compra nuestros productos con disponibilidad inmediata.",
         "hero-button": "Ver catálogo",
+        "latest-news-title": "Noticias recientes",
+        "categories-title": "Categorías",
+        "we-offer-section":{
+            "title": "Te ofrecemos",
+            "offer-1-title": "Delivery en toda maracay",
+            "offer-2-title": "Envíos nacionales en todo el país",
+            "offer-3-title": "Paga el 50% en pedidos personalizados",
+            "offer-1-description": "Podemos llevar tu pedido a cualquier zona de Maracay.",
+            "offer-2-description": "Tu pedido llegará en cualquier estado en el que te encuentres",
+            "offer-3-description": "Puedes encargar con solo el 50% y pagar el resto para retirar."
+        },
+
+        "immediately-available-products-title": "Productos de disponibilidad inmediata",
+        "custom-made-products-title": "Productos por encargo",
+        "customized-products-title": "Productos personalizados",
         "footer":{
             "slogan": "Compre, pague y vende en Venezuela",
             "social-networks": "Nuestras redes sociales"

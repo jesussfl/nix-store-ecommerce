@@ -9,6 +9,7 @@ import {
 import { Card, CardContent, CardTitle } from '@/components/shared/card/card'
 import Image from 'next/image'
 import { AspectRatio } from '@/components/shared/aspect-ratio'
+import { getTranslations } from 'next-intl/server'
 const categories = [
   {
     name: 'Collares',
@@ -47,9 +48,10 @@ const categories = [
     image: '/assets/categories/tapabocas.png',
   },
 ]
-export const CategoriesSection = () => {
+export const CategoriesSection = async () => {
+  const t = await getTranslations('homepage')
   return (
-    <Section title="Categorías">
+    <Section title={t('categories-title')}>
       <Carousel
         opts={{
           align: 'start',
@@ -87,12 +89,11 @@ const HoverImage = async ({ imageUrl }: { imageUrl: string }) => {
       className="group relative overflow-hidden rounded-sm"
       ratio={1 / 1}
     >
-      {/* Image with blur and dark filter on hover */}
       <Image
         src={imageUrl}
         alt="Your image"
         fill
-        className="h-full w-full object-cover transition duration-300 md:group-hover:scale-125 md:group-hover:brightness-50"
+        className="h-full w-full rounded-sm border border-border object-cover transition duration-300 md:group-hover:scale-125"
       />
     </AspectRatio>
   )

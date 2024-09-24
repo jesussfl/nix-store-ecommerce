@@ -7,6 +7,7 @@ import {
   CarouselPrevious,
 } from '@/components/shared/carousel'
 import { SingleProduct } from '@/components/products/single-product'
+import { getTranslations } from 'next-intl/server'
 
 const products = [
   {
@@ -53,9 +54,10 @@ const products = [
   },
 ]
 
-export const ImmediatelyAvailableProductsSection = () => {
+export const ImmediatelyAvailableProductsSection = async () => {
+  const t = await getTranslations('homepage')
   return (
-    <Section title="Productos de disponibilidad inmediata">
+    <Section title={t('immediately-available-products-title')}>
       <Carousel
         opts={{
           align: 'start',
@@ -87,9 +89,11 @@ export const ImmediatelyAvailableProductsSection = () => {
   )
 }
 
-export const CustomMadeProductsSection = () => {
+export const CustomMadeProductsSection = async () => {
+  const t = await getTranslations('homepage')
+
   return (
-    <Section title="Productos por encargo">
+    <Section title={t('custom-made-products-title')}>
       <Carousel
         opts={{
           align: 'start',
@@ -107,7 +111,7 @@ export const CustomMadeProductsSection = () => {
                   name: product.name,
                   priceInUSD: product.priceInUSD,
                   lastPriceInUSD: product.lastPriceInUSD,
-                  type: product.type,
+                  type: 'Por encargo',
                   image: product.image,
                 }}
               />
@@ -121,9 +125,11 @@ export const CustomMadeProductsSection = () => {
   )
 }
 
-export const CustomizedProductsSection = () => {
+export const CustomizedProductsSection = async () => {
+  const t = await getTranslations('homepage')
+
   return (
-    <Section title="Productos personalizados" variant={'dark'}>
+    <Section title={t('customized-products-title')} variant={'dark'}>
       <Carousel
         opts={{
           align: 'start',
@@ -141,7 +147,7 @@ export const CustomizedProductsSection = () => {
                   name: product.name,
                   priceInUSD: product.priceInUSD,
                   lastPriceInUSD: product.lastPriceInUSD,
-                  type: product.type,
+                  type: 'Personalizado',
                   image: product.image,
                 }}
               />

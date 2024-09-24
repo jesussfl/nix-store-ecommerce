@@ -9,7 +9,7 @@ const Hero = async () => {
   const t = await getTranslations('homepage')
 
   return (
-    <div className="flex h-[550px] flex-col justify-center gap-8 bg-dark px-4 md:w-[50%] md:px-8 lg:h-[650px] lg:px-12">
+    <div className="bg-hero-texture flex h-[550px] flex-col justify-center gap-8 bg-dark bg-cover bg-no-repeat px-4 md:w-[50%] md:px-8 lg:h-[650px] lg:px-12">
       <div className="flex flex-col items-center justify-center space-y-4 md:items-start">
         <Logo
           variant="white"

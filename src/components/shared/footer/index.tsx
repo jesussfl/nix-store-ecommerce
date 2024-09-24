@@ -46,18 +46,7 @@ const TopFooterContainer = async () => {
       </div>
       <VerticalDivider />
       <div className="flex h-[400px] flex-col items-center justify-center gap-4 md:w-[50%]">
-        <div className="flex flex-1 items-center justify-center gap-4">
-          <Button size={'lg'} variant={'outline'}>
-            Catálogo
-            <RiArrowRightUpLine className="ml-2 h-4 w-4" />
-          </Button>
-          <Button size={'lg'} variant={'outline'}>
-            Colecciones
-            <RiArrowRightUpLine className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
         <H6>Necesitas Ayuda?</H6>
-        <ContactButtons />
       </div>
     </div>
   )

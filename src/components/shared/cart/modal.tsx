@@ -9,6 +9,7 @@ import { useFormStatus } from 'react-dom'
 import CloseCart from './close-cart'
 import { RiShoppingCartLine } from '@remixicon/react'
 import clsx from 'clsx'
+import { Button } from '../button'
 // import { DeleteItemButton } from './delete-item-button';
 // import { EditItemQuantityButton } from './edit-item-quantity-button';
 // import OpenCart from './open-cart';
@@ -45,19 +46,22 @@ export default function CartModal() {
 
   return (
     <>
-      <button aria-label="Open cart" onClick={openCart}>
-        <div className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white">
-          <RiShoppingCartLine
-            className={clsx('h-4 transition-all ease-in-out hover:scale-110')}
-          />
+      <Button
+        variant="outline"
+        size={'icon'}
+        aria-label="Open cart"
+        onClick={openCart}
+      >
+        <RiShoppingCartLine
+          className={clsx('h-4 transition-all ease-in-out hover:scale-110')}
+        />
 
-          {/* {quantity ? (
+        {/* {quantity ? (
         <div className="absolute right-0 top-0 -mr-2 -mt-2 h-4 w-4 rounded bg-blue-600 text-[11px] font-medium text-white">
           {quantity}
         </div>
       ) : null} */}
-        </div>
-      </button>
+      </Button>
       <Transition show={isOpen}>
         <Dialog onClose={closeCart} className="relative z-50">
           <Transition.Child
@@ -82,7 +86,7 @@ export default function CartModal() {
           >
             <Dialog.Panel className="fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l border-neutral-200 bg-white/80 p-6 text-black backdrop-blur-xl dark:border-neutral-700 dark:bg-black/80 dark:text-white md:w-[390px]">
               <div className="flex items-center justify-between">
-                <p className="text-lg font-semibold">My Cart</p>
+                <p className="text-lg font-semibold">Mi carrito</p>
                 <button aria-label="Close cart" onClick={closeCart}>
                   <CloseCart />
                 </button>
