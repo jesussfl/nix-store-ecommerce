@@ -4,16 +4,18 @@ import { cn } from '@/libs/utils'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
-export const InfiniteMovingCards = ({
+export const NixAnimation = ({
   direction = 'left',
   speed = 'fast',
-  pauseOnHover = true,
+  pauseOnHover = false,
   className,
+  isDark = false,
 }: {
   direction?: 'left' | 'right'
   speed?: 'fast' | 'normal' | 'slow'
   pauseOnHover?: boolean
   className?: string
+  isDark?: boolean
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null)
   const scrollerRef = React.useRef<HTMLUListElement>(null)
@@ -69,7 +71,7 @@ export const InfiniteMovingCards = ({
       ref={containerRef}
       className={cn(
         // max-w-7xl to w-screen
-        'scroller relative z-20 w-screen overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]',
+        'scroller relative z-20 w-screen overflow-hidden border-2 border-border bg-dark [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]',
         className
       )}
     >
@@ -77,7 +79,7 @@ export const InfiniteMovingCards = ({
         ref={scrollerRef}
         className={cn(
           // change gap-16
-          'flex w-max min-w-full shrink-0 flex-nowrap -space-x-8 py-4 md:gap-8 md:-space-x-4',
+          'flex w-max min-w-full shrink-0 flex-nowrap -space-x-2 py-2 md:space-x-16 md:py-4',
           start && 'animate-scroll',
           pauseOnHover && 'hover:[animation-play-state:paused]'
         )}
@@ -86,72 +88,72 @@ export const InfiniteMovingCards = ({
           <Image
             width={56}
             height={56}
-            src={`/assets/brands/adidas-logo.png`}
-            alt="Adidas"
-            className="object-contain object-center"
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={80}
-            height={80}
-            src={`/assets/brands/Amazon-logo.png`}
-            alt="Amazon"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={80}
-            height={80}
-            src={`/assets/brands/Shein.png`}
-            alt="Shein"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={80}
-            height={80}
-            src={`/assets/brands/Ebay.png`}
-            alt="Ebay"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={120}
-            height={120}
-            src={`/assets/brands/Aliexpress.png`}
-            alt="Aliexpress"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={80}
-            height={80}
-            src={`/assets/brands/Nike.png`}
-            alt="Aliexpress"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={100}
-            height={100}
-            src={`/assets/brands/Temu.png`}
-            alt="Aliexpress"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
         <Li>
           <Image
-            width={150}
-            height={150}
-            src={`/assets/brands/Walmart.png`}
-            alt="Walmart"
-            className="object-contain object-center"
+            width={56}
+            height={56}
+            src={`/assets/logo/nix-logo-v2-white.svg`}
+            alt="Nix Logo"
+            className={`${isDark ? 'invert' : ''} object-contain object-center`}
           />
         </Li>
       </ul>
@@ -163,7 +165,7 @@ const Li = ({ children }: { children: React.ReactNode }) => {
   return (
     <li
       //   change md:w-[450px] to md:w-[60vw] , px-8 py-6 to p-16, border-slate-700 to border-slate-800
-      className="relative flex h-[72px] w-[200px] scale-75 items-center justify-center rounded-md border p-5 md:scale-100"
+      className="relative flex h-[72px] w-[200px] scale-[300%] items-center justify-center md:scale-[400%]"
       // change to idx cuz we have the same name
     >
       {children}

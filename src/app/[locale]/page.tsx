@@ -1,4 +1,4 @@
-import Header from '@/components/shared/header'
+import Header from '@/components/pages/homepage/header'
 import { Navbar } from '@/components/shared/floating-nav'
 import {
   CustomizedProductsSection,
@@ -11,8 +11,8 @@ import { WeOfferSection } from '@/components/pages/homepage/we-offer'
 import { LatestNews } from '@/components/pages/homepage/latest-news'
 import { FaqsSection } from '@/components/pages/homepage/faqs'
 import BrandsSection from '@/components/pages/homepage/brands'
-import { MetricsSection } from '@/components/pages/homepage/metrics'
 import { CollectionsSection } from '@/components/pages/homepage/collections'
+import CoolSection from '@/components/pages/homepage/cool-section'
 
 const Home = async () => {
   return (
@@ -22,11 +22,11 @@ const Home = async () => {
       <WeOfferSection />
       <CategoriesSection />
       <LatestNews />
+      <CoolSection />
       <ImmediatelyAvailableProductsSection />
       <CustomMadeProductsSection />
       <BrandsSection />
-      <MetricsSection />
-      <CategoriesSection />
+      {/* <MetricsSection /> */}
       <CustomizedProductsSection />
       <CollectionsSection />
       <FaqsSection />

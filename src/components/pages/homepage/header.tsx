@@ -1,6 +1,6 @@
-import Hero from '../hero'
+import Hero from './hero'
 
-import { CarouselPlugin } from './carousel'
+import { CarouselPlugin } from '../../shared/header/carousel'
 
 const Header = async () => {
   return (

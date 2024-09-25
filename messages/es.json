@@ -1,55 +1,75 @@
 {
-    "homepage":{
-        "hero-h1": "Compras online sin complicaciones en toda Venezuela",
-        "hero-description": "Pide lo que más te guste de tus páginas favoritas o compra nuestros productos con disponibilidad inmediata.",
-        "hero-button": "Ver catálogo",
-        "latest-news-title": "Noticias recientes",
-        "categories-title": "Categorías",
-        "we-offer-section":{
-            "title": "Te ofrecemos",
-            "offer-1-title": "Delivery en toda maracay",
-            "offer-2-title": "Envíos nacionales en todo el país",
-            "offer-3-title": "Paga el 50% en pedidos personalizados",
-            "offer-1-description": "Podemos llevar tu pedido a cualquier zona de Maracay.",
-            "offer-2-description": "Tu pedido llegará en cualquier estado en el que te encuentres",
-            "offer-3-description": "Puedes encargar con solo el 50% y pagar el resto para retirar."
-        },
-        "metrics-section":{
-          "title": "Métricas",
-          "satisfied-customers": "Clientes satisfechos",
-          "successful-orders": "Pedidos exitosos",
-          "custom-made-products": "Productos personalizados"
-        },
-
-        "immediately-available-products-title": "Productos de disponibilidad inmediata",
-        "custom-made-products-title": "Productos por encargo",
-        "customized-products-title": "Productos personalizados",
-        "footer":{
-            "slogan": "Compre, pague y vende en Venezuela",
-            "social-networks": "Nuestras redes sociales"
-        }
+  "homepage": {
+    "hero-section": {
+      "title": "Compras online sin complicaciones en toda Venezuela",
+      "description": "Pide lo que más te guste de tus páginas favoritas o compra nuestros productos con disponibilidad inmediata.",
+      "CTA": "Ver catálogo"
     },
-    
-        "ApiRoute": {
-          "hello": "¡Hola {name}!"
-        },
-        "LocaleLayout": {
-          "description": "Tienda de accesorios",
-          "title": "Nix Store"
-        },
-        "LocaleSwitcher": {
-          "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
-        },
-        "Navigation": {
-          "about": "Acerca de (MDX)",
-          "client": "Página del cliente",
-          "home": "Inicio",
-          "nested": "Página anidada",
-          "newsArticle": "Noticias #{articleId}"
-        },
 
-        "NotFound": {
-          "title": "Esta página no se encontró (404)"
-        }
-  
-      }
+    "latest-news-section": {
+      "title": "Últimas noticias"
+    },
+
+    "categories-section": {
+      "title": "Categorías"
+    },
+    "collections-section": {
+      "title": "Colecciones de Productos"
+    },
+    "faqs-section": {
+      "title": "Preguntas Frecuentes",
+      "description": "Si tienes más dudas contáctanos"
+    },
+    "we-offer-section": {
+      "title": "Te ofrecemos",
+      "offer-1-title": "Delivery en toda maracay",
+      "offer-2-title": "Envíos nacionales en todo el país",
+      "offer-3-title": "Paga el 50% en pedidos personalizados",
+      "offer-1-description": "Podemos llevar tu pedido a cualquier zona de Maracay.",
+      "offer-2-description": "Tu pedido llegará en cualquier estado en el que te encuentres",
+      "offer-3-description": "Puedes encargar con solo el 50% y pagar el resto para retirar.",
+      "chip1": "Compras seguras",
+      "chip2": "Variedad en métodos de pago",
+      "chip3": "Entregas inmediatas"
+    },
+
+    "brands-section": {
+      "title": "Trabajamos con las siguientes páginas y muchas más",
+      "description": "Encarga desde cualquier página que tenga envío a Estados Unidos"
+    },
+    "metrics-section": {
+      "title": "Métricas",
+      "satisfied-customers": "Clientes satisfechos",
+      "successful-orders": "Pedidos exitosos",
+      "custom-made-products": "Productos personalizados"
+    },
+
+    "immediately-available-products-title": "Productos de disponibilidad inmediata",
+    "custom-made-products-title": "Productos por encargo",
+    "customized-products-title": "Productos personalizados",
+
+    "footer": {
+      "slogan": "Compre, pague y vende en Venezuela",
+      "social-networks": "Nuestras redes sociales"
+    }
+  },
+
+  "LocaleLayout": {
+    "description": "Tienda de accesorios",
+    "title": "Nix Store"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
+  },
+  "Navigation": {
+    "about": "Acerca de (MDX)",
+    "client": "Página del cliente",
+    "home": "Inicio",
+    "nested": "Página anidada",
+    "newsArticle": "Noticias #{articleId}"
+  },
+
+  "NotFound": {
+    "title": "Esta página no se encontró (404)"
+  }
+}

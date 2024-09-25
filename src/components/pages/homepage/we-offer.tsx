@@ -9,29 +9,29 @@ import {
 import { getTranslations } from 'next-intl/server'
 
 export const WeOfferSection = async () => {
-  const t = await getTranslations('homepage')
+  const t = await getTranslations('homepage.we-offer-section')
 
   const features = [
     {
-      title: t('we-offer-section.offer-1-title'),
-      description: t('we-offer-section.offer-1-description'),
+      title: t('offer-1-title'),
+      description: t('offer-1-description'),
       icon: <RiMotorbikeLine className="h-8 w-8" />,
     },
     {
-      title: t('we-offer-section.offer-2-title'),
-      description: t('we-offer-section.offer-2-description'),
+      title: t('offer-2-title'),
+      description: t('offer-2-description'),
       icon: <RiTruckLine className="h-8 w-8" />,
     },
     {
-      title: t('we-offer-section.offer-3-title'),
-      description: t('we-offer-section.offer-3-description'),
+      title: t('offer-3-title'),
+      description: t('offer-3-description'),
       icon: <RiPercentLine className="h-8 w-8" />,
     },
   ]
   return (
     <section className="mx-auto my-12 flex flex-col items-center gap-4 md:my-24">
       <div className="flex w-[150px] flex-col items-center justify-center rounded-full border border-border bg-gray-50 py-2">
-        <p>{t('we-offer-section.title')}</p>
+        <p>{t('title')}</p>
       </div>
       <div className="grid grid-cols-3 items-stretch gap-x-1 px-1 md:gap-x-4">
         {features.map((feature, index) => (
@@ -40,15 +40,15 @@ export const WeOfferSection = async () => {
       </div>
       <div className="flex flex-row flex-wrap justify-center gap-4">
         <FeatureChip
-          title={`Compras seguras`}
+          title={t(`chip1`)}
           icon={<RiShieldCheckLine className="h-4 w-4" />}
         />
         <FeatureChip
-          title={`Variedad en métodos de pago`}
+          title={t(`chip2`)}
           icon={<RiBankCard2Line className="h-4 w-4" />}
         />
         <FeatureChip
-          title={`Entregas inmediatas`}
+          title={t(`chip3`)}
           icon={<RiTimeLine className="h-4 w-4" />}
         />
       </div>
@@ -78,7 +78,9 @@ const FeatureCard = ({ title, description, icon }: FeatureCardProps) => {
       </div>
       <div className="space-y-2">
         <p className="text-center text-xs font-semibold md:text-lg">{title}</p>
-        <p className="text-center text-xs md:text-sm">{description}</p>
+        <p className="hidden text-center text-xs md:block md:text-sm">
+          {description}
+        </p>
       </div>
     </div>
   )

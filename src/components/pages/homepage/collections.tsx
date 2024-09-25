@@ -54,9 +54,9 @@ const categories = [
   },
 ]
 export const CollectionsSection = async () => {
-  const t = await getTranslations('homepage')
+  const t = await getTranslations('homepage.collections-section')
   return (
-    <Section title={`Colecciones de Productos`}>
+    <Section title={t('title')}>
       <Carousel
         opts={{
           align: 'start',
@@ -72,10 +72,6 @@ export const CollectionsSection = async () => {
               <Card className="flex cursor-pointer flex-col gap-2 rounded-sm border-0 p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
                 <CardContent className="relative flex flex-col items-start gap-2 p-0 md:gap-4">
                   <HoverImage imageUrl={category.image} />
-
-                  {/* <CardTitle className="line-clamp-2 text-sm font-medium text-gray-600 md:text-base md:font-semibold">
-                    {category.name}
-                  </CardTitle> */}
                 </CardContent>
               </Card>
             </CarouselItem>

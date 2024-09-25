@@ -5,14 +5,12 @@ import {
   AccordionTrigger,
 } from '@/components/shared/accordion'
 import { Section } from '@/components/shared/carousel/section'
+import { getTranslations } from 'next-intl/server'
 
 export const FaqsSection = async () => {
+  const t = await getTranslations('homepage.faqs-section')
   return (
-    <Section
-      title="Preguntas Frecuentes"
-      description="Si tienes más dudas contáctanos"
-      centered
-    >
+    <Section title={t('title')} description={t('description')} centered>
       <Accordion type="single" collapsible className="mx-auto max-w-3xl">
         <AccordionItem value="item-1">
           <AccordionTrigger>Is it accessible?</AccordionTrigger>

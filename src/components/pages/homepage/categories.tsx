@@ -49,9 +49,9 @@ const categories = [
   },
 ]
 export const CategoriesSection = async () => {
-  const t = await getTranslations('homepage')
+  const t = await getTranslations('homepage.categories-section')
   return (
-    <Section title={t('categories-title')}>
+    <Section title={t('title')}>
       <Carousel
         opts={{
           align: 'start',
