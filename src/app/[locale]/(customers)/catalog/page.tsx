@@ -1,84 +1,49 @@
 import { SingleProduct } from '@/components/products/single-product'
+import { graphql } from '@/gql'
+import { vendureFetch } from '@/libs/vendure'
+import { getLocale } from 'next-intl/server'
 
-const GET_PRODUCTS = /*GraphQL*/ `
-    query GetProducts($options: ProductListOptions) {
-        products(options: $options) {
-            items {
-                id
-                name
-                slug
-                featuredAsset {
-                    preview
-                }
-            }
+const GET_PRODUCTS = graphql(`
+  query GetProducts($options: ProductListOptions) {
+    products(options: $options) {
+      items {
+        id
+        name
+        slug
+        featuredAsset {
+          preview
         }
+        variants {
+          currencyCode
+          price
+        }
+      }
     }
-`
-const AUTH_TOKEN_KEY = 'auth_token'
-
-const API_URL = 'http://localhost:3000/shop-api'
-
-let languageCode: string | undefined
-let channelToken: string | undefined
-
-export function setLanguageCode(value: string | undefined) {
-  languageCode = value
-}
-
-export function setChannelToken(value: string | undefined) {
-  channelToken = value
-}
-export async function query(
-  document: string,
-  variables: Record<string, any> = {}
-) {
-  // const authToken = localStorage.getItem(AUTH_TOKEN_KEY)
-  const headers = new Headers({
-    'content-type': 'application/json',
-  })
-  // if (authToken) {
-  //   headers.append('authorization', `Bearer ${authToken}`)
-  // }
-  if (channelToken) {
-    headers.append('vendure-token', channelToken)
   }
-  let endpoint = API_URL
-  if (languageCode) {
-    endpoint += `?languageCode=${languageCode}`
-  }
-  return fetch(endpoint, {
-    method: 'POST',
-    headers,
-    credentials: 'include',
-    body: JSON.stringify({
-      query: document,
-      variables,
-    }),
-  }).then((res) => {
-    if (!res.ok) {
-      throw new Error(`An error ocurred, HTTP status: ${res.status}`)
-    }
-    const newAuthToken = res.headers.get('vendure-auth-token')
-    if (newAuthToken) {
-      localStorage.setItem(AUTH_TOKEN_KEY, newAuthToken)
-    }
-    return res.json()
-  })
-}
+`)
+
 const Catalog = async () => {
-  const { data } = await query(GET_PRODUCTS, {
-    take: 4,
-    // groupByProduct: true,
-    // sort: { price: SortOrder.ASC },
+  const locale = await getLocale()
+  const { data } = await vendureFetch({
+    query: GET_PRODUCTS,
+    variables: {
+      options: {
+        take: 10,
+        skip: 0,
+      },
+    },
+
+    languageCode: locale,
+    revalidate: 900,
   })
 
   console.log(data.products.items)
-
   return (
     <div className="w-full max-w-[90rem]">
       <div className="grid grid-cols-4">
         {data.products.items.map((product: any) => {
-          const { id, name, slug, featuredAsset } = product
+          const { id, name, slug, featuredAsset, variants } = product
+          console.log(variants)
           const formattedProduct = {
             id,
             name,
@@ -95,20 +60,3 @@ const Catalog = async () => {
 }
 
 export default Catalog
-
-// const api = SSGQuery({ locale: lng })
-
-// const products = await api({
-//   search: [
-//     {
-//       input: {
-//         take: 4,
-//         groupByProduct: true,
-//         sort: { price: SortOrder.ASC },
-//       },
-//     },
-//     { items: ProductSearchSelector },
-//   ],
-// })
-
-// console.log(products.search.items.length)

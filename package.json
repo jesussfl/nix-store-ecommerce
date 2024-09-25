@@ -7,7 +7,8 @@
     "build": "next build",
     "export": "next build && next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",
@@ -69,7 +70,9 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/client-preset": "4.3.3",
+    "@graphql-codegen/introspection": "^4.0.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20",
