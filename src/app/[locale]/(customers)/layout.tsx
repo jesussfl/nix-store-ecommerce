@@ -15,6 +15,7 @@ import { Montserrat } from 'next/font/google'
 import Footer from '@/components/shared/footer'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
+import Providers from './providers'
 type Props = {
   children: ReactNode
   params: { locale: string }

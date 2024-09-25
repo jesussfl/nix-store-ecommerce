@@ -46,6 +46,7 @@ export const SingleProduct = async ({ product }: Props) => {
 }
 
 const HoverImage = async ({ imageUrl }: { imageUrl: string }) => {
+  console.log(imageUrl)
   return (
     <AspectRatio
       className="group relative overflow-hidden rounded-sm"
