@@ -1,5 +1,5 @@
 import { SingleProduct } from '@/components/products/single-product'
-import { graphql } from '@/gql'
+import { graphql } from '@/graphql'
 import { vendureFetch } from '@/libs/vendure'
 import { getLocale } from 'next-intl/server'
 
@@ -9,20 +9,15 @@ const GET_PRODUCTS = graphql(`
       items {
         id
         name
-        slug
         featuredAsset {
           preview
-        }
-        variants {
-          currencyCode
-          price
         }
       }
     }
   }
 `)
 
-const Catalog = async () => {
+const CatalogPage = async () => {
   const locale = await getLocale()
   const { data } = await vendureFetch({
     query: GET_PRODUCTS,
@@ -37,20 +32,18 @@ const Catalog = async () => {
     revalidate: 900,
   })
 
-  console.log(data.products.items)
   return (
     <div className="w-full max-w-[90rem]">
       <div className="grid grid-cols-4">
-        {data.products.items.map((product: any) => {
-          const { id, name, slug, featuredAsset, variants } = product
-          console.log(variants)
+        {data.products.items.map((product) => {
+          const { id, name, featuredAsset } = product
           const formattedProduct = {
             id,
             name,
             image: featuredAsset?.preview,
             priceInUSD: 0,
             lastPriceInUSD: 0,
-            type: slug,
+            type: 'Disponibilidad inmediata',
           }
           return <SingleProduct key={product.id} product={formattedProduct} />
         })}
@@ -59,4 +52,4 @@ const Catalog = async () => {
   )
 }
 
-export default Catalog
+export default CatalogPage

@@ -6,7 +6,7 @@ import { RiEyeLine, RiShoppingCartLine } from '@remixicon/react'
 import { AspectRatio } from '../shared/aspect-ratio'
 type ProductCardInfo = {
   name: string
-  image: string
+  image: string | undefined
   priceInUSD: number
   lastPriceInUSD: number
   type: string
@@ -45,19 +45,22 @@ export const SingleProduct = async ({ product }: Props) => {
   )
 }
 
-const HoverImage = async ({ imageUrl }: { imageUrl: string }) => {
+const HoverImage = async ({ imageUrl }: { imageUrl: string | undefined }) => {
   return (
     <AspectRatio
       className="group relative overflow-hidden rounded-sm"
       ratio={1 / 1}
     >
-      {/* Image with blur and dark filter on hover */}
-      <Image
-        src={imageUrl}
-        alt="Your image"
-        fill
-        className="h-full w-full object-cover transition duration-300 md:group-hover:scale-125 md:group-hover:brightness-50"
-      />
+      {imageUrl === undefined ? (
+        <div className="h-full w-full rounded-sm border border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-1 md:p-4" />
+      ) : (
+        <Image
+          src={imageUrl}
+          alt="Your image"
+          fill
+          className="h-full w-full object-cover transition duration-300 md:group-hover:scale-125 md:group-hover:brightness-50"
+        />
+      )}
 
       <div className="absolute inset-0 hidden flex-col gap-4 p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:flex md:flex-row md:items-center md:justify-center">
         <Button variant="secondary" size={'lg'} className="md:w-[50%]">

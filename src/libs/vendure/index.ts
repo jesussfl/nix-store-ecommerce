@@ -1,4 +1,4 @@
-import { TypedDocumentString } from '@/gql/graphql'
+import { TypedDocumentString } from '@/graphql/graphql'
 import { VENDURE_GRAPHQL_API_ENDPOINT } from '../constants'
 
 export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>

@@ -3393,7 +3393,7 @@ export type GetProductsQueryVariables = Exact<{
 }>;
 
 
-export type GetProductsQuery = { __typename?: 'Query', products: { __typename?: 'ProductList', items: Array<{ __typename?: 'Product', id: string, name: string, slug: string, featuredAsset?: { __typename?: 'Asset', preview: string } | null, variants: Array<{ __typename?: 'ProductVariant', currencyCode: CurrencyCode, price: number }> }> } };
+export type GetProductsQuery = { __typename?: 'Query', products: { __typename?: 'ProductList', items: Array<{ __typename?: 'Product', id: string, name: string, featuredAsset?: { __typename?: 'Asset', preview: string } | null }> } };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -3416,13 +3416,8 @@ export const GetProductsDocument = new TypedDocumentString(`
     items {
       id
       name
-      slug
       featuredAsset {
         preview
-      }
-      variants {
-        currencyCode
-        price
       }
     }
   }

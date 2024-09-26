@@ -1,13 +1,14 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
-  overwrite: true,
+  // overwrite: true,
   schema: 'http://localhost:3000/shop-api',
   documents: 'src/**/*.{ts,tsx}',
+  ignoreNoDocuments: true,
   generates: {
-    'src/gql/': {
+    'src/graphql/': {
       preset: 'client',
-      plugins: [],
+      // plugins: [],
       config: {
         scalars: {
           // This tells codegen that the `Money` scalar is a number
@@ -20,8 +21,11 @@ const config: CodegenConfig = {
         documentMode: 'string',
       },
     },
-    './graphql.schema.json': {
-      plugins: ['introspection'],
+    './schema.graphql': {
+      plugins: ['schema-ast'],
+      config: {
+        includeDirectives: true,
+      },
     },
   },
 }

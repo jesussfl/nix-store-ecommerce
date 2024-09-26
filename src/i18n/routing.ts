@@ -15,7 +15,10 @@ export const routing = defineRouting({
     // external path can be used for all locales
     '/': '/',
     '/blog': '/blog',
-
+    '/search': {
+      en: '/search',
+      es: '/busqueda',
+    },
     // If locales use different paths, you can
     // specify each external path per locale
     '/catalog': {
