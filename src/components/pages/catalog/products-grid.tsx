@@ -19,7 +19,7 @@ export const ProductsGrid = async ({
     <div className="flex flex-col items-start md:flex-row md:px-4">
       <Filters results={results.facetValues} />
 
-      <section className="grid w-full grid-cols-2 gap-2 px-2 md:w-[80%] md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+      <section className="grid w-full grid-cols-2 gap-2 px-2 md:w-[90%] md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
         {results.items.map((product) => {
           const {
             productId,

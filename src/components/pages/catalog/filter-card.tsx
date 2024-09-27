@@ -173,7 +173,7 @@ export const Filters = ({
 
   return (
     <>
-      <aside className="sticky left-0 top-40 hidden flex-col gap-4 md:flex md:w-[20%]">
+      <aside className="sticky left-0 top-40 hidden min-w-[220px] flex-col gap-4 md:flex md:w-[15%]">
         <FilterContent />
       </aside>
 
