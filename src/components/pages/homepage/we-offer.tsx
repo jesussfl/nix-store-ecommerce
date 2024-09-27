@@ -29,7 +29,7 @@ export const WeOfferSection = async () => {
     },
   ]
   return (
-    <section className="mx-auto my-12 flex flex-col items-center gap-4 md:my-24">
+    <section className="mx-auto my-12 flex flex-col items-center gap-4 md:my-24 md:px-8">
       <div className="flex w-[150px] flex-col items-center justify-center rounded-full border border-border bg-gray-50 py-2">
         <p>{t('title')}</p>
       </div>
@@ -77,7 +77,9 @@ const FeatureCard = ({ title, description, icon }: FeatureCardProps) => {
         {icon}
       </div>
       <div className="space-y-2">
-        <p className="text-center text-xs font-semibold md:text-lg">{title}</p>
+        <p className="text-center text-xs font-semibold md:text-base lg:text-lg">
+          {title}
+        </p>
         <p className="hidden text-center text-xs md:block md:text-sm">
           {description}
         </p>
