@@ -20,9 +20,13 @@ module.exports = {
       },
     },
     extend: {
+      screens: {
+        lg: '1100px',
+      },
       fontFamily: {
         sans: ['var(--font-montserrat)', ...fontFamily.sans],
       },
+
       backgroundImage: {
         'button-primary': 'linear-gradient(180deg, #641EC8 0%, #46158D 100%)',
         'text-gradient': 'linear-gradient(90deg, #000 0%, #641EC8 100%)',

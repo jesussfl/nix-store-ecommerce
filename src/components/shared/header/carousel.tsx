@@ -34,14 +34,14 @@ export function CarouselPlugin() {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="aspect-square bg-gray-200 md:w-[50%] lg:h-[650px]"
+      className="my-auto aspect-square rounded-sm md:w-[50%] md:p-4"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
         {slideshow.map((slide, index) => (
           <CarouselItem key={index}>
-            <AspectRatio>
+            <AspectRatio className="group relative overflow-hidden rounded-sm">
               <Image
                 src={slide.image}
                 alt="Your image"

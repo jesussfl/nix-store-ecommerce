@@ -15,6 +15,7 @@ import { Montserrat } from 'next/font/google'
 import Footer from '@/components/shared/footer'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
+import { Navbar } from '@/components/shared/floating-nav'
 type Props = {
   children: ReactNode
   params: { locale: string }
@@ -80,13 +81,15 @@ export default async function RootLayout({
           montserrat.variable
         )}
       >
-        <main className="bg-black-100 relative mx-auto flex flex-col items-center justify-center">
-          <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={messages}>
+          <Navbar />
+
+          <div className="bg-black-100 relative mx-auto flex flex-col pt-36 md:pt-36 lg:pt-40">
             {children}
             <Toaster />
-          </NextIntlClientProvider>
-        </main>
-        <Footer />
+          </div>
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   )

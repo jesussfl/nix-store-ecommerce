@@ -19,13 +19,20 @@ export const routing = defineRouting({
       en: '/search',
       es: '/busqueda',
     },
+    collections: {
+      en: '/collections',
+      es: '/colecciones',
+    },
     // If locales use different paths, you can
     // specify each external path per locale
     '/catalog': {
       en: '/catalog',
       es: '/catalogo',
     },
-
+    '/catalog/[collection]': {
+      en: '/catalog/[collection]',
+      es: '/catalogo/[collection]',
+    },
     // Dynamic params are supported via square brackets
     // '/news/[articleSlug]-[articleId]': {
     //   en: '/news/[articleSlug]-[articleId]',

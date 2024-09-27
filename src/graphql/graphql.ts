@@ -3388,6 +3388,23 @@ export type Zone = Node & {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type GetAllCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllCollectionsQuery = { __typename?: 'Query', collections: { __typename?: 'CollectionList', items: Array<{ __typename?: 'Collection', id: string, slug: string, name: string, parentId: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null }> } };
+
+export type GetTopLevelCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTopLevelCollectionsQuery = { __typename?: 'Query', collections: { __typename?: 'CollectionList', items: Array<{ __typename?: 'Collection', id: string, slug: string, name: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null }> } };
+
+export type SearchProductsQueryVariables = Exact<{
+  input: SearchInput;
+}>;
+
+
+export type SearchProductsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', totalItems: number, facetValues: Array<{ __typename?: 'FacetValueResult', count: number, facetValue: { __typename?: 'FacetValue', id: string, name: string, facet: { __typename?: 'Facet', id: string, name: string } } }>, items: Array<{ __typename?: 'SearchResult', productName: string, productId: string, slug: string, collectionIds: Array<string>, currencyCode: CurrencyCode, productAsset?: { __typename?: 'SearchResultAsset', id: string, preview: string } | null, priceWithTax: { __typename?: 'PriceRange', min: number, max: number } | { __typename?: 'SinglePrice', value: number } }> } };
+
 export type GetProductsQueryVariables = Exact<{
   options?: InputMaybe<ProductListOptions>;
 }>;
@@ -3410,6 +3427,75 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const GetAllCollectionsDocument = new TypedDocumentString(`
+    query GetAllCollections {
+  collections {
+    items {
+      id
+      slug
+      name
+      parentId
+      featuredAsset {
+        id
+        preview
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetAllCollectionsQuery, GetAllCollectionsQueryVariables>;
+export const GetTopLevelCollectionsDocument = new TypedDocumentString(`
+    query GetTopLevelCollections {
+  collections(options: {topLevelOnly: true}) {
+    items {
+      id
+      slug
+      name
+      featuredAsset {
+        id
+        preview
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetTopLevelCollectionsQuery, GetTopLevelCollectionsQueryVariables>;
+export const SearchProductsDocument = new TypedDocumentString(`
+    query SearchProducts($input: SearchInput!) {
+  search(input: $input) {
+    totalItems
+    facetValues {
+      count
+      facetValue {
+        id
+        name
+        facet {
+          id
+          name
+        }
+      }
+    }
+    items {
+      productName
+      productId
+      slug
+      collectionIds
+      productAsset {
+        id
+        preview
+      }
+      priceWithTax {
+        ... on SinglePrice {
+          value
+        }
+        ... on PriceRange {
+          min
+          max
+        }
+      }
+      currencyCode
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<SearchProductsQuery, SearchProductsQueryVariables>;
 export const GetProductsDocument = new TypedDocumentString(`
     query GetProducts($options: ProductListOptions) {
   products(options: $options) {

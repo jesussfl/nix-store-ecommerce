@@ -14,9 +14,24 @@ import * as types from './graphql';
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  query GetAllCollections {\n    collections {\n      items {\n        id\n        slug\n        name\n        parentId\n        featuredAsset {\n          id\n          preview\n        }\n      }\n    }\n  }\n": types.GetAllCollectionsDocument,
+    "\n  query GetTopLevelCollections {\n    collections(options: { topLevelOnly: true }) {\n      items {\n        id\n        slug\n        name\n        featuredAsset {\n          id\n          preview\n        }\n      }\n    }\n  }\n": types.GetTopLevelCollectionsDocument,
+    "\n  query SearchProducts($input: SearchInput!) {\n    search(input: $input) {\n      totalItems\n      facetValues {\n        count\n        facetValue {\n          id\n          name\n          facet {\n            id\n            name\n          }\n        }\n      }\n      items {\n        productName\n        productId\n        slug\n        collectionIds\n        productAsset {\n          id\n          preview\n        }\n        priceWithTax {\n          ... on SinglePrice {\n            value\n          }\n          ... on PriceRange {\n            min\n            max\n          }\n        }\n\n        currencyCode\n      }\n    }\n  }\n": types.SearchProductsDocument,
     "\n  query GetProducts($options: ProductListOptions) {\n    products(options: $options) {\n      items {\n        id\n        name\n        featuredAsset {\n          preview\n        }\n      }\n    }\n  }\n": types.GetProductsDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetAllCollections {\n    collections {\n      items {\n        id\n        slug\n        name\n        parentId\n        featuredAsset {\n          id\n          preview\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetAllCollectionsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetTopLevelCollections {\n    collections(options: { topLevelOnly: true }) {\n      items {\n        id\n        slug\n        name\n        featuredAsset {\n          id\n          preview\n        }\n      }\n    }\n  }\n"): typeof import('./graphql').GetTopLevelCollectionsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query SearchProducts($input: SearchInput!) {\n    search(input: $input) {\n      totalItems\n      facetValues {\n        count\n        facetValue {\n          id\n          name\n          facet {\n            id\n            name\n          }\n        }\n      }\n      items {\n        productName\n        productId\n        slug\n        collectionIds\n        productAsset {\n          id\n          preview\n        }\n        priceWithTax {\n          ... on SinglePrice {\n            value\n          }\n          ... on PriceRange {\n            min\n            max\n          }\n        }\n\n        currencyCode\n      }\n    }\n  }\n"): typeof import('./graphql').SearchProductsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -41,13 +41,14 @@ export async function vendureFetch<TResult, TVariables>({
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/graphql-response+json',
+        'vendure-token': languageCode,
         ...headers,
       },
       body: JSON.stringify({
         query,
         variables,
       }),
-      cache,
+      cache: !revalidate ? cache : undefined,
       ...(tags && { next: { tags } }),
       ...(revalidate && { next: { revalidate } }),
     })

@@ -11,6 +11,21 @@
   padding: 0;
   margin: 0;
 }
+/* For Chrome, Safari, and Opera */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px; /* Adjust the height for horizontal scrollbar */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1); /* Change the color */
+  border-radius: 10px; /* Rounded scrollbar */
+}
+
+/* For Firefox */
+.scrollbar-thin {
+  scrollbar-width: thin; /* Make scrollbar thin */
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent; /* Color of the scrollbar and background */
+}
 
 /* Track */
 ::-webkit-scrollbar-track {

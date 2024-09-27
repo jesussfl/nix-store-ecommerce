@@ -1,5 +1,4 @@
 import Header from '@/components/pages/homepage/header'
-import { Navbar } from '@/components/shared/floating-nav'
 import {
   CustomizedProductsSection,
   CustomMadeProductsSection,
@@ -16,39 +15,23 @@ import CoolSection from '@/components/pages/homepage/cool-section'
 
 const Home = async () => {
   return (
-    <div className="w-full max-w-[90rem]">
-      <Navbar />
+    <div className="w-full max-w-[120rem]">
       <Header />
-      <WeOfferSection />
-      <CategoriesSection />
-      <LatestNews />
-      <CoolSection />
-      <ImmediatelyAvailableProductsSection />
-      <CustomMadeProductsSection />
-      <BrandsSection />
-      {/* <MetricsSection /> */}
-      <CustomizedProductsSection />
-      <CollectionsSection />
-      <FaqsSection />
+      <main>
+        <WeOfferSection />
+        <CategoriesSection />
+        <LatestNews />
+        <CoolSection />
+        <ImmediatelyAvailableProductsSection />
+        <CustomMadeProductsSection />
+        <BrandsSection />
+        {/* <MetricsSection /> */}
+        <CustomizedProductsSection />
+        <CollectionsSection />
+        <FaqsSection />
+      </main>
     </div>
   )
 }
 
 export default Home
-
-// const api = SSGQuery({ locale: lng })
-
-// const products = await api({
-//   search: [
-//     {
-//       input: {
-//         take: 4,
-//         groupByProduct: true,
-//         sort: { price: SortOrder.ASC },
-//       },
-//     },
-//     { items: ProductSearchSelector },
-//   ],
-// })
-
-// console.log(products.search.items.length)

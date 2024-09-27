@@ -40,7 +40,7 @@ export const Section = ({
     variant === 'dark' ? 'bg-dark-text-gradient' : 'bg-text-gradient'
   return (
     <section className={cn(sectionVariants({ variant }), className)}>
-      <div className="w-full max-w-[90rem] space-y-8 px-2 md:px-8">
+      <div className="w-full max-w-[120rem] space-y-8 px-2 md:px-8 lg:px-36">
         <div
           className={`flex w-full flex-col items-center justify-center gap-4 md:flex-row ${centered ? '' : 'md:justify-between'}`}
         >

@@ -12,42 +12,47 @@ import { getTranslations } from 'next-intl/server'
 const products = [
   {
     name: 'Anillo de ojo morado',
-    priceInUSD: 4.99,
+    priceInUSD: '4.99',
+
     lastPriceInUSD: 5.99,
     type: 'Disponibilidad inmediata',
     image: '/assets/products/product1.webp',
   },
   {
     name: 'Llaveros de Hello Kitty',
-    priceInUSD: 4.99,
+    priceInUSD: '4.99',
+
     lastPriceInUSD: 5.99,
     type: 'Disponibilidad inmediata',
     image: '/assets/products/product2.webp',
   },
   {
     name: 'Pulseras de cuero negras',
-    priceInUSD: 4.99,
+    priceInUSD: '4.99',
+
     lastPriceInUSD: 5.99,
     type: 'Disponibilidad inmediata',
     image: '/assets/products/product3.webp',
   },
   {
     name: 'Collar de corazón',
-    priceInUSD: 4.99,
+    priceInUSD: '4.99',
+
     lastPriceInUSD: 5.99,
     type: 'Disponibilidad inmediata',
     image: '/assets/products/product4.webp',
   },
   {
     name: 'Cinturón de cuero de corazón',
-    priceInUSD: 4.99,
+    priceInUSD: '4.99',
     lastPriceInUSD: 5.99,
     type: 'Disponibilidad inmediata',
     image: '/assets/products/product5.webp',
   },
   {
     name: 'Peluche de Hollow Knight',
-    priceInUSD: 4.99,
+    priceInUSD: '4.99',
+
     lastPriceInUSD: 5.99,
     type: 'Disponibilidad inmediata',
     image: '/assets/products/product6.webp',
@@ -72,6 +77,7 @@ export const ImmediatelyAvailableProductsSection = async () => {
             >
               <SingleProduct
                 product={{
+                  id: index.toString(),
                   name: product.name,
                   priceInUSD: product.priceInUSD,
                   lastPriceInUSD: product.lastPriceInUSD,
@@ -108,6 +114,7 @@ export const CustomMadeProductsSection = async () => {
             >
               <SingleProduct
                 product={{
+                  id: index.toString(),
                   name: product.name,
                   priceInUSD: product.priceInUSD,
                   lastPriceInUSD: product.lastPriceInUSD,
@@ -144,6 +151,7 @@ export const CustomizedProductsSection = async () => {
             >
               <SingleProduct
                 product={{
+                  id: index.toString(),
                   name: product.name,
                   priceInUSD: product.priceInUSD,
                   lastPriceInUSD: product.lastPriceInUSD,
