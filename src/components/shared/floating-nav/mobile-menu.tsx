@@ -39,8 +39,8 @@ export default function MobileMenu({
             <RiSearchLine className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[50vh]">
-          <div className="pt-16">
+        <SheetContent side="bottom" className="h-[30vh]">
+          <div className="pt-8">
             <Suspense fallback={<SearchSkeleton />}>
               <Search onSearchSubmit={handleSearchSubmit} />
             </Suspense>
@@ -53,7 +53,7 @@ export default function MobileMenu({
             <RiMenu2Line className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[90vw] pt-16 sm:w-[400px]">
+        <SheetContent side="right" className="w-[90vw] pt-16 sm:w-[400px]">
           <div className="mb-4 w-full">
             <Suspense fallback={<SearchSkeleton />}>
               <Search onSearchSubmit={handleSearchSubmit} />

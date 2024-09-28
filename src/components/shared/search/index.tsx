@@ -47,7 +47,7 @@ export default function Search({ className, onSearchSubmit }: SearchProps) {
             autoComplete="off"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="rounded-r-none"
+            className="h-[52px] rounded-r-none md:h-auto"
           />
           {searchQuery ? (
             <Button
@@ -59,7 +59,7 @@ export default function Search({ className, onSearchSubmit }: SearchProps) {
               <RiCloseLine className="h-5 w-5" />
             </Button>
           ) : null}
-          <Button type="submit" className="rounded-l-none">
+          <Button type="submit" className="h-[52px] rounded-l-none md:h-auto">
             <RiSearchLine className="h-5 w-5" />
           </Button>
         </div>
