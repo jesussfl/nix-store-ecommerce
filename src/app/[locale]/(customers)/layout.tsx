@@ -84,7 +84,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <Navbar />
 
-          <div className="bg-black-100 relative mx-auto flex flex-col pt-36 md:pt-36 lg:pt-40">
+          <div className="flex flex-col items-center pt-36 md:pt-36 lg:pt-40">
             {children}
             <Toaster />
           </div>

@@ -11,15 +11,11 @@ export const ProductsGrid = async ({
 }: {
   results: SearchProductsQuery['search']
 }) => {
-  if (results.items.length === 0 || !results.items) {
-    return <EmptyState />
-  }
-
   return (
     <div className="flex flex-col items-start md:flex-row md:px-4">
       <Filters results={results.facetValues} />
 
-      <section className="grid w-full grid-cols-2 gap-2 px-2 md:w-[90%] md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
+      <ProductGrid>
         {results.items.map((product) => {
           const {
             productId,
@@ -48,12 +44,19 @@ export const ProductsGrid = async ({
           }
           return <SingleProduct key={productId} product={formattedProduct} />
         })}
-      </section>
+      </ProductGrid>
     </div>
   )
 }
 
-const EmptyState = () => {
+const ProductGrid = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <section className="grid w-full grid-cols-2 gap-2 px-2 md:w-[90%] md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
+      {children}
+    </section>
+  )
+}
+export const EmptyState = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <div className="bg-feature-texture bg-cover bg-no-repeat p-1">

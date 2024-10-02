@@ -6,11 +6,8 @@ export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
-const domain = process.env.VENDURE_ADMIN_DOMAIN
-//   ? ensureStartsWith(process.env.VENDURE_ADMIN_DOMAIN, 'https://')
-//   : ''
+const domain = process.env.VENDURE_ADMIN_DOMAIN || ''
 const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
-const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
 
 type VendureFetchProps<TResult, TVariables> = {
   cache?: RequestCache
@@ -31,8 +28,8 @@ export async function vendureFetch<TResult, TVariables>({
   languageCode = 'es',
   revalidate,
 }: VendureFetchProps<TResult, TVariables>): Promise<{
-  status: number
-  data: TResult
+  data: TResult | null
+  error?: string
 }> {
   try {
     const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
@@ -54,23 +51,28 @@ export async function vendureFetch<TResult, TVariables>({
     })
 
     if (!response.ok) {
-      throw new Error('Network response was not ok')
+      return {
+        data: null,
+        error: `Network response was not ok: ${response.statusText}`,
+      }
     }
 
     const body = await response.json()
 
     if (body.errors) {
-      throw body.errors[0]
+      return {
+        data: null,
+        error: body.errors[0].message,
+      }
     }
 
     return {
-      status: response.status,
       data: body.data,
-    } as { status: number; data: TResult }
+    }
   } catch (error) {
-    throw {
-      error,
-      query,
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     }
   }
 }

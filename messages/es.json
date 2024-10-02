@@ -68,7 +68,12 @@
     "nested": "Página anidada",
     "newsArticle": "Noticias #{articleId}"
   },
-
+  "Errors": {
+    "something-went-wrong": "Algo ha salido mal",
+    "catalog-troubles": "Estamos teniendo problemas para cargar el catálogo. Por favor intenta más tarde",
+    "no-results": "No se encontraron resultados",
+    "no-results-description": "No pudimos encontrar ningún producto que cumpla con tu búsqueda"
+  },
   "NotFound": {
     "title": "Esta página no se encontró (404)"
   }

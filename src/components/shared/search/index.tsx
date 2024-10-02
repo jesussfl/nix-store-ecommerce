@@ -70,21 +70,3 @@ export default function Search({ className, onSearchSubmit }: SearchProps) {
     </form>
   )
 }
-
-export function SearchSkeleton({ className }: { className?: string }) {
-  return (
-    <div className={cn(`relative w-full max-w-[550px]`, className)}>
-      <div className="flex flex-col gap-2">
-        <div className="flex">
-          <Input placeholder="Buscar productos..." className="rounded-r-none" />
-          <Button className="rounded-l-none">
-            <RiSearchLine className="h-5 w-5" />
-          </Button>
-        </div>
-        <p className="text-sm text-muted-foreground md:hidden">
-          Encuentra los mejores productos aquí
-        </p>
-      </div>
-    </div>
-  )
-}

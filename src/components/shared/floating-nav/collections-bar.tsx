@@ -2,16 +2,14 @@
 
 import { cn } from '@/libs/utils'
 import Link from 'next/link'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import { buttonVariants } from '../button'
 import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react'
-import { GetTopLevelCollectionsQuery } from '@/graphql/graphql'
+import { useNavbar } from './navbar.context'
 
-export const CollectionsBar = ({
-  collections,
-}: {
-  collections: GetTopLevelCollectionsQuery['collections']['items']
-}) => {
+export const NavbarCollections = () => {
+  const { collections } = useNavbar()
+
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scrollLeft = () => {

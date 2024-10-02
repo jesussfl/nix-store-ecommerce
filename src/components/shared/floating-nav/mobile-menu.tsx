@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link'
-import { Suspense, useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/shared/sheet'
 import { RiMenu2Line, RiSearchLine } from '@remixicon/react'
-import Search, { SearchSkeleton } from '../search'
+import Search from '../search'
 import { Button, buttonVariants } from '../button'
 import {
   Accordion,
@@ -11,20 +11,18 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/shared/accordion'
-import { GetTopLevelCollectionsQuery } from '@/graphql/graphql'
 import { cn } from '@/libs/utils'
 import { HorizontalDivider } from '../divider'
+import { useNavbar } from './navbar.context'
 
 export type Menu = {
   title: string
   path: string
 }
 
-export default function MobileMenu({
-  collections,
-}: {
-  collections: GetTopLevelCollectionsQuery['collections']['items']
-}) {
+export default function MobileMenu({}) {
+  const { collections } = useNavbar()
+
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const handleSearchSubmit = () => {
@@ -41,9 +39,7 @@ export default function MobileMenu({
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[30vh]">
           <div className="pt-8">
-            <Suspense fallback={<SearchSkeleton />}>
-              <Search onSearchSubmit={handleSearchSubmit} />
-            </Suspense>
+            <Search onSearchSubmit={handleSearchSubmit} />
           </div>
         </SheetContent>
       </Sheet>
@@ -55,9 +51,7 @@ export default function MobileMenu({
         </SheetTrigger>
         <SheetContent side="right" className="w-[90vw] pt-16 sm:w-[400px]">
           <div className="mb-4 w-full">
-            <Suspense fallback={<SearchSkeleton />}>
-              <Search onSearchSubmit={handleSearchSubmit} />
-            </Suspense>
+            <Search onSearchSubmit={handleSearchSubmit} />
           </div>
           <Link
             href={`/catalog`}
