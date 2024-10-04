@@ -32,13 +32,13 @@ export async function vendureFetch<TResult, TVariables>({
   error?: string
 }> {
   try {
-    const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
+    const endpointWithLanguage = `${endpoint}?languageCode=en`
     const response = await fetch(endpointWithLanguage, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/graphql-response+json',
-        'vendure-token': languageCode,
+        'vendure-token': 'en',
         ...headers,
       },
       body: JSON.stringify({
