@@ -19,6 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/shared/sheet'
 import { Button } from '@/components/shared/button'
 import { FilterIcon, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import SortBy from './sort-by'
 
 export const Filters = ({
   children,
@@ -37,7 +38,9 @@ export const Filters = ({
   useEffect(() => {
     const newActiveFilters: Record<string, string[]> = {}
     searchParams.forEach((value, key) => {
-      newActiveFilters[key] = value.split(',')
+      if (key !== 'page') {
+        newActiveFilters[key] = value.split(',')
+      }
     })
     setActiveFilters(newActiveFilters)
   }, [searchParams])
@@ -64,6 +67,9 @@ export const Filters = ({
       currentParams.set(facetKey, facetValue)
     }
 
+    // Reset page to 1 when changing filters
+    currentParams.set('page', '1')
+
     router.push(`${pathname}?${currentParams.toString()}`)
   }
 
@@ -81,11 +87,15 @@ export const Filters = ({
       }
     }
 
+    // Reset page to 1 when removing filters
+    currentParams.set('page', '1')
+
     router.push(`${pathname}?${currentParams.toString()}`)
   }
 
   const clearAllFilters = () => {
-    router.push(pathname)
+    // Reset to page 1 and remove all filters
+    router.push(`${pathname}?page=1`)
   }
 
   const groupedFilters = results.reduce(
@@ -165,6 +175,9 @@ export const Filters = ({
             </AccordionItem>
           ))}
         </Accordion>
+        <SortBy />
+        {/* <div className="mb-4 mr-2 flex justify-end md:mr-4">
+        </div> */}
       </FilterCard>
 
       {children}

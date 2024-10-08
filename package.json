@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"yarn generate --watch\"",
+    "dev2": "next dev",
     "build": "next build",
     "export": "next build && next export",
     "start": "next start",
@@ -11,8 +12,7 @@
     "codegen": "graphql-codegen --config codegen.ts",
     "generate": "graphql-codegen",
     "prestart": "yarn generate",
-    "predev": "yarn generate",
-    "watchdev": "concurrently \"next dev\" \"yarn generate --watch\""
+    "predev": "yarn generate"
   },
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",

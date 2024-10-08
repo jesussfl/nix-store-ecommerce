@@ -2386,6 +2386,16 @@ type PriceRange {
   min: Money!
 }
 
+type PriceRangeBucket {
+  count: Int!
+  to: Int!
+}
+
+input PriceRangeInput {
+  max: Int!
+  min: Int!
+}
+
 type Product implements Node {
   assets: [Asset!]!
   collections: [Collection!]!
@@ -2795,6 +2805,8 @@ input SearchInput {
   facetValueFilters: [FacetValueFilterInput!]
   groupByProduct: Boolean
   inStock: Boolean
+  priceRange: PriceRangeInput
+  priceRangeWithTax: PriceRangeInput
   skip: Int
   sort: SearchResultSortParameter
   take: Int
@@ -2809,7 +2821,15 @@ type SearchResponse {
   collections: [CollectionResult!]!
   facetValues: [FacetValueResult!]!
   items: [SearchResult!]!
+  prices: SearchResponsePriceData!
   totalItems: Int!
+}
+
+type SearchResponsePriceData {
+  buckets: [PriceRangeBucket!]!
+  bucketsWithTax: [PriceRangeBucket!]!
+  range: PriceRange!
+  rangeWithTax: PriceRange!
 }
 
 type SearchResult {
@@ -2819,7 +2839,7 @@ type SearchResult {
   description: String!
   facetIds: [ID!]!
   facetValueIds: [ID!]!
-  inStock: Boolean!
+  inStock: Boolean
   price: SearchResultPrice!
   priceWithTax: SearchResultPrice!
   productAsset: SearchResultAsset
