@@ -5,6 +5,7 @@ import { Button } from '@/components/shared/button'
 import { RiEyeLine, RiShoppingCartLine } from '@remixicon/react'
 import { AspectRatio } from '../shared/aspect-ratio'
 import { optimizeImage } from '@/utils/optimizeImage'
+import Link from 'next/link'
 
 export type ProductCardInfo = {
   id: string
@@ -13,6 +14,8 @@ export type ProductCardInfo = {
   priceInUSD: string
   lastPriceInUSD: number
   type: string
+  slug: string
+  variantId: string
 }
 
 type Props = {
@@ -21,32 +24,36 @@ type Props = {
 
 export const SingleProduct = async ({ product }: Props) => {
   return (
-    <Card className="flex h-full cursor-pointer flex-col gap-2 rounded-sm border border-border p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
-      <CardContent className="relative flex flex-col items-start gap-2 p-0">
-        <HoverImage imageUrl={product.image} />
-        <Badge
-          variant={'secondary'}
-          className="right-2 top-2 z-10 rounded-full bg-black/80 px-2 py-1 text-white md:absolute md:inline"
-        >
-          <p className="line-clamp-1 text-[0.6rem] font-semibold">
-            {product.type}
-          </p>
-        </Badge>
-        <div className="flex w-full flex-col">
-          <CardTitle className="line-clamp-2 text-sm font-medium text-gray-600 md:text-base">
-            {product.name}
-          </CardTitle>
-          <div className="flex w-full flex-1 justify-between">
-            <p className="text-sm font-medium text-primary md:text-base">
-              {product.priceInUSD}
+    <Link
+      href={`/catalog/details/${product.slug}?variant=${product.variantId}`}
+    >
+      <Card className="flex h-full cursor-pointer flex-col gap-2 rounded-sm border border-border p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
+        <CardContent className="relative flex flex-col items-start gap-2 p-0">
+          <HoverImage imageUrl={product.image} />
+          <Badge
+            variant={'secondary'}
+            className="right-2 top-2 z-10 rounded-full bg-black/80 px-2 py-1 text-white md:absolute md:inline"
+          >
+            <p className="line-clamp-1 text-[0.6rem] font-semibold">
+              {product.type}
             </p>
-            {/* <p className="text-sm font-medium text-gray-400 line-through">
+          </Badge>
+          <div className="flex w-full flex-col">
+            <CardTitle className="line-clamp-2 text-sm font-medium text-gray-600 md:text-base">
+              {product.name}
+            </CardTitle>
+            <div className="flex w-full flex-1 justify-between">
+              <p className="text-sm font-medium text-primary md:text-base">
+                {product.priceInUSD}
+              </p>
+              {/* <p className="text-sm font-medium text-gray-400 line-through">
               ${product.lastPriceInUSD}
             </p> */}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 

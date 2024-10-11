@@ -42,6 +42,8 @@ export const ProductsGrid = async ({
             priceInUSD: priceValue,
             lastPriceInUSD: 0,
             type: 'Disponibilidad inmediata',
+            slug: product.slug,
+            variantId: product.productVariantId,
           }
           return <SingleProduct key={productId} product={formattedProduct} />
         })}

@@ -2571,17 +2571,6 @@ export type PriceRange = {
   min: Scalars['Money']['output'];
 };
 
-export type PriceRangeBucket = {
-  __typename?: 'PriceRangeBucket';
-  count: Scalars['Int']['output'];
-  to: Scalars['Int']['output'];
-};
-
-export type PriceRangeInput = {
-  max: Scalars['Int']['input'];
-  min: Scalars['Int']['input'];
-};
-
 export type Product = Node & {
   __typename?: 'Product';
   assets: Array<Asset>;
@@ -3051,8 +3040,6 @@ export type SearchInput = {
   facetValueFilters?: InputMaybe<Array<FacetValueFilterInput>>;
   groupByProduct?: InputMaybe<Scalars['Boolean']['input']>;
   inStock?: InputMaybe<Scalars['Boolean']['input']>;
-  priceRange?: InputMaybe<PriceRangeInput>;
-  priceRangeWithTax?: InputMaybe<PriceRangeInput>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<SearchResultSortParameter>;
   take?: InputMaybe<Scalars['Int']['input']>;
@@ -3069,16 +3056,7 @@ export type SearchResponse = {
   collections: Array<CollectionResult>;
   facetValues: Array<FacetValueResult>;
   items: Array<SearchResult>;
-  prices: SearchResponsePriceData;
   totalItems: Scalars['Int']['output'];
-};
-
-export type SearchResponsePriceData = {
-  __typename?: 'SearchResponsePriceData';
-  buckets: Array<PriceRangeBucket>;
-  bucketsWithTax: Array<PriceRangeBucket>;
-  range: PriceRange;
-  rangeWithTax: PriceRange;
 };
 
 export type SearchResult = {
@@ -3089,7 +3067,7 @@ export type SearchResult = {
   description: Scalars['String']['output'];
   facetIds: Array<Scalars['ID']['output']>;
   facetValueIds: Array<Scalars['ID']['output']>;
-  inStock?: Maybe<Scalars['Boolean']['output']>;
+  inStock: Scalars['Boolean']['output'];
   price: SearchResultPrice;
   priceWithTax: SearchResultPrice;
   productAsset?: Maybe<SearchResultAsset>;
@@ -3410,6 +3388,13 @@ export type Zone = Node & {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type GetProductInfoQueryVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type GetProductInfoQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, slug: string, description: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, assets: Array<{ __typename?: 'Asset', id: string, preview: string }> }> } | null };
+
 export type GetAllCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3425,7 +3410,7 @@ export type SearchProductsQueryVariables = Exact<{
 }>;
 
 
-export type SearchProductsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', totalItems: number, facetValues: Array<{ __typename?: 'FacetValueResult', count: number, facetValue: { __typename?: 'FacetValue', id: string, name: string, facet: { __typename?: 'Facet', id: string, name: string } } }>, items: Array<{ __typename?: 'SearchResult', productName: string, productId: string, slug: string, collectionIds: Array<string>, currencyCode: CurrencyCode, productAsset?: { __typename?: 'SearchResultAsset', id: string, preview: string } | null, priceWithTax: { __typename?: 'PriceRange', min: number, max: number } | { __typename?: 'SinglePrice', value: number } }> } };
+export type SearchProductsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', totalItems: number, facetValues: Array<{ __typename?: 'FacetValueResult', count: number, facetValue: { __typename?: 'FacetValue', id: string, name: string, facet: { __typename?: 'Facet', id: string, name: string } } }>, items: Array<{ __typename?: 'SearchResult', productName: string, productId: string, slug: string, collectionIds: Array<string>, productVariantId: string, productVariantName: string, currencyCode: CurrencyCode, productAsset?: { __typename?: 'SearchResultAsset', id: string, preview: string } | null, priceWithTax: { __typename?: 'PriceRange', min: number, max: number } | { __typename?: 'SinglePrice', value: number } }> } };
 
 export type GetProductsQueryVariables = Exact<{
   options?: InputMaybe<ProductListOptions>;
@@ -3449,6 +3434,33 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const GetProductInfoDocument = new TypedDocumentString(`
+    query GetProductInfo($slug: String!) {
+  product(slug: $slug) {
+    id
+    name
+    slug
+    description
+    featuredAsset {
+      id
+      preview
+    }
+    assets {
+      id
+      preview
+    }
+    variants {
+      id
+      sku
+      priceWithTax
+      assets {
+        id
+        preview
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetProductInfoQuery, GetProductInfoQueryVariables>;
 export const GetAllCollectionsDocument = new TypedDocumentString(`
     query GetAllCollections {
   collections {
@@ -3513,6 +3525,8 @@ export const SearchProductsDocument = new TypedDocumentString(`
           max
         }
       }
+      productVariantId
+      productVariantName
       currencyCode
     }
   }

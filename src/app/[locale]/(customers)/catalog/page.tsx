@@ -9,10 +9,9 @@ import { getLocale, getTranslations } from 'next-intl/server'
 import { PageContainer } from '@/components/pages/page-container'
 import H1 from '@/components/shared/headings'
 import Pagination from '@/components/shared/pagination'
-import SortBy, { sortOptions } from '@/components/pages/catalog/sort-by'
-import { SearchResultSortParameter, SortOrder } from '@/graphql/graphql'
+import { getSortOption } from '@/utils/get-sort-option'
 
-const ITEMS_PER_PAGE = 40
+const ITEMS_PER_PAGE = Number(process.env.NEXT_PUBLIC_ITEMS_PER_PAGE) || 20
 
 export default async function CatalogPage({
   searchParams = {},
@@ -21,16 +20,17 @@ export default async function CatalogPage({
 }) {
   const locale = await getLocale()
   const t = await getTranslations(`Errors`)
+
   const {
     sort,
     q: searchValue,
     page = '1',
   } = searchParams as { [key: string]: string }
+
   const currentPage = parseInt(page, 10)
   const dynamicFacets = Object.entries(searchParams).filter(
     ([key]) => key !== 'sort' && key !== 'q' && key !== 'page'
   )
-
   const facetValueFilters = dynamicFacets.flatMap(([facetKey, facetValues]) => {
     const valuesArray =
       typeof facetValues === 'string'
@@ -40,22 +40,6 @@ export default async function CatalogPage({
       and: value,
     }))
   })
-
-  const getSortOption = (sortValue: string): SearchResultSortParameter => {
-    switch (sortValue) {
-      case 'price-asc':
-        return { price: SortOrder.ASC }
-      case 'price-desc':
-        return { price: SortOrder.DESC }
-      case 'name-asc':
-        return { name: SortOrder.ASC }
-      case 'name-desc':
-        return { name: SortOrder.DESC }
-      default:
-        return {}
-    }
-  }
-
   const sortOption = getSortOption(sort)
 
   const { data, error } = await vendureFetch({

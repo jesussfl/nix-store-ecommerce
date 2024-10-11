@@ -1,5 +1,33 @@
 import { graphql } from '@/graphql'
 
+export const GET_PRODUCT_INFO = graphql(`
+  query GetProductInfo($slug: String!) {
+    product(slug: $slug) {
+      id
+      name
+      slug
+      description
+      featuredAsset {
+        id
+        preview
+      }
+      assets {
+        id
+        preview
+      }
+      variants {
+        id
+        sku
+        priceWithTax
+        assets {
+          id
+          preview
+        }
+      }
+    }
+  }
+`)
+
 export const ALL_COLLECTIONS = graphql(`
   query GetAllCollections {
     collections {
@@ -16,6 +44,7 @@ export const ALL_COLLECTIONS = graphql(`
     }
   }
 `)
+
 export const TOP_LEVEL_COLLECTIONS = graphql(`
   query GetTopLevelCollections {
     collections(options: { topLevelOnly: true }) {
@@ -64,7 +93,8 @@ export const SEARCH_PRODUCTS = graphql(`
             max
           }
         }
-
+        productVariantId
+        productVariantName
         currencyCode
       }
     }
