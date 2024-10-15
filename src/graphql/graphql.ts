@@ -3388,12 +3388,12 @@ export type Zone = Node & {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type GetProductInfoQueryVariables = Exact<{
+export type GetProductDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetProductInfoQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, slug: string, description: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, assets: Array<{ __typename?: 'Asset', id: string, preview: string }> }> } | null };
+export type GetProductDataQuery = { __typename?: 'Query', product?: { __typename: 'Product', id: string, name: string, slug: string, description: string, optionGroups: Array<{ __typename?: 'ProductOptionGroup', id: string, code: string, name: string, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }>, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, price: number, currencyCode: CurrencyCode, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }> } | null };
 
 export type GetAllCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3434,13 +3434,25 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const GetProductInfoDocument = new TypedDocumentString(`
-    query GetProductInfo($slug: String!) {
+export const GetProductDataDocument = new TypedDocumentString(`
+    query GetProductData($slug: String!) {
   product(slug: $slug) {
+    __typename
     id
     name
     slug
     description
+    optionGroups {
+      id
+      code
+      name
+      options {
+        id
+        code
+        name
+        groupId
+      }
+    }
     featuredAsset {
       id
       preview
@@ -3453,14 +3465,22 @@ export const GetProductInfoDocument = new TypedDocumentString(`
       id
       sku
       priceWithTax
+      price
+      currencyCode
       assets {
         id
         preview
       }
+      options {
+        id
+        code
+        name
+        groupId
+      }
     }
   }
 }
-    `) as unknown as TypedDocumentString<GetProductInfoQuery, GetProductInfoQueryVariables>;
+    `) as unknown as TypedDocumentString<GetProductDataQuery, GetProductDataQueryVariables>;
 export const GetAllCollectionsDocument = new TypedDocumentString(`
     query GetAllCollections {
   collections {

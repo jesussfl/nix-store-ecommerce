@@ -4,24 +4,12 @@ import { Gallery } from './gallery'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_PRODUCT_INFO } from '@/libs/queries/products'
 
-const productImages = [
-  '/placeholder.svg?height=500&width=500',
-  '/placeholder.svg?height=80&width=80',
-  '/placeholder.svg?height=80&width=80',
-  '/placeholder.svg?height=80&width=80',
-]
-
-const productColors = [
-  { name: 'Black', image: '/placeholder.svg?height=60&width=60' },
-  { name: 'Blue', image: '/placeholder.svg?height=60&width=60' },
-]
-
-const productSizes = ['XS', 'S', 'M']
-
 export default async function ProductInfoPage({
   params: { productSlug },
+  searchParams,
 }: {
   params: { productSlug: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }) {
   const { data, error } = await vendureFetch({
     query: GET_PRODUCT_INFO,
@@ -29,24 +17,32 @@ export default async function ProductInfoPage({
       slug: productSlug,
     },
   })
-  const variants = data?.product?.variants
-  console.log(data?.product?.assets)
+
+  if (!data?.product) {
+    return <div>Product not found</div>
+  }
+
+  const { variants, optionGroups } = data.product
+  const initialVariantId = (searchParams?.variant as string) || variants[0]?.id
+  const currentVariant = variants.find(
+    (variant) => variant.id === initialVariantId
+  )
+  console.log(data.product)
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <Gallery
-          images={data?.product?.assets.map((asset) => asset.preview) || []}
+          images={currentVariant?.assets.map((asset) => asset.preview) || []}
         />
         <ProductDetails
-          title="Jeans casuales de pierna ancha para mujer"
-          price={17.0}
-          originalPrice={19.0}
-          colors={productColors}
-          sizes={productSizes}
+          title={data.product.name}
+          variants={variants}
+          optionGroups={optionGroups}
+          initialVariantId={initialVariantId}
         />
       </div>
       <div className="mt-8">
-        <Description content="EZwear Plus Size Solid Color Street Style Tooling Pants With Hanging Belts" />
+        <Description content={data.product.description || ''} />
       </div>
     </div>
   )

@@ -1,12 +1,24 @@
 import { graphql } from '@/graphql'
 
 export const GET_PRODUCT_INFO = graphql(`
-  query GetProductInfo($slug: String!) {
+  query GetProductData($slug: String!) {
     product(slug: $slug) {
+      __typename
       id
       name
       slug
       description
+      optionGroups {
+        id
+        code
+        name
+        options {
+          id
+          code
+          name
+          groupId
+        }
+      }
       featuredAsset {
         id
         preview
@@ -19,9 +31,17 @@ export const GET_PRODUCT_INFO = graphql(`
         id
         sku
         priceWithTax
+        price
+        currencyCode
         assets {
           id
           preview
+        }
+        options {
+          id
+          code
+          name
+          groupId
         }
       }
     }

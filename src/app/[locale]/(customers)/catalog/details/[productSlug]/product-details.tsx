@@ -1,29 +1,151 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/shared/button'
 import { RadioGroup, RadioGroupItem } from '@/components/shared/radio-group'
 import { Label } from '@/components/shared/label/label'
 import { Input } from '@/components/shared/input/input'
 import { Share2 } from 'lucide-react'
-import Image from 'next/image'
+
+interface Asset {
+  id: string
+  preview: string
+}
+
+interface ProductOption {
+  id: string
+  code: string
+  name: string
+  groupId: string
+}
+
+interface Variant {
+  id: string
+  sku: string
+  priceWithTax: number
+  price: number
+  currencyCode: string
+  assets: Asset[]
+  options: ProductOption[]
+}
+
+interface OptionGroup {
+  id: string
+  code: string
+  name: string
+  options: ProductOption[]
+}
 
 interface ProductDetailsProps {
   title: string
-  price: number
-  originalPrice: number
-  colors: { name: string; image: string }[]
-  sizes: string[]
+  variants: Variant[]
+  optionGroups: OptionGroup[]
+  initialVariantId?: string
 }
 
 export function ProductDetails({
   title,
-  price,
-  originalPrice,
-  colors,
-  sizes,
+  variants,
+  optionGroups,
+  initialVariantId,
 }: ProductDetailsProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [quantity, setQuantity] = useState(1)
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<string, string>
+  >({})
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
 
+  useEffect(() => {
+    const variantId = searchParams.get('variant') || initialVariantId
+    const variant = variants.find((v) => v.id === variantId) || variants[0]
+    if (variant) {
+      setSelectedVariant(variant)
+      const newSelectedOptions: Record<string, string> = {}
+      variant.options.forEach((option) => {
+        newSelectedOptions[option.groupId] = option.id
+      })
+      setSelectedOptions(newSelectedOptions)
+    }
+  }, [variants, initialVariantId, searchParams])
+
+  const handleOptionChange = (groupId: string, optionId: string) => {
+    const isFirstOptionGroup =
+      optionGroups.indexOf(
+        optionGroups.find((group) => group.id === groupId)!
+      ) === 0
+    let newVariant: Variant | null = null
+
+    if (isFirstOptionGroup) {
+      // For the first option group, find a variant that matches the selected option
+      newVariant =
+        variants.find((variant) =>
+          variant.options.some(
+            (option) => option.groupId === groupId && option.id === optionId
+          )
+        ) || null
+    } else {
+      // For other option groups, find a variant that matches all currently selected options
+      const newSelectedOptions = { ...selectedOptions, [groupId]: optionId }
+      newVariant =
+        variants.find((variant) =>
+          variant.options.every(
+            (option) => newSelectedOptions[option.groupId] === option.id
+          )
+        ) || null
+    }
+
+    if (newVariant) {
+      const updatedOptions: Record<string, string> = {}
+      newVariant.options.forEach((option) => {
+        updatedOptions[option.groupId] = option.id
+      })
+      setSelectedOptions(updatedOptions)
+      setSelectedVariant(newVariant)
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+      newSearchParams.set('variant', newVariant.id)
+      router.push(`?${newSearchParams.toString()}`, { scroll: false })
+    } else if (isFirstOptionGroup) {
+      // If no variant found for the first option group, reset other options
+      const resetOptions: Record<string, string> = { [groupId]: optionId }
+      setSelectedOptions(resetOptions)
+      setSelectedVariant(null)
+    }
+  }
+
+  const getAvailableOptions = (groupId: string) => {
+    const isFirstOptionGroup =
+      optionGroups.indexOf(
+        optionGroups.find((group) => group.id === groupId)!
+      ) === 0
+    if (isFirstOptionGroup) {
+      // All options are available for the first group
+      return new Set(
+        optionGroups
+          .find((group) => group.id === groupId)
+          ?.options.map((option) => option.id)
+      )
+    } else {
+      // For other groups, filter based on the selected option in the first group
+      const firstGroupId = optionGroups[0].id
+      const firstGroupSelectedOptionId = selectedOptions[firstGroupId]
+      return new Set(
+        variants
+          .filter((variant) =>
+            variant.options.some(
+              (option) =>
+                option.groupId === firstGroupId &&
+                option.id === firstGroupSelectedOptionId
+            )
+          )
+          .flatMap((variant) => variant.options)
+          .filter((option) => option.groupId === groupId)
+          .map((option) => option.id)
+      )
+    }
+  }
+  console.log(selectedVariant)
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -35,57 +157,59 @@ export function ProductDetails({
         </Button>
       </div>
       <h1 className="text-2xl font-bold">{title}</h1>
-      <div className="flex items-baseline gap-2">
-        <span className="text-2xl font-bold text-purple-600">
-          ${price.toFixed(2)} USD
-        </span>
-        <span className="text-sm text-gray-500 line-through">
-          ${originalPrice.toFixed(2)} USD
-        </span>
-      </div>
-      <div>
-        <h3 className="mb-2 font-medium">Color:</h3>
-        <RadioGroup defaultValue={colors[0].name} className="flex gap-2">
-          {colors.map((color) => (
-            <div key={color.name}>
-              <RadioGroupItem
-                value={color.name}
-                id={`color-${color.name}`}
-                className="sr-only"
-              />
-              <Label htmlFor={`color-${color.name}`} className="cursor-pointer">
-                <Image
-                  src={color.image}
-                  alt={color.name}
-                  width={60}
-                  height={60}
-                  className="rounded-md border-2 border-transparent hover:border-purple-600"
-                />
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
-      <div>
-        <h3 className="mb-2 font-medium">Talla:</h3>
-        <RadioGroup defaultValue={sizes[0]} className="flex gap-2">
-          {sizes.map((size) => (
-            <div key={size}>
-              <RadioGroupItem
-                value={size}
-                id={`size-${size}`}
-                className="sr-only"
-              />
-              <Label
-                htmlFor={`size-${size}`}
-                className="cursor-pointer rounded-md border px-4 py-2 hover:bg-gray-100"
-              >
-                {size}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
+      {selectedVariant && (
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-bold text-purple-600">
+            ${(selectedVariant.priceWithTax / 100).toFixed(2)}{' '}
+            {selectedVariant.currencyCode}
+          </span>
+          <span className="text-sm text-gray-500 line-through">
+            ${(selectedVariant.price / 100).toFixed(2)}{' '}
+            {selectedVariant.currencyCode}
+          </span>
+        </div>
+      )}
+      {optionGroups.map((group, index) => {
+        const availableOptions = getAvailableOptions(group.id)
+        return (
+          <div key={group.id}>
+            <h3 className="mb-2 font-medium">{group.name}:</h3>
+            <RadioGroup
+              value={selectedOptions[group.id] || ''}
+              onValueChange={(value) => handleOptionChange(group.id, value)}
+              className="flex flex-wrap gap-2"
+            >
+              {group.options.map((option) => {
+                const isAvailable = availableOptions.has(option.id)
+                return (
+                  <div key={option.id}>
+                    <RadioGroupItem
+                      value={option.id}
+                      id={`${group.code}-${option.id}`}
+                      className="sr-only"
+                      disabled={!isAvailable && index !== 0}
+                    />
+                    <Label
+                      htmlFor={`${group.code}-${option.id}`}
+                      className={`cursor-pointer rounded-md border px-4 py-2 ${
+                        selectedOptions[group.id] === option.id
+                          ? 'border-purple-500 bg-purple-100'
+                          : 'hover:bg-gray-100'
+                      } ${
+                        !isAvailable && index !== 0
+                          ? 'cursor-not-allowed opacity-50'
+                          : ''
+                      }`}
+                    >
+                      {option.name}
+                    </Label>
+                  </div>
+                )
+              })}
+            </RadioGroup>
+          </div>
+        )
+      })}
       <div>
         <h3 className="mb-2 font-medium">Selecciona la cantidad</h3>
         <div className="flex items-center gap-2">
