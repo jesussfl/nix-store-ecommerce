@@ -33,6 +33,10 @@ export const routing = defineRouting({
       en: '/catalog/[collection]',
       es: '/catalogo/[collection]',
     },
+    '/catalog/details/[productSlug]': {
+      en: '/catalog/details/[productSlug]',
+      es: '/catalogo/detalles/[productSlug]',
+    },
     // Dynamic params are supported via square brackets
     // '/news/[articleSlug]-[articleId]': {
     //   en: '/news/[articleSlug]-[articleId]',
