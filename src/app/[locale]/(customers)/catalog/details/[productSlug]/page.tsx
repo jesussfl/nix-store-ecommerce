@@ -1,6 +1,6 @@
-import { Description } from './description'
-import { ProductDetails } from './product-details'
-import { Gallery } from './gallery'
+import { Description } from '@/components/pages/catalog/details/description'
+import ProductDetails from '@/components/pages/catalog/details/product-details'
+import { Gallery } from '@/components/pages/catalog/details/gallery'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_PRODUCT_INFO } from '@/libs/queries/products'
 
@@ -21,28 +21,25 @@ export default async function ProductInfoPage({
   if (!data?.product) {
     return <div>Product not found</div>
   }
-
-  const { variants, optionGroups } = data.product
-  const initialVariantId = (searchParams?.variant as string) || variants[0]?.id
-  const currentVariant = variants.find(
+  const initialVariantId =
+    (searchParams?.variant as string) || data.product.variants[0]?.id
+  const currentVariant = data.product.variants.find(
     (variant) => variant.id === initialVariantId
   )
-  console.log(data.product)
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+    <div className="space-y-8 px-4 py-8">
+      <div className="flex flex-col gap-4 md:px-8 lg:flex-row lg:gap-8 lg:px-16 2xl:px-56">
         <Gallery
           images={currentVariant?.assets.map((asset) => asset.preview) || []}
         />
         <ProductDetails
-          title={data.product.name}
-          variants={variants}
-          optionGroups={optionGroups}
+          product={data.product}
           initialVariantId={initialVariantId}
         />
       </div>
-      <div className="mt-8">
+      <div className="flex flex-col gap-4 md:px-8 lg:flex-row lg:gap-8 lg:px-16 2xl:px-56">
         <Description content={data.product.description || ''} />
+        <div className="w-[700px]"></div>
       </div>
     </div>
   )

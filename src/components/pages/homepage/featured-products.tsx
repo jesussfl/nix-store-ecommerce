@@ -83,6 +83,9 @@ export const ImmediatelyAvailableProductsSection = async () => {
                   lastPriceInUSD: product.lastPriceInUSD,
                   type: product.type,
                   image: product.image,
+                  slug: product.name,
+
+                  variantId: index.toString(),
                 }}
               />
             </CarouselItem>
@@ -120,6 +123,9 @@ export const CustomMadeProductsSection = async () => {
                   lastPriceInUSD: product.lastPriceInUSD,
                   type: 'Por encargo',
                   image: product.image,
+                  slug: product.name,
+
+                  variantId: index.toString(),
                 }}
               />
             </CarouselItem>
@@ -157,6 +163,9 @@ export const CustomizedProductsSection = async () => {
                   lastPriceInUSD: product.lastPriceInUSD,
                   type: 'Personalizado',
                   image: product.image,
+                  slug: product.name,
+
+                  variantId: index.toString(),
                 }}
               />
             </CarouselItem>

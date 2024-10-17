@@ -54,7 +54,7 @@ export const ProductsGrid = async ({
 
 const ProductGrid = ({ children }: { children: React.ReactNode }) => {
   return (
-    <section className="grid w-full grid-cols-2 gap-2 px-2 md:w-[90%] md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
+    <section className="grid w-full grid-cols-2 gap-2 gap-y-6 px-2 md:w-[90%] md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5">
       {children}
     </section>
   )

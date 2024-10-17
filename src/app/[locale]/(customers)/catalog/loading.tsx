@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/shared/skeleton'
 
 export default function Loading() {
   return (
-    <div className="mb-56 w-full max-w-[100rem] space-y-8 bg-feature-texture">
+    <div className="mb-56 space-y-8 bg-feature-texture">
       <div className="w-full">
         <Skeleton className="mx-auto h-[200px] max-w-[300px] rounded-xl" />
       </div>

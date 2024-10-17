@@ -6,6 +6,7 @@ import { RiEyeLine, RiShoppingCartLine } from '@remixicon/react'
 import { AspectRatio } from '../shared/aspect-ratio'
 import { optimizeImage } from '@/utils/optimizeImage'
 import Link from 'next/link'
+import { ImageOff } from 'lucide-react'
 
 export type ProductCardInfo = {
   id: string
@@ -64,7 +65,12 @@ const HoverImage = async ({ imageUrl }: { imageUrl: string | undefined }) => {
       ratio={4 / 5}
     >
       {imageUrl === undefined ? (
-        <div className="h-full w-full rounded-sm border border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-1 md:p-4" />
+        <div className="h-full w-full rounded-sm border border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-1 md:p-4">
+          <ImageOff className="mb-4 h-16 w-16" />
+          <p className="text-center text-lg font-medium">
+            Este producto no tiene imágenes disponibles
+          </p>
+        </div>
       ) : (
         <Image
           src={optimizeImage({ size: 'popup', src: imageUrl }) || ''}

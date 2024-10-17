@@ -10,7 +10,7 @@ export function Description({ content }: DescriptionProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
-    <div className="rounded-lg border p-4">
+    <div className="w-full rounded-lg border p-4">
       <button
         className="flex w-full items-center justify-between text-left font-medium"
         onClick={() => setIsExpanded(!isExpanded)}

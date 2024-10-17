@@ -8,7 +8,7 @@ export default async function Layout({
 }) {
   const locale = await getLocale()
   return (
-    <div className="flex flex-col items-center">
+    <div className="w-full">
       <DynamicBreadcrumbs locale={locale} />
       {children}
     </div>

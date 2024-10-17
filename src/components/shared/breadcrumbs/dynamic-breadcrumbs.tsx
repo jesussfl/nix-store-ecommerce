@@ -24,7 +24,7 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
     pathSegments[0] === locale ? pathSegments.slice(1) : pathSegments
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className="flex justify-center px-4">
       <BreadcrumbList>
         {/* Home Breadcrumb */}
         <BreadcrumbItem>

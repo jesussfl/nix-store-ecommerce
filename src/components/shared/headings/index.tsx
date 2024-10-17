@@ -1,6 +1,6 @@
 import { cn } from '@/libs/utils'
 
-const H1 = async ({
+const H1 = ({
   children,
   className,
 }: {
@@ -21,7 +21,7 @@ const H1 = async ({
 
 export default H1
 
-export const H2 = async ({
+export const H2 = ({
   children,
   className,
 }: {
@@ -35,7 +35,7 @@ export const H2 = async ({
   )
 }
 
-export const H5 = async ({
+export const H5 = ({
   children,
   className,
 }: {
@@ -49,7 +49,7 @@ export const H5 = async ({
   )
 }
 
-export const H6 = async ({
+export const H6 = ({
   children,
   className,
 }: {

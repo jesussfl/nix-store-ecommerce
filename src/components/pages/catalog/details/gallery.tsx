@@ -1,16 +1,31 @@
 'use client'
+
 import Image from 'next/image'
 import { useState } from 'react'
+import { ImageOff } from 'lucide-react'
 
 interface GalleryProps {
   images: string[]
 }
 
 export function Gallery({ images }: GalleryProps) {
-  const [selectedImage, setSelectedImage] = useState(images[0])
+  const [selectedImage, setSelectedImage] = useState(images[0] || '')
+
+  if (images.length === 0) {
+    return (
+      <div className="h-auto flex-1 rounded-lg border-2 p-4">
+        <div className="flex h-[500px] flex-col items-center justify-center rounded-lg bg-slate-100">
+          <ImageOff className="mb-4 h-16 w-16" />
+          <p className="text-center text-lg font-medium">
+            Este producto no tiene imágenes disponibles
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col-reverse items-center justify-center gap-4 rounded-lg md:border-2 md:p-6 lg:flex-1 lg:flex-row">
       <div className="flex flex-col gap-2">
         {images.map((image, index) => (
           <button
@@ -34,7 +49,7 @@ export function Gallery({ images }: GalleryProps) {
           alt="Selected product image"
           width={500}
           height={500}
-          className="h-auto w-full rounded-lg"
+          className="h-auto w-full rounded-sm"
         />
       </div>
     </div>
