@@ -8,6 +8,11 @@ export const GET_PRODUCT_INFO = graphql(`
       name
       slug
       description
+      facetValues {
+        id
+        name
+        code
+      }
       optionGroups {
         id
         code
@@ -31,6 +36,17 @@ export const GET_PRODUCT_INFO = graphql(`
         id
         sku
         priceWithTax
+        # facetValues {
+        #   id
+        #   name
+        #   code
+        #   facetId
+        #   facet {
+        #     id
+        #     name
+        #     code
+        #   }
+        # }
         price
         currencyCode
         assets {

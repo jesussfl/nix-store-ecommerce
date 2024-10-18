@@ -3393,7 +3393,7 @@ export type GetProductDataQueryVariables = Exact<{
 }>;
 
 
-export type GetProductDataQuery = { __typename?: 'Query', product?: { __typename: 'Product', id: string, name: string, slug: string, description: string, optionGroups: Array<{ __typename?: 'ProductOptionGroup', id: string, code: string, name: string, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }>, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, price: number, currencyCode: CurrencyCode, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }> } | null };
+export type GetProductDataQuery = { __typename?: 'Query', product?: { __typename: 'Product', id: string, name: string, slug: string, description: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }>, optionGroups: Array<{ __typename?: 'ProductOptionGroup', id: string, code: string, name: string, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }>, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, price: number, currencyCode: CurrencyCode, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }> } | null };
 
 export type GetAllCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3442,6 +3442,11 @@ export const GetProductDataDocument = new TypedDocumentString(`
     name
     slug
     description
+    facetValues {
+      id
+      name
+      code
+    }
     optionGroups {
       id
       code

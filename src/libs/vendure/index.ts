@@ -26,7 +26,7 @@ export async function vendureFetch<TResult, TVariables>({
   tags,
   variables,
   languageCode = 'es',
-  revalidate,
+  revalidate = 900,
 }: VendureFetchProps<TResult, TVariables>): Promise<{
   data: TResult | null
   error?: string

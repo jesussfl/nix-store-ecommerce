@@ -22,7 +22,11 @@ export function Description({ content }: DescriptionProps) {
           <ChevronDown className="h-4 w-4" />
         )}
       </button>
-      {isExpanded && <p className="mt-2 text-gray-600">{content}</p>}
+      <div
+        className={`mt-2 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[1000px]' : 'max-h-0'}`}
+      >
+        <p className="text-gray-600">{content}</p>
+      </div>
     </div>
   )
 }

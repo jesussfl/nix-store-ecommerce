@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
-import { ImageOff } from 'lucide-react'
+import { ImageOff, ChevronUp, ChevronDown } from 'lucide-react'
 
 interface GalleryProps {
   images: string[]
@@ -13,11 +13,11 @@ export function Gallery({ images }: GalleryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="h-auto flex-1 rounded-lg border-2 p-4">
-        <div className="flex h-[500px] flex-col items-center justify-center rounded-lg bg-slate-100">
+      <div className="h-[500px] w-full rounded-lg border p-4">
+        <div className="flex h-full flex-col items-center justify-center rounded-lg bg-slate-100">
           <ImageOff className="mb-4 h-16 w-16" />
           <p className="text-center text-lg font-medium">
-            Este producto no tiene imágenes disponibles
+            Este producto no tiene imágenes disponibles
           </p>
         </div>
       </div>
@@ -25,12 +25,12 @@ export function Gallery({ images }: GalleryProps) {
   }
 
   return (
-    <div className="flex flex-col-reverse items-center justify-center gap-4 rounded-lg md:border-2 md:p-6 lg:flex-1 lg:flex-row">
-      <div className="flex flex-col gap-2">
+    <div className="flex w-full flex-col-reverse items-center justify-center gap-4 rounded-lg border p-2 md:h-[700px] md:p-6 lg:flex-row">
+      <div className="flex flex-row gap-2 overflow-x-auto lg:max-h-[500px] lg:flex-col lg:overflow-y-auto">
         {images.map((image, index) => (
           <button
             key={index}
-            className="h-20 w-20 overflow-hidden rounded-md border border-gray-200"
+            className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
             onClick={() => setSelectedImage(image)}
           >
             <Image
@@ -38,18 +38,18 @@ export function Gallery({ images }: GalleryProps) {
               alt={`Product thumbnail ${index + 1}`}
               width={80}
               height={80}
-              className="object-cover"
+              className="h-full w-full rounded-sm object-cover"
             />
           </button>
         ))}
       </div>
-      <div className="flex-1">
+      <div className="h-full w-full flex-1 rounded-md bg-slate-100">
         <Image
           src={selectedImage}
           alt="Selected product image"
           width={500}
           height={500}
-          className="h-auto w-full rounded-sm"
+          className="h-full w-full rounded-sm object-contain"
         />
       </div>
     </div>

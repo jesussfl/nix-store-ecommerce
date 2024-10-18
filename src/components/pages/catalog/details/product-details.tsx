@@ -55,7 +55,7 @@ export default function ProductDetails({
     Record<string, string>
   >({})
   const [variants, setVariants] = useState<Variant[]>([])
-
+  const [facets, setFacets] = useState<string[]>([])
   useEffect(() => {
     const variant =
       product?.variants.find((v) => v.id === initialVariantId) ||
@@ -68,6 +68,7 @@ export default function ProductDetails({
       newSelectedOptions[option.groupId] = option.id
     })
 
+    setFacets(product?.facetValues.map((facet) => facet.name) || [])
     setSelectedOptions(newSelectedOptions)
     setCurrentVariant(variant)
     setTotalPrice(variant.priceWithTax * quantity)
@@ -157,8 +158,12 @@ export default function ProductDetails({
 
   return (
     <div className="space-y-6 rounded-lg md:border-2 md:p-6 lg:w-[450px]">
-      <div className="flex items-center justify-between">
-        <Badge variant="default">Por Encargo</Badge>
+      <div className="flex flex-wrap items-center gap-2">
+        {facets.map((facet) => (
+          <Badge key={facet} variant="default" className="text-xs">
+            {facet}
+          </Badge>
+        ))}
         <Button variant="secondary" size="icon">
           <Share2 className="h-4 w-4" />
         </Button>
@@ -255,8 +260,8 @@ export default function ProductDetails({
 
       {currentVariant && totalPrice !== null && (
         <div className="rounded-md bg-slate-100 p-4">
-          <p className="text-lg font-semibold">Total:</p>
-          <p className="text-2xl font-bold text-primary">
+          <p className="text-base font-semibold">Total:</p>
+          <p className="text-xl font-medium text-primary">
             ${(totalPrice / 100).toFixed(2)} {currentVariant.currencyCode}
           </p>
         </div>
