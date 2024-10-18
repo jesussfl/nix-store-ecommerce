@@ -1,15 +1,14 @@
 import { TypedDocumentString } from '@/graphql/graphql'
 import { VENDURE_GRAPHQL_API_ENDPOINT } from '../constants'
-
 export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
   stringToCheck.startsWith(startsWith)
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
-const domain = process.env.VENDURE_ADMIN_DOMAIN || ''
+const domain = process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || ''
 const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
-
 type VendureFetchProps<TResult, TVariables> = {
+  url?: string
   cache?: RequestCache
   headers?: HeadersInit
   query: TypedDocumentString<TResult, TVariables>
@@ -26,7 +25,7 @@ export async function vendureFetch<TResult, TVariables>({
   tags,
   variables,
   languageCode = 'es',
-  revalidate = 900,
+  revalidate,
 }: VendureFetchProps<TResult, TVariables>): Promise<{
   data: TResult | null
   error?: string
@@ -35,6 +34,7 @@ export async function vendureFetch<TResult, TVariables>({
     const endpointWithLanguage = `${endpoint}?languageCode=en`
     const response = await fetch(endpointWithLanguage, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/graphql-response+json',

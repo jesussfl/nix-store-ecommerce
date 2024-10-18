@@ -157,7 +157,7 @@ export default function ProductDetails({
   }
 
   return (
-    <div className="space-y-6 rounded-lg md:border-2 md:p-6 lg:w-[450px]">
+    <div className="space-y-10 rounded-lg md:border-2 md:p-6 lg:w-[450px]">
       <div className="flex flex-wrap items-center gap-2">
         {facets.map((facet) => (
           <Badge key={facet} variant="default" className="text-xs">
@@ -169,10 +169,12 @@ export default function ProductDetails({
         </Button>
       </div>
       <div className="space-y-2">
-        <H1 className="lg:text-xl lg:font-semibold">{product.name}</H1>
+        <H1 className="text-base font-semibold lg:text-xl lg:font-semibold">
+          {product.name}
+        </H1>
         {currentVariant && (
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-medium text-primary">
+            <span className="text-xl font-medium text-primary">
               ${(currentVariant.priceWithTax / 100).toFixed(2)}{' '}
               {currentVariant.currencyCode}
             </span>

@@ -3388,6 +3388,34 @@ export type Zone = Node & {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type LoginMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  rememberMe: Scalars['Boolean']['input'];
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'CurrentUser', id: string, identifier: string } | { __typename?: 'InvalidCredentialsError', errorCode: ErrorCode, message: string } | { __typename?: 'NativeAuthStrategyError', errorCode: ErrorCode, message: string } | { __typename?: 'NotVerifiedError', errorCode: ErrorCode, message: string } };
+
+export type RegisterMutationVariables = Exact<{
+  input: RegisterCustomerInput;
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', registerCustomerAccount: { __typename?: 'MissingPasswordError', errorCode: ErrorCode, message: string } | { __typename?: 'NativeAuthStrategyError', errorCode: ErrorCode, message: string } | { __typename?: 'PasswordValidationError', errorCode: ErrorCode, message: string } | { __typename?: 'Success', success: boolean } };
+
+export type RequestPasswordResetMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+}>;
+
+
+export type RequestPasswordResetMutation = { __typename?: 'Mutation', requestPasswordReset?: { __typename?: 'NativeAuthStrategyError', errorCode: ErrorCode, message: string } | { __typename?: 'Success', success: boolean } | null };
+
+export type GetActiveCustomerQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetActiveCustomerQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, title?: string | null, firstName: string, lastName: string, emailAddress: string } | null };
+
 export type GetProductDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
@@ -3434,6 +3462,57 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const LoginDocument = new TypedDocumentString(`
+    mutation Login($email: String!, $password: String!, $rememberMe: Boolean!) {
+  login(username: $email, password: $password, rememberMe: $rememberMe) {
+    ... on CurrentUser {
+      id
+      identifier
+    }
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<LoginMutation, LoginMutationVariables>;
+export const RegisterDocument = new TypedDocumentString(`
+    mutation Register($input: RegisterCustomerInput!) {
+  registerCustomerAccount(input: $input) {
+    ... on Success {
+      success
+    }
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<RegisterMutation, RegisterMutationVariables>;
+export const RequestPasswordResetDocument = new TypedDocumentString(`
+    mutation RequestPasswordReset($email: String!) {
+  requestPasswordReset(emailAddress: $email) {
+    ... on Success {
+      success
+    }
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<RequestPasswordResetMutation, RequestPasswordResetMutationVariables>;
+export const GetActiveCustomerDocument = new TypedDocumentString(`
+    query getActiveCustomer {
+  activeCustomer {
+    id
+    title
+    firstName
+    lastName
+    emailAddress
+  }
+}
+    `) as unknown as TypedDocumentString<GetActiveCustomerQuery, GetActiveCustomerQueryVariables>;
 export const GetProductDataDocument = new TypedDocumentString(`
     query GetProductData($slug: String!) {
   product(slug: $slug) {
