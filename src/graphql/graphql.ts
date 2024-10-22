@@ -3388,6 +3388,44 @@ export type Zone = Node & {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type AddItemToOrderMutationVariables = Exact<{
+  productVariantId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+}>;
+
+
+export type AddItemToOrderMutation = { __typename?: 'Mutation', addItemToOrder: { __typename: 'InsufficientStockError', errorCode: ErrorCode, message: string, quantityAvailable: number, order: (
+      { __typename?: 'Order' }
+      & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+    ) } | { __typename: 'NegativeQuantityError', errorCode: ErrorCode, message: string } | (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename: 'OrderLimitError', errorCode: ErrorCode, message: string } | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
+
+export type RemoveItemFromOrderMutationVariables = Exact<{
+  lineId: Scalars['ID']['input'];
+}>;
+
+
+export type RemoveItemFromOrderMutation = { __typename?: 'Mutation', removeOrderLine: (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
+
+export type AdjustItemQuantityInOrderMutationVariables = Exact<{
+  lineId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+}>;
+
+
+export type AdjustItemQuantityInOrderMutation = { __typename?: 'Mutation', adjustOrderLine: { __typename: 'InsufficientStockError', errorCode: ErrorCode, message: string, quantityAvailable: number, order: (
+      { __typename?: 'Order' }
+      & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+    ) } | { __typename: 'NegativeQuantityError', errorCode: ErrorCode, message: string } | (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename: 'OrderLimitError', errorCode: ErrorCode, message: string } | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -3415,6 +3453,16 @@ export type GetActiveCustomerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetActiveCustomerQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, title?: string | null, firstName: string, lastName: string, emailAddress: string } | null };
+
+export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
+
+export type GetActiveOrderQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetActiveOrderQuery = { __typename?: 'Query', activeOrder?: (
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | null };
 
 export type GetProductDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -3461,7 +3509,353 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
-
+export const ActiveOrderFragmentDoc = new TypedDocumentString(`
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        name
+        slug
+      }
+    }
+  }
+}
+    `, {"fragmentName":"ActiveOrder"}) as unknown as TypedDocumentString<ActiveOrderFragment, unknown>;
+export const AddItemToOrderDocument = new TypedDocumentString(`
+    mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
+  addItemToOrder(productVariantId: $productVariantId, quantity: $quantity) {
+    __typename
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+    ... on InsufficientStockError {
+      quantityAvailable
+      order {
+        ...ActiveOrder
+      }
+    }
+    ... on NegativeQuantityError {
+      errorCode
+      message
+    }
+    ... on OrderModificationError {
+      errorCode
+      message
+    }
+    ... on OrderLimitError {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<AddItemToOrderMutation, AddItemToOrderMutationVariables>;
+export const RemoveItemFromOrderDocument = new TypedDocumentString(`
+    mutation RemoveItemFromOrder($lineId: ID!) {
+  removeOrderLine(orderLineId: $lineId) {
+    __typename
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+    ... on OrderModificationError {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<RemoveItemFromOrderMutation, RemoveItemFromOrderMutationVariables>;
+export const AdjustItemQuantityInOrderDocument = new TypedDocumentString(`
+    mutation AdjustItemQuantityInOrder($lineId: ID!, $quantity: Int!) {
+  adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {
+    __typename
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+    ... on OrderLimitError {
+      errorCode
+      message
+    }
+    ... on InsufficientStockError {
+      quantityAvailable
+      order {
+        ...ActiveOrder
+      }
+    }
+    ... on NegativeQuantityError {
+      errorCode
+      message
+    }
+    ... on OrderModificationError {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<AdjustItemQuantityInOrderMutation, AdjustItemQuantityInOrderMutationVariables>;
 export const LoginDocument = new TypedDocumentString(`
     mutation Login($email: String!, $password: String!, $rememberMe: Boolean!) {
   login(username: $email, password: $password, rememberMe: $rememberMe) {
@@ -3513,6 +3907,80 @@ export const GetActiveCustomerDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetActiveCustomerQuery, GetActiveCustomerQueryVariables>;
+export const GetActiveOrderDocument = new TypedDocumentString(`
+    query GetActiveOrder {
+  activeOrder {
+    ...ActiveOrder
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<GetActiveOrderQuery, GetActiveOrderQueryVariables>;
 export const GetProductDataDocument = new TypedDocumentString(`
     query GetProductData($slug: String!) {
   product(slug: $slug) {

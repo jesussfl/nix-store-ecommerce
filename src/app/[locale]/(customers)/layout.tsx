@@ -16,6 +16,7 @@ import Footer from '@/components/shared/footer'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { Navbar } from '@/components/shared/floating-nav'
+import { CartProvider } from '@/components/cart/cart-context'
 type Props = {
   children: ReactNode
   params: { locale: string }
@@ -82,13 +83,15 @@ export default async function RootLayout({
         )}
       >
         <NextIntlClientProvider messages={messages}>
-          <Navbar />
+          <CartProvider>
+            <Navbar />
 
-          <div className="flex flex-col items-center pt-36 md:pt-36 lg:pt-40">
-            {children}
-            <Toaster />
-          </div>
-          <Footer />
+            <div className="flex flex-col items-center pt-36 md:pt-36 lg:pt-40">
+              {children}
+              <Toaster />
+            </div>
+            <Footer />
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

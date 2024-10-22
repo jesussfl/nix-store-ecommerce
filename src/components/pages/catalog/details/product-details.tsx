@@ -1,15 +1,20 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/shared/button'
+import { useRouter } from 'next/navigation'
+import { Button, buttonVariants } from '@/components/shared/button'
 import { Input } from '@/components/shared/input/input'
 import { ArrowRight, Minus, Plus, Share2, ShoppingCart } from 'lucide-react'
-import { GetProductDataQuery } from '@/graphql/graphql'
+import { GetActiveCustomerQuery, GetProductDataQuery } from '@/graphql/graphql'
 import { RadioGroup, RadioGroupItem } from '@/components/shared/radio-group'
 import { Label } from '@/components/shared/label/label'
 import H1 from '@/components/shared/headings'
 import { Badge } from '@/components/shared/badge'
+import Link from 'next/link'
+import { cn } from '@/libs/utils'
+import { vendureFetch } from '@/libs/vendure'
+import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
+import { useCart } from '@/components/cart/cart-context'
 interface Asset {
   id: string
   preview: string
@@ -32,49 +37,56 @@ interface Variant {
   options: ProductOption[]
 }
 
-interface OptionGroup {
-  id: string
-  code: string
-  name: string
-  options: ProductOption[]
-}
 export default function ProductDetails({
   product,
   initialVariantId,
 }: {
   product: GetProductDataQuery['product']
   initialVariantId: string
+  activeCustomer?: GetActiveCustomerQuery['activeCustomer']
 }) {
+  const optionGroups = product?.optionGroups || []
+  const variants = product?.variants || []
+  const currentVariant =
+    product?.variants.find((v) => v.id === initialVariantId) || null
+  const facets = product?.facetValues.map((facet) => facet.name) || []
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const [currentVariant, setCurrentVariant] = useState<Variant | null>(null)
-  const [optionGroups, setOptionGroups] = useState<OptionGroup[]>([])
+  const cart = useCart()
   const [quantity, setQuantity] = useState(1)
   const [totalPrice, setTotalPrice] = useState<number | null>(null)
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >({})
-  const [variants, setVariants] = useState<Variant[]>([])
-  const [facets, setFacets] = useState<string[]>([])
+  // const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  // useEffect(() => {
+  //   checkAuthStatus()
+  // }, [])
+
+  // const checkAuthStatus = async () => {
+  //   try {
+  //     const { data } = await vendureFetch({
+  //       query: GET_ACTIVE_CUSTOMER,
+  //     })
+  //     if (data?.activeCustomer) {
+  //       setIsAuthenticated(true)
+  //     }
+  //   } catch (error) {
+  //     console.error('Error checking auth status:', error)
+  //   }
+  // }
+
   useEffect(() => {
-    const variant =
-      product?.variants.find((v) => v.id === initialVariantId) ||
-      product?.variants[0]
-
+    if (!currentVariant) return
     const newSelectedOptions: Record<string, string> = {}
-    if (!variant) return
 
-    variant?.options.forEach((option) => {
+    currentVariant?.options.forEach((option) => {
       newSelectedOptions[option.groupId] = option.id
     })
 
-    setFacets(product?.facetValues.map((facet) => facet.name) || [])
     setSelectedOptions(newSelectedOptions)
-    setCurrentVariant(variant)
-    setTotalPrice(variant.priceWithTax * quantity)
-    setVariants(product?.variants || [])
-    setOptionGroups(product?.optionGroups || [])
-  }, [product, initialVariantId, quantity])
+    setTotalPrice(currentVariant.priceWithTax * quantity)
+  }, [currentVariant, quantity])
 
   const handleQuantityChange = (newQuantity: number) => {
     const updatedQuantity = Math.max(1, newQuantity)
@@ -111,15 +123,12 @@ export default function ProductDetails({
         updatedOptions[option.groupId] = option.id
       })
       setSelectedOptions(updatedOptions)
-      setCurrentVariant(newVariant)
       setTotalPrice(newVariant.priceWithTax * quantity)
-      // const newSearchParams = new URLSearchParams(searchParams.toString())
-      // newSearchParams.set('variant', newVariant.id)
+
       router.replace(`?variant=${newVariant.id}`, { scroll: false })
     } else if (isFirstOptionGroup) {
       const resetOptions: Record<string, string> = { [groupId]: optionId }
       setSelectedOptions(resetOptions)
-      setCurrentVariant(null)
       setTotalPrice(null)
     }
   }
@@ -270,11 +279,26 @@ export default function ProductDetails({
       )}
 
       <div className="w-full space-y-2">
-        <Button variant="default" className="w-full">
-          Comprar Ahora
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-        <Button variant="outline" className="w-full">
+        <Link
+          href={
+            cart.isLogged
+              ? '/cart'
+              : '/account/login?callback=/catalog/details/' +
+                product.slug +
+                '?variantId=' +
+                currentVariant.id
+          }
+          className={cn(buttonVariants({ variant: 'default', size: 'lg' }))}
+        >
+          Comprar ahora
+          <ShoppingCart className="ml-2 h-4 w-4" />
+        </Link>
+
+        <Button
+          variant="outline"
+          onClick={() => cart.addToCart(currentVariant.id, quantity)}
+          className="w-full"
+        >
           Agregar al carrito
           <ShoppingCart className="ml-2 h-4 w-4" />
         </Button>

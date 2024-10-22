@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Button } from '@/components/shared/button'
 import { Input } from '@/components/shared/input/input'
 import { Label } from '@/components/shared/label/label'
@@ -14,93 +13,25 @@ import {
   TabsTrigger,
 } from '@/components/shared/tabs/tabs'
 import { vendureFetch } from '@/libs/vendure'
-import { graphql } from '@/graphql'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import {
+  LOGIN_MUTATION,
+  REGISTER_MUTATION,
+  REQUEST_PASSWORD_RESET_MUTATION,
+} from '@/libs/queries/account'
+import {
+  LoginInputs,
+  loginSchema,
+  SignupInputs,
+  signupSchema,
+  ResetPasswordInputs,
+  resetPasswordSchema,
+} from '@/utils/schemas/account'
+import { Loader2 } from 'lucide-react'
 
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Correo electrónico inválido' }),
-  password: z
-    .string()
-    .min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
-  rememberMe: z.boolean().optional(),
-})
-
-const signupSchema = z.object({
-  email: z.string().email({ message: 'Correo electrónico inválido' }),
-  firstName: z
-    .string()
-    .min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
-  lastName: z
-    .string()
-    .min(2, { message: 'El apellido debe tener al menos 2 caracteres' }),
-  password: z
-    .string()
-    .min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
-})
-
-const resetPasswordSchema = z.object({
-  email: z.string().email({ message: 'Correo electrónico inválido' }),
-})
-
-type LoginInputs = z.infer<typeof loginSchema>
-type SignupInputs = z.infer<typeof signupSchema>
-type ResetPasswordInputs = z.infer<typeof resetPasswordSchema>
-
-const LOGIN_MUTATION = graphql(`
-  mutation Login($email: String!, $password: String!, $rememberMe: Boolean!) {
-    login(username: $email, password: $password, rememberMe: $rememberMe) {
-      ... on CurrentUser {
-        id
-        identifier
-      }
-      ... on ErrorResult {
-        errorCode
-        message
-      }
-    }
-  }
-`)
-
-const REGISTER_MUTATION = graphql(`
-  mutation Register($input: RegisterCustomerInput!) {
-    registerCustomerAccount(input: $input) {
-      ... on Success {
-        success
-      }
-      ... on ErrorResult {
-        errorCode
-        message
-      }
-    }
-  }
-`)
-
-const REQUEST_PASSWORD_RESET_MUTATION = graphql(`
-  mutation RequestPasswordReset($email: String!) {
-    requestPasswordReset(emailAddress: $email) {
-      ... on Success {
-        success
-      }
-      ... on ErrorResult {
-        errorCode
-        message
-      }
-    }
-  }
-`)
-const ME_MUTATION = graphql(`
-  query getActiveCustomer {
-    activeCustomer {
-      id
-      title
-      firstName
-      lastName
-      emailAddress
-    }
-  }
-`)
 export default function AuthForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<'login' | 'signup' | 'reset'>(
     'login'
   )
@@ -150,7 +81,7 @@ export default function AuthForm() {
       } else if (result.data?.login) {
         if ('id' in result.data.login) {
           setSuccess('Inicio de sesión exitoso')
-          router.push('/catalog')
+          handleRedirect()
         } else if ('errorCode' in result.data.login) {
           setError(result.data.login.message)
         }
@@ -219,7 +150,14 @@ export default function AuthForm() {
       )
     }
   }
-
+  const handleRedirect = () => {
+    const callbackUrl = searchParams.get('callback')
+    if (callbackUrl) {
+      router.push(callbackUrl)
+    } else {
+      router.push('/catalog')
+    }
+  }
   return (
     <Tabs
       value={activeTab}
@@ -290,9 +228,11 @@ export default function AuthForm() {
             className="w-full"
             disabled={loginForm.formState.isSubmitting}
           >
-            {loginForm.formState.isSubmitting
-              ? 'Iniciando sesión...'
-              : 'Iniciar sesión'}
+            {loginForm.formState.isSubmitting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Iniciar sesión'
+            )}
           </Button>
         </form>
       </TabsContent>
@@ -362,9 +302,11 @@ export default function AuthForm() {
             className="w-full"
             disabled={signupForm.formState.isSubmitting}
           >
-            {signupForm.formState.isSubmitting
-              ? 'Registrando...'
-              : 'Registrarse'}
+            {signupForm.formState.isSubmitting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Registrarse'
+            )}
           </Button>
         </form>
       </TabsContent>
@@ -392,9 +334,11 @@ export default function AuthForm() {
             className="w-full"
             disabled={resetPasswordForm.formState.isSubmitting}
           >
-            {resetPasswordForm.formState.isSubmitting
-              ? 'Enviando...'
-              : 'Restablecer contraseña'}
+            {resetPasswordForm.formState.isSubmitting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Restablecer contraseña'
+            )}
           </Button>
         </form>
       </TabsContent>
