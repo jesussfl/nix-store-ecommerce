@@ -1,20 +1,19 @@
 'use client'
-import { ActiveOrderFragment, GetActiveOrderQuery } from '@/graphql/graphql'
+import { useFragment } from '@/graphql'
+import { ActiveOrderFragment } from '@/graphql/graphql'
 import {
   ADD_TO_CART_MUTATION,
   REMOVE_FROM_CART_MUTATION,
   SET_ITEM_QUANTITY_IN_CART_MUTATION,
 } from '@/libs/mutations/order'
 import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
-import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
+import { ACTIVE_ORDER_FRAGMENT, GET_ACTIVE_ORDER } from '@/libs/queries/order'
 import { vendureFetch } from '@/libs/vendure'
 import { useState, useCallback, useEffect } from 'react'
 import { createContainer } from 'unstated-next'
 
 const useCartContainer = createContainer(() => {
-  const [activeOrder, setActiveOrder] = useState<
-    ActiveOrderFragment | null | undefined
-  >()
+  const [activeOrder, setActiveOrder] = useState<ActiveOrderFragment | null>()
   const [isLogged, setIsLogged] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -33,7 +32,16 @@ const useCartContainer = createContainer(() => {
       const { data: customer } = await vendureFetch({
         query: GET_ACTIVE_CUSTOMER,
       })
-      setActiveOrder(order?.activeOrder)
+      const activeOrderData = useFragment(
+        ACTIVE_ORDER_FRAGMENT,
+        order?.activeOrder
+      )
+
+      if (activeOrderData) {
+        setActiveOrder(activeOrderData)
+      }
+
+      // setActiveOrder(order?.activeOrder)
       setIsLogged(!!customer?.activeCustomer?.id)
       console.log(order?.activeOrder)
       return order?.activeOrder
@@ -63,7 +71,13 @@ const useCartContainer = createContainer(() => {
         })
 
         if (data?.addItemToOrder.__typename === 'Order') {
-          setActiveOrder(data.addItemToOrder)
+          const activeOrderData = useFragment(
+            ACTIVE_ORDER_FRAGMENT,
+            data.addItemToOrder
+          )
+
+          setActiveOrder(activeOrderData)
+
           if (o) open()
         }
       } catch (e) {
@@ -85,7 +99,11 @@ const useCartContainer = createContainer(() => {
         },
       })
       if (data?.removeOrderLine.__typename === 'Order') {
-        setActiveOrder(data.removeOrderLine)
+        const activeOrderData = useFragment(
+          ACTIVE_ORDER_FRAGMENT,
+          data.removeOrderLine
+        )
+        setActiveOrder(activeOrderData)
       }
     } catch (e) {
       console.error(e)
@@ -111,7 +129,11 @@ const useCartContainer = createContainer(() => {
         },
       })
       if (data?.adjustOrderLine.__typename === 'Order') {
-        setActiveOrder(data.adjustOrderLine)
+        const activeOrderData = useFragment(
+          ACTIVE_ORDER_FRAGMENT,
+          data.adjustOrderLine
+        )
+        setActiveOrder(activeOrderData)
       }
       return data?.adjustOrderLine
     } catch (e) {

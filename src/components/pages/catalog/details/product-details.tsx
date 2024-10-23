@@ -57,24 +57,29 @@ export default function ProductDetails({
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >({})
-  // const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    checkAuthStatus()
+  }, [])
 
-  // useEffect(() => {
-  //   checkAuthStatus()
-  // }, [])
-
-  // const checkAuthStatus = async () => {
-  //   try {
-  //     const { data } = await vendureFetch({
-  //       query: GET_ACTIVE_CUSTOMER,
-  //     })
-  //     if (data?.activeCustomer) {
-  //       setIsAuthenticated(true)
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking auth status:', error)
-  //   }
-  // }
+  const checkAuthStatus = async () => {
+    try {
+      setIsLoading(true)
+      const { data } = await vendureFetch({
+        query: GET_ACTIVE_CUSTOMER,
+      })
+      console.log(data)
+      if (data?.activeCustomer) {
+        setIsAuthenticated(true)
+        console.log('Authenticated')
+      }
+    } catch (error) {
+      console.error('Error checking auth status:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (!currentVariant) return
@@ -281,7 +286,7 @@ export default function ProductDetails({
       <div className="w-full space-y-2">
         <Link
           href={
-            cart.isLogged
+            isAuthenticated && !isLoading
               ? '/cart'
               : '/account/login?callback=/catalog/details/' +
                 product.slug +

@@ -25,9 +25,7 @@ type Props = {
 
 export const SingleProduct = async ({ product }: Props) => {
   return (
-    <Link
-      href={`/catalog/details/${product.slug}?variant=${product.variantId}`}
-    >
+    <Link href={`/catalog/details/${product.slug}`}>
       <Card className="flex h-full cursor-pointer flex-col gap-2 rounded-sm border border-border p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
         <CardContent className="relative flex flex-col items-start gap-2 p-0">
           <HoverImage imageUrl={product.image} />

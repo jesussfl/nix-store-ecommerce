@@ -18,7 +18,6 @@ export default async function ProductInfoPage({
       slug: productSlug,
     },
   })
-
   const { data: activeCustomer, error: activeCustomerError } =
     await vendureFetch({
       query: GET_ACTIVE_CUSTOMER,
