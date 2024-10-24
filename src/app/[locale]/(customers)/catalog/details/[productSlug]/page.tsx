@@ -3,7 +3,6 @@ import ProductDetails from '@/components/pages/catalog/details/product-details'
 import { Gallery } from '@/components/pages/catalog/details/gallery'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_PRODUCT_INFO } from '@/libs/queries/products'
-import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
 
 export default async function ProductInfoPage({
   params: { productSlug },
@@ -12,16 +11,12 @@ export default async function ProductInfoPage({
   params: { productSlug: string }
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  const { data, error } = await vendureFetch({
+  const { data } = await vendureFetch({
     query: GET_PRODUCT_INFO,
     variables: {
       slug: productSlug,
     },
   })
-  const { data: activeCustomer, error: activeCustomerError } =
-    await vendureFetch({
-      query: GET_ACTIVE_CUSTOMER,
-    })
 
   if (!data?.product) {
     return <div>Product not found</div>
@@ -46,7 +41,6 @@ export default async function ProductInfoPage({
           <ProductDetails
             product={data.product}
             initialVariantId={initialVariantId}
-            activeCustomer={activeCustomer?.activeCustomer}
           />
         </div>
 

@@ -1,14 +1,14 @@
 'use client'
-
 import { RiShoppingCartLine } from '@remixicon/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/shared/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/shared/sheet'
 import { useCart } from '@/components/cart/cart-context'
-import { Minus, Plus, Trash2 } from 'lucide-react'
+import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { ScrollArea } from '@/components/shared/scroll-area/scroll-area'
 import { Separator } from '@/components/shared/separator/separator'
+import { debounce } from 'lodash'
 
 export default function CartModal() {
   const {
@@ -16,24 +16,35 @@ export default function CartModal() {
     fetchActiveOrder,
     removeFromCart,
     setItemQuantityInCart,
+    isLoading,
+    currentCustomer,
   } = useCart()
 
-  useEffect(() => {
-    fetchActiveOrder()
-  }, [fetchActiveOrder])
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [pricingLoading, setPricingLoading] = useState(false) // Loader for pricing
 
-  const handleQuantityChange = (
-    lineId: string,
-    currentQuantity: number,
-    change: number
-  ) => {
-    const newQuantity = currentQuantity + change
-    if (newQuantity > 0) {
-      setItemQuantityInCart(lineId, newQuantity)
-    } else {
-      removeFromCart(lineId)
-    }
-  }
+  useEffect(() => {
+    if (!isLoading) return
+    fetchActiveOrder()
+  }, [fetchActiveOrder, isLoading])
+  console.log(currentCustomer, 'curreeeent')
+  const handleQuantityChange = debounce(
+    async (lineId, currentQuantity, change) => {
+      if (isUpdating) return
+      setIsUpdating(true)
+      setPricingLoading(true) // Start loader for pricing
+      const newQuantity = currentQuantity + change
+      if (newQuantity > 0) {
+        await setItemQuantityInCart(lineId, newQuantity)
+      } else {
+        removeFromCart(lineId)
+      }
+      setIsUpdating(false)
+      setPricingLoading(false) // Stop loader for pricing
+    },
+    300, // Debounce time to limit rapid clicks
+    { leading: true, trailing: false }
+  )
 
   return (
     <Sheet>
@@ -112,38 +123,62 @@ export default function CartModal() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>
-                  {(activeOrder.subTotalWithTax / 100).toLocaleString('es-ES', {
-                    style: 'currency',
-                    currency: activeOrder.currencyCode,
-                  })}
-                </span>
+                {pricingLoading ? ( // Loader for subtotal
+                  <span className="loader">Cargando...</span>
+                ) : (
+                  <span>
+                    {(activeOrder.subTotalWithTax / 100).toLocaleString(
+                      'es-ES',
+                      {
+                        style: 'currency',
+                        currency: activeOrder.currencyCode,
+                      }
+                    )}
+                  </span>
+                )}
               </div>
               <div className="flex justify-between">
                 <span>Envío</span>
-                <span>
-                  {(activeOrder.shippingWithTax / 100).toLocaleString('es-ES', {
-                    style: 'currency',
-                    currency: activeOrder.currencyCode,
-                  })}
-                </span>
+                {pricingLoading ? ( // Loader for shipping
+                  <span className="loader">Cargando...</span>
+                ) : (
+                  <span>
+                    {(activeOrder.shippingWithTax / 100).toLocaleString(
+                      'es-ES',
+                      {
+                        style: 'currency',
+                        currency: activeOrder.currencyCode,
+                      }
+                    )}
+                  </span>
+                )}
               </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>
-                  {(activeOrder.totalWithTax / 100).toLocaleString('es-ES', {
-                    style: 'currency',
-                    currency: activeOrder.currencyCode,
-                  })}
-                </span>
+                {pricingLoading ? ( // Loader for total
+                  <span className="loader">Cargando...</span>
+                ) : (
+                  <span>
+                    {(activeOrder.totalWithTax / 100).toLocaleString('es-ES', {
+                      style: 'currency',
+                      currency: activeOrder.currencyCode,
+                    })}
+                  </span>
+                )}
               </div>
             </div>
             <Button className="mt-4 w-full">Proceder al pago</Button>
           </>
         ) : (
-          <p className="text-center text-muted-foreground">
-            Tu carrito está vacío
-          </p>
+          <>
+            {isLoading ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              <p className="text-center text-muted-foreground">
+                Tu carrito está vacío
+              </p>
+            )}
+          </>
         )}
       </SheetContent>
     </Sheet>

@@ -1,93 +1,81 @@
 'use client'
-import { useFragment } from '@/graphql'
-import { ActiveOrderFragment } from '@/graphql/graphql'
+import { ActiveOrderFragment, GetActiveCustomerQuery } from '@/graphql/graphql'
 import {
   ADD_TO_CART_MUTATION,
   REMOVE_FROM_CART_MUTATION,
   SET_ITEM_QUANTITY_IN_CART_MUTATION,
 } from '@/libs/mutations/order'
 import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
-import { ACTIVE_ORDER_FRAGMENT, GET_ACTIVE_ORDER } from '@/libs/queries/order'
+import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
 import { vendureFetch } from '@/libs/vendure'
-import { useState, useCallback, useEffect } from 'react'
+import { useState } from 'react'
 import { createContainer } from 'unstated-next'
 
 const useCartContainer = createContainer(() => {
   const [activeOrder, setActiveOrder] = useState<ActiveOrderFragment | null>()
+  const [currentCustomer, setCurrentCustomer] =
+    useState<GetActiveCustomerQuery['activeCustomer']>()
   const [isLogged, setIsLogged] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  const open = useCallback(() => setOpen(true), [])
-  const close = useCallback(() => setOpen(false), [])
+  const open = () => setOpen(true)
+  const close = () => setOpen(false)
 
-  const fetchActiveOrder = useCallback(async () => {
-    if (!isLoading) return // Prevent multiple fetches
+  const fetchActiveOrder = async () => {
+    if (!isLoading) return
     setIsLoading(true)
     try {
-      const { data: order } = await vendureFetch({
-        query: GET_ACTIVE_ORDER,
-      })
+      const [{ data: order }, { data: customer }] = await Promise.all([
+        vendureFetch({
+          query: GET_ACTIVE_ORDER,
+        }),
+        vendureFetch({
+          query: GET_ACTIVE_CUSTOMER,
+        }),
+      ])
 
-      const { data: customer } = await vendureFetch({
-        query: GET_ACTIVE_CUSTOMER,
-      })
-      const activeOrderData = useFragment(
-        ACTIVE_ORDER_FRAGMENT,
-        order?.activeOrder
-      )
-
-      if (activeOrderData) {
-        setActiveOrder(activeOrderData)
+      if (order?.activeOrder) {
+        setActiveOrder(order.activeOrder)
       }
 
-      // setActiveOrder(order?.activeOrder)
+      setCurrentCustomer(customer?.activeCustomer)
       setIsLogged(!!customer?.activeCustomer?.id)
-      console.log(order?.activeOrder)
+
       return order?.activeOrder
     } catch (e) {
       console.error(e)
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading])
+  }
 
-  useEffect(() => {
-    fetchActiveOrder()
-  }, [fetchActiveOrder])
+  const addToCart = async (id: string, q: number, o?: boolean) => {
+    setActiveOrder(
+      (c) => c && { ...c, totalQuantity: (c.totalQuantity || 0) + q }
+    )
+    try {
+      const { data } = await vendureFetch({
+        query: ADD_TO_CART_MUTATION,
+        variables: {
+          productVariantId: id,
+          quantity: q,
+        },
+      })
 
-  const addToCart = useCallback(
-    async (id: string, q: number, o?: boolean) => {
-      setActiveOrder(
-        (c) => c && { ...c, totalQuantity: (c.totalQuantity || 0) + q }
-      )
-      try {
-        const { data } = await vendureFetch({
-          query: ADD_TO_CART_MUTATION,
-          variables: {
-            productVariantId: id,
-            quantity: q,
-          },
-        })
-
-        if (data?.addItemToOrder.__typename === 'Order') {
-          const activeOrderData = useFragment(
-            ACTIVE_ORDER_FRAGMENT,
-            data.addItemToOrder
-          )
-
-          setActiveOrder(activeOrderData)
-
-          if (o) open()
+      if (data?.addItemToOrder.__typename === 'Order') {
+        if (data?.addItemToOrder) {
+          setActiveOrder(data?.addItemToOrder)
         }
-      } catch (e) {
-        console.error(e)
-      }
-    },
-    [open]
-  )
 
-  const removeFromCart = useCallback(async (id: string) => {
+        if (o) open()
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const removeFromCart = async (id: string) => {
     setActiveOrder(
       (c) => c && { ...c, lines: c.lines.filter((l) => l.id !== id) }
     )
@@ -99,18 +87,16 @@ const useCartContainer = createContainer(() => {
         },
       })
       if (data?.removeOrderLine.__typename === 'Order') {
-        const activeOrderData = useFragment(
-          ACTIVE_ORDER_FRAGMENT,
-          data.removeOrderLine
-        )
-        setActiveOrder(activeOrderData)
+        if (data.removeOrderLine) {
+          setActiveOrder(data.removeOrderLine)
+        }
       }
     } catch (e) {
       console.error(e)
     }
-  }, [])
+  }
 
-  const setItemQuantityInCart = useCallback(async (id: string, q: number) => {
+  const setItemQuantityInCart = async (id: string, q: number) => {
     setActiveOrder((c) => {
       if (c?.lines.find((l) => l.id === id)) {
         return {
@@ -129,17 +115,13 @@ const useCartContainer = createContainer(() => {
         },
       })
       if (data?.adjustOrderLine.__typename === 'Order') {
-        const activeOrderData = useFragment(
-          ACTIVE_ORDER_FRAGMENT,
-          data.adjustOrderLine
-        )
-        setActiveOrder(activeOrderData)
+        setActiveOrder(data?.adjustOrderLine)
       }
       return data?.adjustOrderLine
     } catch (e) {
       console.error(e)
     }
-  }, [])
+  }
 
   return {
     isLogged,
@@ -153,6 +135,7 @@ const useCartContainer = createContainer(() => {
     open,
     close,
     isLoading,
+    currentCustomer,
   }
 })
 
