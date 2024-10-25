@@ -3488,6 +3488,13 @@ export type SearchProductsQueryVariables = Exact<{
 
 export type SearchProductsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', totalItems: number, facetValues: Array<{ __typename?: 'FacetValueResult', count: number, facetValue: { __typename?: 'FacetValue', id: string, name: string, facet: { __typename?: 'Facet', id: string, name: string } } }>, items: Array<{ __typename?: 'SearchResult', productName: string, productId: string, slug: string, collectionIds: Array<string>, productVariantId: string, productVariantName: string, currencyCode: CurrencyCode, productAsset?: { __typename?: 'SearchResultAsset', id: string, preview: string } | null, priceWithTax: { __typename?: 'PriceRange', min: number, max: number } | { __typename?: 'SinglePrice', value: number } }> } };
 
+export type GetSearchSuggestionsQueryVariables = Exact<{
+  input: SearchInput;
+}>;
+
+
+export type GetSearchSuggestionsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', items: Array<{ __typename?: 'SearchResult', productName: string, slug: string }> } };
+
 export type GetProductsQueryVariables = Exact<{
   options?: InputMaybe<ProductListOptions>;
 }>;
@@ -4104,6 +4111,16 @@ export const SearchProductsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<SearchProductsQuery, SearchProductsQueryVariables>;
+export const GetSearchSuggestionsDocument = new TypedDocumentString(`
+    query GetSearchSuggestions($input: SearchInput!) {
+  search(input: $input) {
+    items {
+      productName
+      slug
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetSearchSuggestionsQuery, GetSearchSuggestionsQueryVariables>;
 export const GetProductsDocument = new TypedDocumentString(`
     query GetProducts($options: ProductListOptions) {
   products(options: $options) {

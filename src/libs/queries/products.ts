@@ -137,6 +137,17 @@ export const SEARCH_PRODUCTS = graphql(`
   }
 `)
 
+export const GET_SEARCH_SUGGESTIONS = graphql(`
+  query GetSearchSuggestions($input: SearchInput!) {
+    search(input: $input) {
+      items {
+        productName
+        slug
+      }
+    }
+  }
+`)
+
 export const GET_PRODUCTS = graphql(`
   query GetProducts($options: ProductListOptions) {
     products(options: $options) {
