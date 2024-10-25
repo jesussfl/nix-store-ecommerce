@@ -16,6 +16,7 @@ export default async function ProductInfoPage({
     variables: {
       slug: productSlug,
     },
+    cache: 'no-cache',
   })
 
   if (!data?.product) {
@@ -26,6 +27,7 @@ export default async function ProductInfoPage({
   const currentVariant = data.product.variants.find(
     (variant) => variant.id === initialVariantId
   )
+
   return (
     <div className="space-y-8 px-4 py-8">
       <div className="flex flex-col gap-12 md:px-8 lg:flex-row lg:gap-8 lg:px-16 2xl:px-56">
@@ -33,18 +35,16 @@ export default async function ProductInfoPage({
           <Gallery
             images={currentVariant?.assets.map((asset) => asset.preview) || []}
           />
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <Description content={data.product.description || ''} />
           </div>
         </div>
-        <div className="lg:sticky lg:top-32 lg:self-start">
-          <ProductDetails
-            product={data.product}
-            initialVariantId={initialVariantId}
-          />
-        </div>
+        <ProductDetails
+          product={data.product}
+          initialVariantId={initialVariantId}
+        />
 
-        <div className="block md:hidden">
+        <div className="block lg:hidden">
           <Description content={data.product.description || ''} />
         </div>
       </div>

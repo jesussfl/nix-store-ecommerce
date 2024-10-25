@@ -11,6 +11,7 @@ import { Label } from '@/components/shared/label/label'
 import H1 from '@/components/shared/headings'
 import { Badge } from '@/components/shared/badge'
 import { useCart } from '@/components/cart/cart-context'
+import { useTranslations } from 'next-intl'
 
 interface Asset {
   id: string
@@ -147,7 +148,7 @@ export default function ProductDetails({
   if (!currentVariant || !product) return null
 
   return (
-    <div className="space-y-10 rounded-lg md:border-2 md:p-6 lg:w-[450px]">
+    <div className="space-y-10 rounded-lg md:border md:p-6 lg:sticky lg:top-32 lg:w-[450px] lg:self-start">
       <ProductBadges facets={facets} />
       <ProductHeading
         productName={product.name}
@@ -294,33 +295,37 @@ const ProductQuantity = ({
 }: {
   quantity: number
   onQuantityChange: (newQuantity: number) => void
-}) => (
-  <div className="space-y-2">
-    <p className="text-sm font-semibold">Selecciona la cantidad</p>
-    <div className="flex justify-center gap-4">
-      <Button
-        variant="secondary"
-        className=""
-        onClick={() => onQuantityChange(quantity - 1)}
-      >
-        <Minus className="h-4 w-4" />
-      </Button>
-      <Input
-        type="number"
-        readOnly
-        value={quantity}
-        className="w-full text-center"
-      />
-      <Button
-        className=""
-        variant="secondary"
-        onClick={() => onQuantityChange(quantity + 1)}
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
+}) => {
+  const t = useTranslations(`product_details`)
+
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-semibold">{t(`select_quantity`)}</p>
+      <div className="flex justify-center gap-4">
+        <Button
+          variant="secondary"
+          className=""
+          onClick={() => onQuantityChange(quantity - 1)}
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Input
+          type="number"
+          readOnly
+          value={quantity}
+          className="w-full text-center"
+        />
+        <Button
+          className=""
+          variant="secondary"
+          onClick={() => onQuantityChange(quantity + 1)}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 const TotalPrice = ({
   totalPrice,
@@ -328,14 +333,17 @@ const TotalPrice = ({
 }: {
   totalPrice: number
   currencyCode: string
-}) => (
-  <div className="flex justify-between text-sm font-medium text-gray-900">
-    <p>Total price:</p>
-    <p>
-      ${(totalPrice / 100).toFixed(2)} {currencyCode}
-    </p>
-  </div>
-)
+}) => {
+  const t = useTranslations(`common`)
+  return (
+    <div className="flex justify-between text-sm font-medium text-gray-900">
+      <p>{t(`total_price`)}</p>
+      <p>
+        ${(totalPrice / 100).toFixed(2)} {currencyCode}
+      </p>
+    </div>
+  )
+}
 
 const PurchaseActions = ({
   isLogged,
@@ -353,6 +361,7 @@ const PurchaseActions = ({
   addToCart: (productVariantId: string, quantity: number) => Promise<void>
 }) => {
   const router = useRouter()
+  const t = useTranslations('common')
   const handleCheckout = async () => {
     if (!isLogged) {
       router.push('/account/login?callback=/catalog/details/')
@@ -371,21 +380,24 @@ const PurchaseActions = ({
   return (
     <div className="space-y-4">
       <Button variant="default" onClick={handleCheckout} className="w-full">
-        Proceed to Checkout
+        {t(`buy_now`)}
       </Button>
       <Button variant={'outline'} onClick={handleAddToCart} className="w-full">
         <ShoppingCart className="mr-2 h-4 w-4" />
-        {isLoading ? 'Loading...' : 'Add to Cart'}
+        {isLoading ? 'Loading...' : t(`add_to_cart`)}
       </Button>
     </div>
   )
 }
 
-const PaymentMethods = () => (
-  <div className="space-y-2">
-    <p className="text-sm font-semibold">Accepted Payment Methods</p>
-    <div className="flex space-x-2">
-      {/* Insert icons for payment methods here */}
+const PaymentMethods = () => {
+  const t = useTranslations('product_details')
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-semibold">{t('accepted_payment_methods')}</p>
+      <div className="flex space-x-2">
+        {/* Insert icons for payment methods here */}
+      </div>
     </div>
-  </div>
-)
+  )
+}

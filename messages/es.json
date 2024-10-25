@@ -53,7 +53,17 @@
       "social-networks": "Nuestras redes sociales"
     }
   },
-
+  "product_details": {
+    "accepted_payment_methods": "Métodos de pago aceptados",
+    "select_quantity": "Selecciona la cantidad"
+  },
+  "common": {
+    "payment_methods": "Métodos de pago",
+    "buy_now": "Comprar ahora",
+    "total_price": "Precio total",
+    "add_to_cart": "Añadir al carrito",
+    "description": "Descripción"
+  },
   "LocaleLayout": {
     "description": "Tienda de accesorios",
     "title": "Nix Store"
