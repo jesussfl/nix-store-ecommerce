@@ -33,3 +33,15 @@ export function priceFormatter(price: number, currencyCode: CurrencyCode) {
   })
   return formatterCode.format(price / 100)
 }
+
+export function formatPriceValue(priceWithTax: any, currencyCode: any) {
+  if ('value' in priceWithTax) {
+    return priceFormatter(priceWithTax.value, currencyCode)
+  }
+
+  if (priceWithTax.min === priceWithTax.max) {
+    return priceFormatter(priceWithTax.min, currencyCode)
+  }
+
+  return `${priceFormatter(priceWithTax.min, currencyCode)} - ${priceFormatter(priceWithTax.max, currencyCode)}`
+}

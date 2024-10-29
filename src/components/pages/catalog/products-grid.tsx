@@ -5,7 +5,6 @@ import { SearchProductsQuery } from '@/graphql/graphql'
 import { priceFormatter } from '@/utils/price-formatter'
 import { RiEmotionSadLine, RiWhatsappLine } from '@remixicon/react'
 import { Filters } from './filter-card'
-import SortBy from './sort-by'
 
 export const ProductsGrid = async ({
   results,

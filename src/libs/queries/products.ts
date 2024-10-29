@@ -65,8 +65,8 @@ export const GET_PRODUCT_INFO = graphql(`
 `)
 
 export const ALL_COLLECTIONS = graphql(`
-  query GetAllCollections {
-    collections {
+  query GetAllCollections($options: CollectionListOptions) {
+    collections(options: $options) {
       items {
         id
         slug
