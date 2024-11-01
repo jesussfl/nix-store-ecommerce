@@ -5,19 +5,19 @@ import {
   ImmediatelyAvailableProductsSection,
 } from '@/components/pages/homepage/featured-products'
 import { CategoriesSection } from '@/components/pages/homepage/categories'
-
 import { WeOfferSection } from '@/components/pages/homepage/we-offer'
 import { LatestNews } from '@/components/pages/homepage/latest-news'
 import { FaqsSection } from '@/components/pages/homepage/faqs'
 import BrandsSection from '@/components/pages/homepage/brands'
 import { CollectionsSection } from '@/components/pages/homepage/collections'
 import CoolSection from '@/components/pages/homepage/cool-section'
+import { MetricsSection } from '@/components/pages/homepage/metrics'
 
 const Home = async () => {
   return (
-    <div className="w-full max-w-[120rem]">
+    <div className="w-full">
       <Header />
-      <main>
+      <main className="space-y-16 sm:space-y-24">
         <WeOfferSection />
         <CategoriesSection />
         <LatestNews />
@@ -25,7 +25,7 @@ const Home = async () => {
         <ImmediatelyAvailableProductsSection />
         <CustomMadeProductsSection />
         <BrandsSection />
-        {/* <MetricsSection /> */}
+        <MetricsSection />
         <CustomizedProductsSection />
         <CollectionsSection />
         <FaqsSection />

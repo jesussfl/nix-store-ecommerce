@@ -5,33 +5,37 @@ import { RiArrowRightCircleLine } from '@remixicon/react'
 import Link from 'next/link'
 import { cn } from '@/libs/utils'
 import Logo from '../../shared/logo'
+
 const Hero = async () => {
   const t = await getTranslations('homepage.hero-section')
 
   return (
-    <div className="flex h-[550px] flex-col justify-center gap-8 px-4 md:h-[750px] md:w-[50%] md:px-8 lg:pl-12">
-      <div className="flex flex-col items-center justify-center space-y-4 md:items-start">
-        <Logo
-          variant="white"
-          width={300}
-          height={300}
-          classname="w-[156px] md:w-[200px] md: lg:w-[224px]"
-        />
-        <H1 className="text-center text-white md:text-left"> {t('title')}</H1>
-        <p className="md:text-md text-center text-sm text-dark-foreground opacity-70 md:text-left lg:text-lg">
+    <div className="flex flex-col gap-6 lg:gap-8">
+      <Logo
+        variant="white"
+        width={300}
+        height={300}
+        classname="w-36 sm:w-44 md:w-52 lg:w-56"
+      />
+      <div className="space-y-4">
+        <H1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          {t('title')}
+        </H1>
+        <p className="max-w-prose text-base text-dark-foreground/70 sm:text-lg lg:text-xl">
           {t('description')}
         </p>
       </div>
-
-      <Link
-        href="/dashboard"
-        className={cn(
-          'w-full lg:w-[350px]',
-          buttonVariants({ variant: 'default', size: 'xl' })
-        )}
-      >
-        {t('CTA')} <RiArrowRightCircleLine className="ml-2" />
-      </Link>
+      <div>
+        <Link
+          href="/dashboard"
+          className={cn(
+            buttonVariants({ variant: 'default', size: 'lg' }),
+            'w-full sm:w-auto'
+          )}
+        >
+          {t('CTA')} <RiArrowRightCircleLine className="ml-2" />
+        </Link>
+      </div>
     </div>
   )
 }

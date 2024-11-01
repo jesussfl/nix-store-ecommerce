@@ -1,7 +1,6 @@
 import '@/utils/styles/globals.css'
 import { cn } from '@/libs/utils'
 import { Toaster } from '@/components/shared/toast/toaster'
-
 import { NextIntlClientProvider } from 'next-intl'
 import {
   getFormatter,
@@ -10,17 +9,18 @@ import {
   getTimeZone,
   getTranslations,
 } from 'next-intl/server'
-
 import { Montserrat } from 'next/font/google'
 import Footer from '@/components/shared/footer'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { Navbar } from '@/components/shared/floating-nav'
 import { CartProvider } from '@/components/cart/cart-context'
+
 type Props = {
   children: ReactNode
   params: { locale: string }
 }
+
 export async function generateMetadata({
   params: { locale },
 }: Omit<Props, 'children'>): Promise<Metadata> {
@@ -60,11 +60,11 @@ export async function generateMetadata({
   }
 }
 
-// If loading a variable font, you don't need to specify the font weight
 const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',
 })
+
 export default async function RootLayout({
   children,
   params: { locale },
@@ -75,21 +75,18 @@ export default async function RootLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale}>
-      <body
-        className={cn(
-          'bg-background font-sans antialiased',
-          montserrat.variable
-        )}
-      >
+    <html
+      lang={locale}
+      className={cn('bg-background font-sans antialiased', montserrat.variable)}
+    >
+      <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider messages={messages}>
           <CartProvider>
             <Navbar />
-
-            <div className="flex flex-col items-center pt-36 md:pt-36 lg:pt-40">
+            <main className="flex-grow pt-16 sm:pt-20 lg:pt-24">
               {children}
-              <Toaster />
-            </div>
+            </main>
+            <Toaster />
             <Footer />
           </CartProvider>
         </NextIntlClientProvider>
