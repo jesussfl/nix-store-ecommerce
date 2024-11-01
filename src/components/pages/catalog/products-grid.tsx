@@ -60,7 +60,7 @@ const ProductGrid = ({ children }: { children: React.ReactNode }) => {
 }
 export const EmptyState = () => {
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="my-36 flex flex-col items-center justify-center gap-4">
       <div className="bg-feature-texture bg-cover bg-no-repeat p-1">
         <RiEmotionSadLine className="h-12 w-12 text-primary" />
       </div>
