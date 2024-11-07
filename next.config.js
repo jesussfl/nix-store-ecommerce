@@ -18,6 +18,11 @@ const nextConfig = {
         port: '',
       },
       {
+        protocol: 'https',
+        hostname: 'nix-store-admin-production.up.railway.app',
+        port: '',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
         port: '3000',
