@@ -1,6 +1,6 @@
 'use client'
 import { RiShoppingCartLine } from '@remixicon/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/shared/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/shared/sheet'
 import { useCart } from '@/components/cart/cart-context'
@@ -17,35 +17,45 @@ export default function CartModal() {
     removeFromCart,
     setItemQuantityInCart,
     isLoading,
-    currentCustomer,
   } = useCart()
 
-  const [isUpdating, setIsUpdating] = useState(false)
   const [pricingLoading, setPricingLoading] = useState(false) // Loader for pricing
-
+  const [localQuantities, setLocalQuantities] = useState<{
+    [key: string]: number
+  }>({})
   useEffect(() => {
     if (!isLoading) return
     fetchActiveOrder()
   }, [fetchActiveOrder, isLoading])
-  console.log(currentCustomer, 'curreeeent')
-  const handleQuantityChange = debounce(
-    async (lineId, currentQuantity, change) => {
-      if (isUpdating) return
-      setIsUpdating(true)
+
+  const debouncedUpdateQuantity = useCallback(
+    debounce(async (lineId: string, newQuantity: number) => {
       setPricingLoading(true) // Start loader for pricing
-      const newQuantity = currentQuantity + change
+
       if (newQuantity > 0) {
         await setItemQuantityInCart(lineId, newQuantity)
       } else {
         removeFromCart(lineId)
       }
-      setIsUpdating(false)
-      setPricingLoading(false) // Stop loader for pricing
-    },
-    300, // Debounce time to limit rapid clicks
-    { leading: true, trailing: false }
-  )
 
+      setPricingLoading(false) // Stop loader for pricing
+    }, 600),
+    []
+  )
+  const handleQuantityChange = (
+    lineId: string,
+    currentQuantity: number,
+    change: number
+  ) => {
+    const newQuantity = (localQuantities[lineId] || currentQuantity) + change
+    if (newQuantity < 0) return // Prevent negative quantities
+
+    // Update the local state immediately for a quick UI response
+    setLocalQuantities((prev) => ({ ...prev, [lineId]: newQuantity }))
+
+    // Debounced server update
+    debouncedUpdateQuantity(lineId, newQuantity)
+  }
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -96,7 +106,11 @@ export default function CartModal() {
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
-                      <span className="text-sm">{line.quantity}</span>
+                      <span className="text-sm">
+                        {localQuantities[line.id] !== undefined
+                          ? localQuantities[line.id]
+                          : line.quantity}
+                      </span>
                       <Button
                         variant="outline"
                         size="icon"

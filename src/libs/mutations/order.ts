@@ -80,3 +80,29 @@ export const SET_ITEM_QUANTITY_IN_CART_MUTATION = graphql(`
     }
   }
 `)
+
+export const SET_ORDER_SHIPPING_ADDRESS_MUTATION = graphql(`
+  mutation SetOrderShippingAddress($input: CreateAddressInput!) {
+    setOrderShippingAddress(input: $input) {
+      __typename
+      ...ActiveOrder
+      ... on ErrorResult {
+        errorCode
+        message
+      }
+    }
+  }
+`)
+
+export const SET_SHIPPING_METHOD_MUTATION = graphql(`
+  mutation SetShippingMethod($id: [ID!]!) {
+    setOrderShippingMethod(shippingMethodId: $id) {
+      __typename
+      ...ActiveOrder
+      ... on ErrorResult {
+        errorCode
+        message
+      }
+    }
+  }
+`)

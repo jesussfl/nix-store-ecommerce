@@ -13,7 +13,7 @@ import {
   TabsTrigger,
 } from '@/components/shared/tabs/tabs'
 import { vendureFetch } from '@/libs/vendure'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import {
   LOGIN_MUTATION,
   REGISTER_MUTATION,
@@ -30,7 +30,6 @@ import {
 import { Loader2 } from 'lucide-react'
 
 export default function AuthForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<'login' | 'signup' | 'reset'>(
     'login'
@@ -81,6 +80,7 @@ export default function AuthForm() {
       } else if (result.data?.login) {
         if ('id' in result.data.login) {
           setSuccess('Inicio de sesión exitoso')
+
           handleRedirect()
         } else if ('errorCode' in result.data.login) {
           setError(result.data.login.message)
@@ -153,9 +153,10 @@ export default function AuthForm() {
   const handleRedirect = () => {
     const callbackUrl = searchParams.get('callback')
     if (callbackUrl) {
-      router.push(callbackUrl)
+      window.location.href = callbackUrl
+      // router.push(callbackUrl)
     } else {
-      router.push('/catalog')
+      window.location.href = '/'
     }
   }
   return (

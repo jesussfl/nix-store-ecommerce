@@ -27,7 +27,7 @@ export const ACTIVE_ORDER_FRAGMENT = graphql(`
       amountWithTax
       adjustmentSource
     }
-
+    shipping
     shippingWithTax
     totalWithTax
     subTotalWithTax
@@ -63,6 +63,11 @@ export const ACTIVE_ORDER_FRAGMENT = graphql(`
         }
         stockLevel
         product {
+          facetValues {
+            id
+            name
+            code
+          }
           name
           slug
         }

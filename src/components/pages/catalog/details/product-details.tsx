@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/shared/button'
 import { Input } from '@/components/shared/input/input'
-import { Minus, Plus, Share2, ShoppingCart } from 'lucide-react'
+import { Loader2, Minus, Plus, Share2, ShoppingCart } from 'lucide-react'
 import { GetProductDataQuery } from '@/graphql/graphql'
 import { RadioGroup, RadioGroupItem } from '@/components/shared/radio-group'
 import { Label } from '@/components/shared/label/label'
@@ -12,6 +12,7 @@ import H1 from '@/components/shared/headings'
 import { Badge } from '@/components/shared/badge'
 import { useCart } from '@/components/cart/cart-context'
 import { useTranslations } from 'next-intl'
+import { is } from 'date-fns/locale'
 
 interface Asset {
   id: string
@@ -57,6 +58,7 @@ export default function ProductDetails({
 
   // Fetch the active order on mount
   useEffect(() => {
+    console.log('fetching active order')
     if (!isLoading) {
       fetchActiveOrder()
     }
@@ -241,7 +243,7 @@ const ProductOptions = ({
             onValueChange={(value) => handleOptionChange(group.id, value)}
             className="flex flex-wrap gap-2"
           >
-            {group.options.map((option) => (
+            {group.options.map((option: ProductOption) => (
               <OptionLabel
                 key={option.id}
                 option={option}
@@ -362,16 +364,28 @@ const PurchaseActions = ({
 }) => {
   const router = useRouter()
   const t = useTranslations('common')
+  console.log(isLogged, isLoading, 'cheeeck')
   const handleCheckout = async () => {
-    if (!isLogged) {
-      router.push('/account/login?callback=/catalog/details/')
+    if (!isLogged && !isLoading) {
+      router.push(
+        '/account/login?callback=/catalog/details/' +
+          productSlug +
+          '?variant=' +
+          currentVariant.id
+      )
       return
     }
-    router.push(`/checkout?slug=${productSlug}`)
+    await addToCart(currentVariant.id, quantity)
+    router.push(`/checkout`)
   }
   const handleAddToCart = async () => {
-    if (!isLogged) {
-      router.push('/account/login?callback=/catalog/details/')
+    if (!isLogged && !isLoading) {
+      router.push(
+        '/account/login?callback=/catalog/details/' +
+          productSlug +
+          '?variant=' +
+          currentVariant.id
+      )
       return
     }
     await addToCart(currentVariant.id, quantity)
@@ -379,12 +393,25 @@ const PurchaseActions = ({
 
   return (
     <div className="space-y-4">
-      <Button variant="default" onClick={handleCheckout} className="w-full">
-        {t(`buy_now`)}
+      <Button
+        variant="default"
+        disabled={isLoading}
+        onClick={handleCheckout}
+        className="w-full"
+      >
+        {isLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          t(`buy_now`)
+        )}
       </Button>
       <Button variant={'outline'} onClick={handleAddToCart} className="w-full">
         <ShoppingCart className="mr-2 h-4 w-4" />
-        {isLoading ? 'Loading...' : t(`add_to_cart`)}
+        {isLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          t(`add_to_cart`)
+        )}
       </Button>
     </div>
   )

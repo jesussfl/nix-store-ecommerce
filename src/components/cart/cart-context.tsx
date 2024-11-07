@@ -1,9 +1,16 @@
 'use client'
-import { ActiveOrderFragment, GetActiveCustomerQuery } from '@/graphql/graphql'
+import {
+  ActiveOrderFragment,
+  CreateAddressInput,
+  GetActiveCustomerQuery,
+  SetOrderShippingAddressMutationVariables,
+} from '@/graphql/graphql'
 import {
   ADD_TO_CART_MUTATION,
   REMOVE_FROM_CART_MUTATION,
   SET_ITEM_QUANTITY_IN_CART_MUTATION,
+  SET_ORDER_SHIPPING_ADDRESS_MUTATION,
+  SET_SHIPPING_METHOD_MUTATION,
 } from '@/libs/mutations/order'
 import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
 import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
@@ -26,7 +33,10 @@ const useCartContainer = createContainer(() => {
     if (!isLoading) return
     setIsLoading(true)
     try {
-      const [{ data: order }, { data: customer }] = await Promise.all([
+      const [
+        { data: order, error: orderError },
+        { data: customer, error: customerError },
+      ] = await Promise.all([
         vendureFetch({
           query: GET_ACTIVE_ORDER,
         }),
@@ -123,12 +133,50 @@ const useCartContainer = createContainer(() => {
     }
   }
 
+  const setShippingOrderAddress = async (address: CreateAddressInput) => {
+    try {
+      // setIsLoading(true)
+      const { data } = await vendureFetch({
+        query: SET_ORDER_SHIPPING_ADDRESS_MUTATION,
+        variables: {
+          input: address,
+        },
+      })
+      if (data?.setOrderShippingAddress.__typename === 'Order') {
+        setActiveOrder(data?.setOrderShippingAddress)
+      }
+      return data?.setOrderShippingAddress
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const setShippingMethod = async (id: string) => {
+    try {
+      // setIsLoading(true)
+      const { data } = await vendureFetch({
+        query: SET_SHIPPING_METHOD_MUTATION,
+        variables: {
+          id,
+        },
+      })
+      if (data?.setOrderShippingMethod.__typename === 'Order') {
+        setActiveOrder(data?.setOrderShippingMethod)
+      }
+      return data?.setOrderShippingMethod
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return {
     isLogged,
     activeOrder,
     cart: activeOrder,
     addToCart,
     setItemQuantityInCart,
+    setShippingOrderAddress,
+    setShippingMethod,
     removeFromCart,
     fetchActiveOrder,
     isOpen,

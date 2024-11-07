@@ -3426,6 +3426,26 @@ export type AdjustItemQuantityInOrderMutation = { __typename?: 'Mutation', adjus
     & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
   ) | { __typename: 'OrderLimitError', errorCode: ErrorCode, message: string } | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
 
+export type SetOrderShippingAddressMutationVariables = Exact<{
+  input: CreateAddressInput;
+}>;
+
+
+export type SetOrderShippingAddressMutation = { __typename?: 'Mutation', setOrderShippingAddress: { __typename: 'NoActiveOrderError', errorCode: ErrorCode, message: string } | (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) };
+
+export type SetShippingMethodMutationVariables = Exact<{
+  id: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type SetShippingMethodMutation = { __typename?: 'Mutation', setOrderShippingMethod: { __typename: 'IneligibleShippingMethodError', errorCode: ErrorCode, message: string } | { __typename: 'NoActiveOrderError', errorCode: ErrorCode, message: string } | (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -3461,7 +3481,7 @@ export type GetCollectionQueryVariables = Exact<{
 
 export type GetCollectionQuery = { __typename?: 'Query', collection?: { __typename?: 'Collection', id: string, name: string, slug: string, parentId: string, children?: Array<{ __typename?: 'Collection', id: string, slug: string, name: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null }> | null, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null } | null };
 
-export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
+export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
 
 export type GetActiveOrderQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3553,6 +3573,7 @@ export const ActiveOrderFragmentDoc = new TypedDocumentString(`
     amountWithTax
     adjustmentSource
   }
+  shipping
   shippingWithTax
   totalWithTax
   subTotalWithTax
@@ -3588,6 +3609,11 @@ export const ActiveOrderFragmentDoc = new TypedDocumentString(`
       }
       stockLevel
       product {
+        facetValues {
+          id
+          name
+          code
+        }
         name
         slug
       }
@@ -3651,6 +3677,7 @@ export const AddItemToOrderDocument = new TypedDocumentString(`
     amountWithTax
     adjustmentSource
   }
+  shipping
   shippingWithTax
   totalWithTax
   subTotalWithTax
@@ -3686,6 +3713,11 @@ export const AddItemToOrderDocument = new TypedDocumentString(`
       }
       stockLevel
       product {
+        facetValues {
+          id
+          name
+          code
+        }
         name
         slug
       }
@@ -3734,6 +3766,7 @@ export const RemoveItemFromOrderDocument = new TypedDocumentString(`
     amountWithTax
     adjustmentSource
   }
+  shipping
   shippingWithTax
   totalWithTax
   subTotalWithTax
@@ -3769,6 +3802,11 @@ export const RemoveItemFromOrderDocument = new TypedDocumentString(`
       }
       stockLevel
       product {
+        facetValues {
+          id
+          name
+          code
+        }
         name
         slug
       }
@@ -3831,6 +3869,7 @@ export const AdjustItemQuantityInOrderDocument = new TypedDocumentString(`
     amountWithTax
     adjustmentSource
   }
+  shipping
   shippingWithTax
   totalWithTax
   subTotalWithTax
@@ -3866,12 +3905,187 @@ export const AdjustItemQuantityInOrderDocument = new TypedDocumentString(`
       }
       stockLevel
       product {
+        facetValues {
+          id
+          name
+          code
+        }
         name
         slug
       }
     }
   }
 }`) as unknown as TypedDocumentString<AdjustItemQuantityInOrderMutation, AdjustItemQuantityInOrderMutationVariables>;
+export const SetOrderShippingAddressDocument = new TypedDocumentString(`
+    mutation SetOrderShippingAddress($input: CreateAddressInput!) {
+  setOrderShippingAddress(input: $input) {
+    __typename
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<SetOrderShippingAddressMutation, SetOrderShippingAddressMutationVariables>;
+export const SetShippingMethodDocument = new TypedDocumentString(`
+    mutation SetShippingMethod($id: [ID!]!) {
+  setOrderShippingMethod(shippingMethodId: $id) {
+    __typename
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<SetShippingMethodMutation, SetShippingMethodMutationVariables>;
 export const LoginDocument = new TypedDocumentString(`
     mutation Login($email: String!, $password: String!, $rememberMe: Boolean!) {
   login(username: $email, password: $password, rememberMe: $rememberMe) {
@@ -3979,6 +4193,7 @@ export const GetActiveOrderDocument = new TypedDocumentString(`
     amountWithTax
     adjustmentSource
   }
+  shipping
   shippingWithTax
   totalWithTax
   subTotalWithTax
@@ -4014,6 +4229,11 @@ export const GetActiveOrderDocument = new TypedDocumentString(`
       }
       stockLevel
       product {
+        facetValues {
+          id
+          name
+          code
+        }
         name
         slug
       }
