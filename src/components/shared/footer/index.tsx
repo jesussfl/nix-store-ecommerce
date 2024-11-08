@@ -15,6 +15,7 @@ import {
   RiWhatsappLine,
   RiTwitterLine,
   RiLinkedinLine,
+  RiFacebookCircleLine,
 } from '@remixicon/react'
 import { HorizontalDivider } from '../divider'
 
@@ -41,7 +42,7 @@ export default function Footer() {
               />
               <SocialButton
                 href="https://www.facebook.com/nixstore.co/"
-                icon={<RiFacebookLine />}
+                icon={<RiFacebookCircleLine />}
                 label="Facebook"
               />
               <SocialButton
@@ -57,68 +58,53 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <H6 className="mb-4">Quick Links</H6>
+            <H6 className="mb-4">{t(`quick-links`)}</H6>
             <nav className="flex flex-col space-y-2">
               <Link href="/about" className="hover:underline">
-                About Us
+                Sobre nosotros
               </Link>
-              <Link href="/products" className="hover:underline">
-                Products
+              <Link href="/catalog" className="hover:underline">
+                Catálogo
               </Link>
-              <Link href="/blog" className="hover:underline">
-                Blog
-              </Link>
+
               <Link href="/contact" className="hover:underline">
                 Contact
               </Link>
             </nav>
           </div>
           <div>
-            <H6 className="mb-4">Customer Service</H6>
+            <H6 className="mb-4">{t('customer-service')}</H6>
             <nav className="flex flex-col space-y-2">
               <Link href="/faq" className="hover:underline">
-                FAQ
+                Preguntas Frecuentes
               </Link>
-              <Link href="/shipping" className="hover:underline">
+              {/* <Link href="/shipping" className="hover:underline">
                 Shipping & Returns
-              </Link>
+              </Link> */}
               <Link href="/terms" className="hover:underline">
-                Terms & Conditions
+                Nuestras políticas de la tienda
               </Link>
-              <Link href="/privacy" className="hover:underline">
+              {/* <Link href="/privacy" className="hover:underline">
                 Privacy Policy
-              </Link>
+              </Link> */}
             </nav>
           </div>
           <div>
             <H6 className="mb-4">{t('need-help')}</H6>
             <ContactButtons />
-            <div className="mt-4">
-              <H6 className="mb-2">Newsletter</H6>
-              <form onSubmit={(e) => e.preventDefault()} className="flex">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="flex-grow rounded-l-md border border-border bg-background px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-                <Button type="submit" className="rounded-l-none">
-                  Subscribe
-                </Button>
-              </form>
-            </div>
           </div>
         </div>
         <HorizontalDivider className="my-8" />
         <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
-          <p>© 2024 Nix Store - All rights reserved</p>
-          <p>Website developed by: @Jesuss_dev</p>
+          <p>© 2024 Nix Store - Todos los derechos reservados</p>
+          <p>Sitio desarrollado por: @Jesuss_dev</p>
           <Button
             variant="ghost"
             size="sm"
             className="group"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            Back to top
+            Volver arriba
             <RiArrowUpLine className="ml-2 transition-transform group-hover:-translate-y-1" />
           </Button>
         </div>

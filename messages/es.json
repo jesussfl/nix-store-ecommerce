@@ -49,8 +49,12 @@
     "customized-products-title": "Productos personalizados",
 
     "footer": {
-      "slogan": "Compre, pague y vende en Venezuela",
-      "social-networks": "Nuestras redes sociales"
+      "slogan": "La mejor tienda online en Venezuela",
+      "social-networks": "Nuestras redes sociales",
+      "quick-links": "Enlaces rápidos",
+      "customer-service": "Servicio al cliente",
+      "need-help": "Necesitas ayuda?",
+      "contact-us": "Contáctanos"
     }
   },
   "product_details": {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Button } from '@/components/shared/button'
 import { useCart } from '@/components/cart/cart-context'
 import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
@@ -12,14 +12,35 @@ interface OrderSummaryProps {
   isPaymentStep: boolean
 }
 
+interface LocalQuantities {
+  [key: string]: number
+}
+
+interface OrderLine {
+  id: string
+  quantity: number
+  unitPriceWithTax: number
+  productVariant: {
+    name: string
+  }
+  featuredAsset?: {
+    preview: string
+  }
+}
+
+interface ActiveOrder {
+  lines: OrderLine[]
+  currencyCode: string
+  subTotalWithTax: number
+  shippingWithTax: number
+  totalWithTax: number
+}
+
 export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
   const { activeOrder, removeFromCart, setItemQuantityInCart, isLoading } =
     useCart()
 
-  const [localQuantities, setLocalQuantities] = useState<{
-    [key: string]: number
-  }>({})
-
+  const [localQuantities, setLocalQuantities] = useState<LocalQuantities>({})
   const [pricingLoading, setPricingLoading] = useState(false)
 
   const debouncedUpdateQuantity = useCallback(
@@ -60,6 +81,13 @@ export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
     [isPaymentStep, removeFromCart]
   )
 
+  const formatCurrency = (amount: number, currencyCode: string) => {
+    return (amount / 100).toLocaleString('es-ES', {
+      style: 'currency',
+      currency: currencyCode,
+    })
+  }
+
   if (!activeOrder || !activeOrder.lines || activeOrder.lines.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -76,57 +104,64 @@ export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
 
   return (
     <div className="space-y-4">
-      {activeOrder.lines.map((line) => (
-        <div key={line.id} className="flex items-center space-x-4 py-4">
-          <div className="relative h-16 w-16 flex-shrink-0">
+      {(activeOrder as ActiveOrder).lines.map((line) => (
+        <div
+          key={line.id}
+          className="flex flex-col items-start space-y-2 py-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
+        >
+          <div className="relative h-20 w-20 flex-shrink-0">
             <Image
               src={
                 line.featuredAsset?.preview ||
-                '/placeholder.svg?height=64&width=64'
+                '/placeholder.svg?height=80&width=80'
               }
               alt={line.productVariant.name}
               layout="fill"
               objectFit="cover"
+              className="rounded-md"
             />
           </div>
-          <div className="flex-grow">
+          <div className="flex-grow space-y-1">
             <h3 className="text-sm font-medium">{line.productVariant.name}</h3>
             <p className="text-sm text-muted-foreground">
-              {(line.unitPriceWithTax / 100).toLocaleString('es-ES', {
-                style: 'currency',
-                currency: activeOrder.currencyCode,
-              })}
+              {formatCurrency(
+                line.unitPriceWithTax,
+                (activeOrder as ActiveOrder).currencyCode
+              )}
             </p>
-            <div className="mt-2 flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
-                size="icon"
+                size="sm"
                 onClick={() => handleQuantityChange(line.id, line.quantity, -1)}
                 disabled={isPaymentStep}
+                aria-label="Decrease quantity"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-3 w-3" />
               </Button>
-              <span className="text-sm">
+              <span className="min-w-[1.5rem] text-center text-sm">
                 {localQuantities[line.id] !== undefined
                   ? localQuantities[line.id]
                   : line.quantity}
               </span>
               <Button
                 variant="outline"
-                size="icon"
+                size="sm"
                 onClick={() => handleQuantityChange(line.id, line.quantity, 1)}
                 disabled={isPaymentStep}
+                aria-label="Increase quantity"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3 w-3" />
               </Button>
             </div>
           </div>
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={() => handleRemoveItem(line.id)}
             className="flex-shrink-0"
             disabled={isPaymentStep}
+            aria-label="Remove item"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -140,10 +175,10 @@ export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <span>
-              {(activeOrder.subTotalWithTax / 100).toLocaleString('es-ES', {
-                style: 'currency',
-                currency: activeOrder.currencyCode,
-              })}
+              {formatCurrency(
+                (activeOrder as ActiveOrder).subTotalWithTax,
+                (activeOrder as ActiveOrder).currencyCode
+              )}
             </span>
           )}
         </div>
@@ -153,10 +188,10 @@ export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <span>
-              {(activeOrder.shippingWithTax / 100).toLocaleString('es-ES', {
-                style: 'currency',
-                currency: activeOrder.currencyCode,
-              })}
+              {formatCurrency(
+                (activeOrder as ActiveOrder).shippingWithTax,
+                (activeOrder as ActiveOrder).currencyCode
+              )}
             </span>
           )}
         </div>
@@ -166,10 +201,10 @@ export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <span>
-              {(activeOrder.totalWithTax / 100).toLocaleString('es-ES', {
-                style: 'currency',
-                currency: activeOrder.currencyCode,
-              })}
+              {formatCurrency(
+                (activeOrder as ActiveOrder).totalWithTax,
+                (activeOrder as ActiveOrder).currencyCode
+              )}
             </span>
           )}
         </div>

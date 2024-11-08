@@ -11,9 +11,22 @@ import {
 } from '@/components/shared/form'
 import { Card, CardContent } from '@/components/shared/card/card'
 import { Input } from '@/components/shared/input/input'
-import { Banknote, Wallet } from 'lucide-react'
+import { Banknote, Wallet, LucideIcon } from 'lucide-react'
 
-const PAYMENT_METHODS = {
+interface PaymentMethod {
+  name: string
+  info: string | string[]
+  icon: LucideIcon
+}
+
+type PaymentMethodKey =
+  | 'binance'
+  | 'zinli'
+  | 'paypal'
+  | 'pago-movil'
+  | 'transferencia'
+
+const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
   binance: {
     name: 'Binance',
     info: 'sarabquinonesv@gmail.com',
@@ -53,7 +66,9 @@ const PAYMENT_METHODS = {
 
 export default function PaymentForm() {
   const { control, watch } = useFormContext()
-  const selectedMethod = watch('paymentDetails.paymentMethod')
+  const selectedMethod = watch('paymentDetails.paymentMethod') as
+    | PaymentMethodKey
+    | undefined
 
   return (
     <div className="space-y-6">
@@ -68,7 +83,7 @@ export default function PaymentForm() {
               <RadioGroup
                 onValueChange={field.onChange}
                 value={field.value}
-                className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {Object.entries(PAYMENT_METHODS).map(([key, method]) => {
                   const Icon = method.icon
@@ -85,7 +100,7 @@ export default function PaymentForm() {
                         htmlFor={key}
                         className="flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 hover:bg-accent peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                       >
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-5 w-5 flex-shrink-0" />
                         <span className="font-medium">{method.name}</span>
                       </Label>
                     </FormItem>
@@ -100,7 +115,7 @@ export default function PaymentForm() {
 
       {selectedMethod && (
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">
                 Información de {PAYMENT_METHODS[selectedMethod].name}
@@ -169,10 +184,11 @@ export default function PaymentForm() {
   )
 }
 
-function Label({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLLabelElement>) {
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  className?: string
+}
+
+function Label({ className, ...props }: LabelProps) {
   return (
     <label
       className={`inline-flex items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}

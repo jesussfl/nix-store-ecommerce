@@ -167,7 +167,7 @@ export default function AuthForm() {
       }
       className="w-full"
     >
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="flex h-auto w-full flex-wrap gap-3">
         <TabsTrigger value="login">Iniciar sesión</TabsTrigger>
         <TabsTrigger value="signup">Registrarse</TabsTrigger>
         <TabsTrigger value="reset">Olvidé mi contraseña</TabsTrigger>

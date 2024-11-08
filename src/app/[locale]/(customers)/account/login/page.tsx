@@ -16,7 +16,11 @@ export default function AuthPage() {
             className="mx-auto"
           />
         </Link>
-        <H1 className="text-center">Acceso a Nix Store</H1>
+        <H1
+          className={`bg-text-gradient bg-clip-text text-center text-transparent`}
+        >
+          Accede a Nix Store
+        </H1>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
