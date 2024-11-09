@@ -15,6 +15,7 @@ import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { Navbar } from '@/components/shared/floating-nav'
 import { CartProvider } from '@/components/cart/cart-context'
+import { NavbarScrollWrapper } from './navbar-wrapper'
 
 type Props = {
   children: ReactNode
@@ -82,7 +83,9 @@ export default async function RootLayout({
       <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider messages={messages}>
           <CartProvider>
-            <Navbar />
+            <NavbarScrollWrapper>
+              <Navbar />
+            </NavbarScrollWrapper>
             <main className="flex-grow pt-16 sm:pt-20 lg:pt-24">
               {children}
             </main>

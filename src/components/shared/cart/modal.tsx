@@ -1,7 +1,7 @@
 'use client'
 import { RiShoppingCartLine } from '@remixicon/react'
 import { useCallback, useEffect, useState } from 'react'
-import { Button } from '@/components/shared/button'
+import { Button, buttonVariants } from '@/components/shared/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/shared/sheet'
 import { useCart } from '@/components/cart/cart-context'
 import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
@@ -9,6 +9,8 @@ import Image from 'next/image'
 import { ScrollArea } from '@/components/shared/scroll-area/scroll-area'
 import { Separator } from '@/components/shared/separator/separator'
 import { debounce } from 'lodash'
+import Link from 'next/link'
+import { cn } from '@/libs/utils'
 
 export default function CartModal() {
   const {
@@ -181,7 +183,15 @@ export default function CartModal() {
                 )}
               </div>
             </div>
-            <Button className="mt-4 w-full">Proceder al pago</Button>
+            <Link
+              href="/checkout"
+              className={cn(
+                buttonVariants({ variant: 'default' }),
+                'mt-4 w-full'
+              )}
+            >
+              Continuar compra
+            </Link>
           </>
         ) : (
           <>

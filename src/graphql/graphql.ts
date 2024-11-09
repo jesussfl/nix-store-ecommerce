@@ -3483,6 +3483,11 @@ export type GetCollectionQuery = { __typename?: 'Query', collection?: { __typena
 
 export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
 
+export type OrderFragment = (
+  { __typename?: 'Order', shippingAddress?: { __typename?: 'OrderAddress', fullName?: string | null, streetLine1?: string | null, streetLine2?: string | null, city?: string | null, province?: string | null, postalCode?: string | null } | null, billingAddress?: { __typename?: 'OrderAddress', fullName?: string | null, streetLine1?: string | null, streetLine2?: string | null, city?: string | null, province?: string | null, postalCode?: string | null } | null }
+  & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+) & { ' $fragmentName'?: 'OrderFragment' };
+
 export type GetActiveOrderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3490,6 +3495,38 @@ export type GetActiveOrderQuery = { __typename?: 'Query', activeOrder?: (
     { __typename?: 'Order' }
     & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
   ) | null };
+
+export type TransitionToStateMutationVariables = Exact<{
+  state: Scalars['String']['input'];
+}>;
+
+
+export type TransitionToStateMutation = { __typename?: 'Mutation', transitionOrderToState?: (
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename?: 'OrderStateTransitionError', errorCode: ErrorCode, message: string, transitionError: string, fromState: string, toState: string } | null };
+
+export type GetOrderByCodeQueryVariables = Exact<{
+  code: Scalars['String']['input'];
+}>;
+
+
+export type GetOrderByCodeQuery = { __typename?: 'Query', orderByCode?: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } | null };
+
+export type GetPaymentMethodsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPaymentMethodsQuery = { __typename?: 'Query', eligiblePaymentMethods: Array<{ __typename?: 'PaymentMethodQuote', id: string, name: string, code: string, isEligible: boolean }> };
+
+export type AddPaymentToOrderMutationVariables = Exact<{
+  input: PaymentInput;
+}>;
+
+
+export type AddPaymentToOrderMutation = { __typename?: 'Mutation', addPaymentToOrder: { __typename?: 'IneligiblePaymentMethodError', errorCode: ErrorCode, message: string } | { __typename?: 'NoActiveOrderError', errorCode: ErrorCode, message: string } | (
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename?: 'OrderPaymentStateError', errorCode: ErrorCode, message: string } | { __typename?: 'OrderStateTransitionError', errorCode: ErrorCode, message: string } | { __typename?: 'PaymentDeclinedError', errorCode: ErrorCode, message: string } | { __typename?: 'PaymentFailedError', errorCode: ErrorCode, message: string } };
 
 export type GetProductDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -3621,6 +3658,100 @@ export const ActiveOrderFragmentDoc = new TypedDocumentString(`
   }
 }
     `, {"fragmentName":"ActiveOrder"}) as unknown as TypedDocumentString<ActiveOrderFragment, unknown>;
+export const OrderFragmentDoc = new TypedDocumentString(`
+    fragment Order on Order {
+  ...ActiveOrder
+  shippingAddress {
+    fullName
+    streetLine1
+    streetLine2
+    city
+    province
+    postalCode
+  }
+  billingAddress {
+    fullName
+    streetLine1
+    streetLine2
+    city
+    province
+    postalCode
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`, {"fragmentName":"Order"}) as unknown as TypedDocumentString<OrderFragment, unknown>;
 export const AddItemToOrderDocument = new TypedDocumentString(`
     mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
   addItemToOrder(productVariantId: $productVariantId, quantity: $quantity) {
@@ -4240,6 +4371,265 @@ export const GetActiveOrderDocument = new TypedDocumentString(`
     }
   }
 }`) as unknown as TypedDocumentString<GetActiveOrderQuery, GetActiveOrderQueryVariables>;
+export const TransitionToStateDocument = new TypedDocumentString(`
+    mutation TransitionToState($state: String!) {
+  transitionOrderToState(state: $state) {
+    ...ActiveOrder
+    ... on OrderStateTransitionError {
+      errorCode
+      message
+      transitionError
+      fromState
+      toState
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<TransitionToStateMutation, TransitionToStateMutationVariables>;
+export const GetOrderByCodeDocument = new TypedDocumentString(`
+    query GetOrderByCode($code: String!) {
+  orderByCode(code: $code) {
+    id
+    createdAt
+    updatedAt
+    totalQuantity
+    couponCodes
+    code
+    customer {
+      id
+      emailAddress
+      firstName
+      lastName
+      phoneNumber
+    }
+    payments {
+      id
+      method
+      amount
+      state
+      errorMessage
+    }
+    discounts {
+      type
+      description
+      amountWithTax
+      adjustmentSource
+    }
+    shipping
+    shippingWithTax
+    totalWithTax
+    subTotalWithTax
+    state
+    active
+    currencyCode
+    shippingLines {
+      shippingMethod {
+        id
+        name
+        description
+      }
+      priceWithTax
+    }
+    lines {
+      id
+      quantity
+      linePriceWithTax
+      unitPriceWithTax
+      discountedLinePriceWithTax
+      featuredAsset {
+        id
+        preview
+      }
+      productVariant {
+        name
+        id
+        sku
+        price
+        featuredAsset {
+          id
+          source
+        }
+        stockLevel
+        product {
+          facetValues {
+            id
+            name
+            code
+          }
+          name
+          slug
+        }
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetOrderByCodeQuery, GetOrderByCodeQueryVariables>;
+export const GetPaymentMethodsDocument = new TypedDocumentString(`
+    query GetPaymentMethods {
+  eligiblePaymentMethods {
+    id
+    name
+    code
+    isEligible
+  }
+}
+    `) as unknown as TypedDocumentString<GetPaymentMethodsQuery, GetPaymentMethodsQueryVariables>;
+export const AddPaymentToOrderDocument = new TypedDocumentString(`
+    mutation AddPaymentToOrder($input: PaymentInput!) {
+  addPaymentToOrder(input: $input) {
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<AddPaymentToOrderMutation, AddPaymentToOrderMutationVariables>;
 export const GetProductDataDocument = new TypedDocumentString(`
     query GetProductData($slug: String!) {
   product(slug: $slug) {

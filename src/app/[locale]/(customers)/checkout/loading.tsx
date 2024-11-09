@@ -6,7 +6,7 @@ import {
 } from '@/components/shared/card/card'
 import { Skeleton } from '@/components/shared/skeleton/'
 
-export default function CheckoutPageLoading() {
+export default function Loading() {
   return (
     <div className="mt-12 grid items-start gap-6 md:mx-8 md:grid-cols-2">
       <Card className="shadow-none">

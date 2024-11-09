@@ -28,10 +28,9 @@ import 'react-phone-input-2/lib/style.css'
 import { Loader2 } from 'lucide-react'
 import { LOCATIONS } from './locations'
 
-export default function ShippingForm() {
+export default function ShippingFields() {
   const { control, watch, setValue, unregister } = useFormContext()
-  const { activeOrder, setShippingMethod, setShippingOrderAddress, isLoading } =
-    useCart()
+  const { setShippingMethod, setShippingOrderAddress, isLoading } = useCart()
   const shippingType = watch('shippingDetails.shippingType')
   const selectedLocation = watch('shippingDetails.locationObject')
 

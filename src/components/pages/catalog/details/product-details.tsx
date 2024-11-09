@@ -58,7 +58,6 @@ export default function ProductDetails({
 
   // Fetch the active order on mount
   useEffect(() => {
-    console.log('fetching active order')
     if (!isLoading) {
       fetchActiveOrder()
     }
@@ -364,15 +363,9 @@ const PurchaseActions = ({
 }) => {
   const router = useRouter()
   const t = useTranslations('common')
-  console.log(isLogged, isLoading, 'cheeeck')
   const handleCheckout = async () => {
     if (!isLogged && !isLoading) {
-      router.push(
-        '/account/login?callback=/catalog/details/' +
-          productSlug +
-          '?variant=' +
-          currentVariant.id
-      )
+      router.push('/account/login?callback=/checkout')
       return
     }
     await addToCart(currentVariant.id, quantity)

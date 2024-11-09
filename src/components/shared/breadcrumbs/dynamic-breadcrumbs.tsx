@@ -10,7 +10,6 @@ import {
   BreadcrumbSeparator,
 } from '@/components/shared/breadcrumbs'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { cn } from '@/libs/utils'
 import { buttonVariants } from '../button'
 import React from 'react'
@@ -24,7 +23,7 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
     pathSegments[0] === locale ? pathSegments.slice(1) : pathSegments
 
   return (
-    <Breadcrumb className="flex justify-center px-4">
+    <Breadcrumb className="mt-6 flex justify-center px-4">
       <BreadcrumbList>
         {/* Home Breadcrumb */}
         <BreadcrumbItem>

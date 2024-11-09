@@ -4,22 +4,21 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/shared/card/card'
-import ShippingForm from '@/components/pages/checkout/checkout-form'
 import OrderSummary from '@/components/pages/checkout/order-summary'
+import PaymentForm from '@/components/pages/checkout/payment-form'
 import { BackLink } from '@/components/shared/back-link'
 
-export default async function CheckoutPage() {
+export default async function PaymentPage() {
   return (
     <div className="-mt-16 space-y-4 md:mx-24">
       <BackLink />
-
       <div className="grid items-start gap-6 md:grid-cols-2">
         <Card className="shadow-none">
           <CardHeader>
-            <CardTitle>Datos de envío</CardTitle>
+            <CardTitle>Datos de pago</CardTitle>
           </CardHeader>
           <CardContent>
-            <ShippingForm />
+            <PaymentForm />
           </CardContent>
         </Card>
         <Card className="h-auto shadow-none">
@@ -27,7 +26,7 @@ export default async function CheckoutPage() {
             <CardTitle>Resumen de Compra</CardTitle>
           </CardHeader>
           <CardContent>
-            <OrderSummary isPaymentStep={false} />
+            <OrderSummary isPaymentStep={true} />
           </CardContent>
         </Card>
       </div>

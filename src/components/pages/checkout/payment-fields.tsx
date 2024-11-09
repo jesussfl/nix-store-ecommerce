@@ -12,6 +12,10 @@ import {
 import { Card, CardContent } from '@/components/shared/card/card'
 import { Input } from '@/components/shared/input/input'
 import { Banknote, Wallet, LucideIcon } from 'lucide-react'
+import { useEffect } from 'react'
+import { vendureFetch } from '@/libs/vendure'
+import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
+import { ADD_PAYMENT_TO_ORDER } from '@/libs/queries/payment'
 
 interface PaymentMethod {
   name: string
@@ -64,7 +68,7 @@ const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
   },
 }
 
-export default function PaymentForm() {
+export default function PaymentFields() {
   const { control, watch } = useFormContext()
   const selectedMethod = watch('paymentDetails.paymentMethod') as
     | PaymentMethodKey
