@@ -7,8 +7,10 @@ import {
 import ShippingForm from '@/components/pages/checkout/checkout-form'
 import OrderSummary from '@/components/pages/checkout/order-summary'
 import { BackLink } from '@/components/shared/back-link'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 export default async function CheckoutPage() {
+  const bcvPrice = await GetBCVPrice()
   return (
     <div className="-mt-16 space-y-4 md:mx-24">
       <BackLink />
@@ -27,7 +29,7 @@ export default async function CheckoutPage() {
             <CardTitle>Resumen de Compra</CardTitle>
           </CardHeader>
           <CardContent>
-            <OrderSummary isPaymentStep={false} />
+            <OrderSummary bcvPrice={bcvPrice} isPaymentStep={false} />
           </CardContent>
         </Card>
       </div>

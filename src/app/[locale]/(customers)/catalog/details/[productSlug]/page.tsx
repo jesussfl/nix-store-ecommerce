@@ -3,6 +3,7 @@ import ProductDetails from '@/components/pages/catalog/details/product-details'
 import { Gallery } from '@/components/pages/catalog/details/gallery'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_PRODUCT_INFO } from '@/libs/queries/products'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 export default async function ProductInfoPage({
   params: { productSlug },
@@ -18,7 +19,7 @@ export default async function ProductInfoPage({
     },
     cache: 'no-cache',
   })
-
+  const bcvPrice = await GetBCVPrice()
   if (!data?.product) {
     return <div>Product not found</div>
   }
@@ -40,6 +41,7 @@ export default async function ProductInfoPage({
           </div>
         </div>
         <ProductDetails
+          bcvPrice={bcvPrice}
           product={data.product}
           initialVariantId={initialVariantId}
         />

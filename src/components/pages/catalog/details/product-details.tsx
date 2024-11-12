@@ -4,7 +4,14 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/shared/button'
 import { Input } from '@/components/shared/input/input'
-import { Loader2, Minus, Plus, Share2, ShoppingCart } from 'lucide-react'
+import {
+  InfoIcon,
+  Loader2,
+  Minus,
+  Plus,
+  Share2,
+  ShoppingCart,
+} from 'lucide-react'
 import { GetProductDataQuery } from '@/graphql/graphql'
 import { RadioGroup, RadioGroupItem } from '@/components/shared/radio-group'
 import { Label } from '@/components/shared/label/label'
@@ -13,6 +20,7 @@ import { Badge } from '@/components/shared/badge'
 import { useCart } from '@/components/cart/cart-context'
 import { useTranslations } from 'next-intl'
 import { is } from 'date-fns/locale'
+import { Alert, AlertDescription, AlertTitle } from '@/components/shared/alert'
 
 interface Asset {
   id: string
@@ -39,9 +47,11 @@ interface Variant {
 export default function ProductDetails({
   product,
   initialVariantId,
+  bcvPrice,
 }: {
   product: GetProductDataQuery['product']
   initialVariantId: string
+  bcvPrice: number
 }) {
   const router = useRouter()
   const { isLoading, isLogged, fetchActiveOrder, addToCart } = useCart()
@@ -167,10 +177,12 @@ export default function ProductDetails({
       />
       {totalPrice !== null && (
         <TotalPrice
+          bcvPrice={bcvPrice}
           totalPrice={totalPrice}
           currencyCode={currentVariant.currencyCode}
         />
       )}
+      <SpecialOrderMessage />
       <PurchaseActions
         isLogged={isLogged}
         isLoading={isLoading}
@@ -179,6 +191,7 @@ export default function ProductDetails({
         quantity={quantity}
         addToCart={addToCart}
       />
+
       <PaymentMethods />
     </div>
   )
@@ -212,9 +225,6 @@ const ProductHeading = ({
       <span className="text-xl font-medium text-primary">
         ${(currentVariant.priceWithTax / 100).toFixed(2)}{' '}
         {currentVariant.currencyCode}
-      </span>
-      <span className="text-sm text-gray-500 line-through">
-        ${(currentVariant.price / 100).toFixed(2)} {currentVariant.currencyCode}
       </span>
     </div>
   </div>
@@ -331,16 +341,20 @@ const ProductQuantity = ({
 const TotalPrice = ({
   totalPrice,
   currencyCode,
+  bcvPrice,
 }: {
   totalPrice: number
   currencyCode: string
+  bcvPrice: number
 }) => {
   const t = useTranslations(`common`)
+
   return (
     <div className="flex justify-between text-sm font-medium text-gray-900">
       <p>{t(`total_price`)}</p>
       <p>
-        ${(totalPrice / 100).toFixed(2)} {currencyCode}
+        ${(totalPrice / 100).toFixed(2)} {currencyCode} (
+        {((totalPrice / 100) * bcvPrice).toFixed(2)} Bs)
       </p>
     </div>
   )
@@ -391,6 +405,7 @@ const PurchaseActions = ({
         disabled={isLoading}
         onClick={handleCheckout}
         className="w-full"
+        size={'lg'}
       >
         {isLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -398,7 +413,12 @@ const PurchaseActions = ({
           t(`buy_now`)
         )}
       </Button>
-      <Button variant={'outline'} onClick={handleAddToCart} className="w-full">
+      <Button
+        variant={'outline'}
+        onClick={handleAddToCart}
+        className="w-full"
+        size={'lg'}
+      >
         <ShoppingCart className="mr-2 h-4 w-4" />
         {isLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -419,5 +439,16 @@ const PaymentMethods = () => {
         {/* Insert icons for payment methods here */}
       </div>
     </div>
+  )
+}
+
+export const SpecialOrderMessage = () => {
+  const t = useTranslations('product_details')
+  return (
+    <Alert>
+      <InfoIcon className="h-4 w-4" />
+      <AlertTitle>{t('special_order_title')}</AlertTitle>
+      <AlertDescription>{t('special_order_description')}</AlertDescription>
+    </Alert>
   )
 }

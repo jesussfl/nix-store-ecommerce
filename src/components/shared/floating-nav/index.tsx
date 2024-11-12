@@ -13,6 +13,7 @@ import { NavbarCollections } from './collections-bar'
 import { getLocale } from 'next-intl/server'
 import { cn } from '@/libs/utils'
 import { NavbarProvider } from './navbar.context'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 export type Menu = {
   title: string
@@ -75,11 +76,12 @@ function NavbarMenu() {
   )
 }
 
-function NavbarActions() {
+async function NavbarActions() {
+  const bcvPrice = await GetBCVPrice()
   return (
     <div className="flex w-full justify-end gap-2">
       <Search className="hidden md:inline" />
-      <CartModal />
+      <CartModal bcvPrice={bcvPrice} />
       <Button variant="outline" size={'icon'}>
         <RiUser3Line
           className={clsx('h-5 w-5 transition-all ease-in-out hover:scale-110')}

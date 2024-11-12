@@ -5,12 +5,15 @@ import { SearchProductsQuery } from '@/graphql/graphql'
 import { priceFormatter } from '@/utils/price-formatter'
 import { RiEmotionSadLine, RiWhatsappLine } from '@remixicon/react'
 import { Filters } from './filter-card'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 export const ProductsGrid = async ({
   results,
 }: {
   results: SearchProductsQuery['search']
 }) => {
+  const bcvPrice = await GetBCVPrice()
+
   return (
     <div className="flex flex-col items-start md:flex-row md:px-4">
       <Filters results={results.facetValues} />
@@ -26,13 +29,8 @@ export const ProductsGrid = async ({
           } = product
           const priceValue =
             'value' in priceWithTax
-              ? priceFormatter(priceWithTax.value, currencyCode)
-              : priceWithTax.min === priceWithTax.max
-                ? priceFormatter(priceWithTax.min, currencyCode)
-                : `${priceFormatter(priceWithTax.min, currencyCode)} - ${priceFormatter(
-                    priceWithTax.max,
-                    currencyCode
-                  )}`
+              ? `${priceFormatter(priceWithTax.value, currencyCode)} (${((priceWithTax.value / 100) * bcvPrice).toFixed(2)} Bs)`
+              : `${priceFormatter(priceWithTax.min, currencyCode)} (${((priceWithTax.min / 100) * bcvPrice).toFixed(2)} Bs)`
 
           const formattedProduct = {
             id: productId,

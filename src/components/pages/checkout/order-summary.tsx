@@ -7,9 +7,11 @@ import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { Separator } from '@/components/shared/separator/separator'
 import { debounce } from 'lodash'
+import { SpecialOrderMessage } from '../catalog/details/product-details'
 
 interface OrderSummaryProps {
   isPaymentStep: boolean
+  bcvPrice: number
 }
 
 interface LocalQuantities {
@@ -36,7 +38,10 @@ interface ActiveOrder {
   totalWithTax: number
 }
 
-export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
+export default function OrderSummary({
+  isPaymentStep,
+  bcvPrice,
+}: OrderSummaryProps) {
   const { activeOrder, removeFromCart, setItemQuantityInCart, isLoading } =
     useCart()
 
@@ -204,10 +209,12 @@ export default function OrderSummary({ isPaymentStep }: OrderSummaryProps) {
               {formatCurrency(
                 (activeOrder as ActiveOrder).totalWithTax,
                 (activeOrder as ActiveOrder).currencyCode
-              )}
+              )}{' '}
+              {`${((activeOrder.totalWithTax / 100) * bcvPrice).toFixed(2)} Bs`}
             </span>
           )}
         </div>
+        <SpecialOrderMessage />
       </div>
     </div>
   )

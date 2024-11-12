@@ -12,7 +12,7 @@ import { debounce } from 'lodash'
 import Link from 'next/link'
 import { cn } from '@/libs/utils'
 
-export default function CartModal() {
+export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
   const {
     activeOrder,
     fetchActiveOrder,
@@ -178,7 +178,8 @@ export default function CartModal() {
                     {(activeOrder.totalWithTax / 100).toLocaleString('es-ES', {
                       style: 'currency',
                       currency: activeOrder.currencyCode,
-                    })}
+                    })}{' '}
+                    {`${((activeOrder.totalWithTax / 100) * bcvPrice).toFixed(2)} Bs`}
                   </span>
                 )}
               </div>

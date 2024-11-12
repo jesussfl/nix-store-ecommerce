@@ -59,7 +59,9 @@
   },
   "product_details": {
     "accepted_payment_methods": "Métodos de pago aceptados",
-    "select_quantity": "Selecciona la cantidad"
+    "select_quantity": "Selecciona la cantidad",
+    "special_order_title": "Pedido especial disponible",
+    "special_order_description": "Puede solicitar productos por encargo especial. Pague el 50% como depósito y el 50% restante al recoger el producto cuando llegue."
   },
   "common": {
     "payment_methods": "Métodos de pago",
