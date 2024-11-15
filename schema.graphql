@@ -855,6 +855,7 @@ enum ErrorCode {
   INSUFFICIENT_STOCK_ERROR
   INVALID_CREDENTIALS_ERROR
   MISSING_PASSWORD_ERROR
+  MY_CUSTOM_ERROR_RESULT
   NATIVE_AUTH_STRATEGY_ERROR
   NEGATIVE_QUANTITY_ERROR
   NOT_VERIFIED_ERROR
@@ -1617,6 +1618,7 @@ type Mutation {
   Adds an item to the order. If custom fields are defined on the OrderLine entity, a third argument 'customFields' will be available.
   """
   addItemToOrder(productVariantId: ID!, quantity: Int!): UpdateOrderItemsResult!
+  addPaymentToExistingOrder(metadata: JSON, orderCode: String!, paymentMethodCode: String!): MyCustomMutationResult
   """Add a Payment to the Order"""
   addPaymentToOrder(input: PaymentInput!): AddPaymentToOrderResult!
   """
@@ -1718,6 +1720,13 @@ type Mutation {
   """
   verifyCustomerAccount(password: String, token: String!): VerifyCustomerAccountResult!
 }
+
+type MyCustomErrorResult implements ErrorResult {
+  errorCode: ErrorCode!
+  message: String!
+}
+
+union MyCustomMutationResult = MyCustomErrorResult | Order
 
 input NativeAuthInput {
   password: String!

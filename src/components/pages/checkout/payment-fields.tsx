@@ -172,7 +172,20 @@ export default function PaymentFields() {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={control}
+              name="paymentDetails.totalPaid"
+              rules={{ required: 'El total pagado es requerido' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Total pagado</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Monto" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={control}
               name="paymentDetails.date"

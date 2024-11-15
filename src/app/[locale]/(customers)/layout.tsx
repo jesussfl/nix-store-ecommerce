@@ -89,10 +89,10 @@ export default async function RootLayout({
             <main className="flex-grow pt-16 sm:pt-20 lg:pt-24">
               {children}
             </main>
-            <Toaster />
             <Footer />
           </CartProvider>
         </NextIntlClientProvider>
+        <Toaster />
       </body>
     </html>
   )

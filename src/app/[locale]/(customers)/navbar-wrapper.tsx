@@ -15,7 +15,6 @@ export function NavbarScrollWrapper({ children }: { children: ReactNode }) {
   const [lastScrollY, setLastScrollY] = useState(0)
   const pathname = usePathname()
   const locale = useLocale()
-  console.log(isVisible, 'isVisible')
   useEffect(() => {
     if (shouldHideNavbar(pathname, locale)) {
       setIsVisible(false)

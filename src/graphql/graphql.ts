@@ -911,6 +911,7 @@ export enum ErrorCode {
   INSUFFICIENT_STOCK_ERROR = 'INSUFFICIENT_STOCK_ERROR',
   INVALID_CREDENTIALS_ERROR = 'INVALID_CREDENTIALS_ERROR',
   MISSING_PASSWORD_ERROR = 'MISSING_PASSWORD_ERROR',
+  MY_CUSTOM_ERROR_RESULT = 'MY_CUSTOM_ERROR_RESULT',
   NATIVE_AUTH_STRATEGY_ERROR = 'NATIVE_AUTH_STRATEGY_ERROR',
   NEGATIVE_QUANTITY_ERROR = 'NEGATIVE_QUANTITY_ERROR',
   NOT_VERIFIED_ERROR = 'NOT_VERIFIED_ERROR',
@@ -1674,6 +1675,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Adds an item to the order. If custom fields are defined on the OrderLine entity, a third argument 'customFields' will be available. */
   addItemToOrder: UpdateOrderItemsResult;
+  addPaymentToExistingOrder?: Maybe<MyCustomMutationResult>;
   /** Add a Payment to the Order */
   addPaymentToOrder: AddPaymentToOrderResult;
   /** Adjusts an OrderLine. If custom fields are defined on the OrderLine entity, a third argument 'customFields' of type `OrderLineCustomFieldsInput` will be available. */
@@ -1772,6 +1774,13 @@ export type Mutation = {
 export type MutationAddItemToOrderArgs = {
   productVariantId: Scalars['ID']['input'];
   quantity: Scalars['Int']['input'];
+};
+
+
+export type MutationAddPaymentToExistingOrderArgs = {
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+  orderCode: Scalars['String']['input'];
+  paymentMethodCode: Scalars['String']['input'];
 };
 
 
@@ -1906,6 +1915,14 @@ export type MutationVerifyCustomerAccountArgs = {
   password?: InputMaybe<Scalars['String']['input']>;
   token: Scalars['String']['input'];
 };
+
+export type MyCustomErrorResult = ErrorResult & {
+  __typename?: 'MyCustomErrorResult';
+  errorCode: ErrorCode;
+  message: Scalars['String']['output'];
+};
+
+export type MyCustomMutationResult = MyCustomErrorResult | Order;
 
 export type NativeAuthInput = {
   password: Scalars['String']['input'];
@@ -3528,6 +3545,18 @@ export type AddPaymentToOrderMutation = { __typename?: 'Mutation', addPaymentToO
     & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
   ) | { __typename?: 'OrderPaymentStateError', errorCode: ErrorCode, message: string } | { __typename?: 'OrderStateTransitionError', errorCode: ErrorCode, message: string } | { __typename?: 'PaymentDeclinedError', errorCode: ErrorCode, message: string } | { __typename?: 'PaymentFailedError', errorCode: ErrorCode, message: string } };
 
+export type AddPaymentToExistingOrderMutationVariables = Exact<{
+  orderCode: Scalars['String']['input'];
+  paymentMethodCode: Scalars['String']['input'];
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+}>;
+
+
+export type AddPaymentToExistingOrderMutation = { __typename?: 'Mutation', addPaymentToExistingOrder?: { __typename?: 'MyCustomErrorResult', errorCode: ErrorCode, message: string } | (
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | null };
+
 export type GetProductDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
@@ -4630,6 +4659,94 @@ export const AddPaymentToOrderDocument = new TypedDocumentString(`
     }
   }
 }`) as unknown as TypedDocumentString<AddPaymentToOrderMutation, AddPaymentToOrderMutationVariables>;
+export const AddPaymentToExistingOrderDocument = new TypedDocumentString(`
+    mutation AddPaymentToExistingOrder($orderCode: String!, $paymentMethodCode: String!, $metadata: JSON) {
+  addPaymentToExistingOrder(
+    orderCode: $orderCode
+    paymentMethodCode: $paymentMethodCode
+    metadata: $metadata
+  ) {
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<AddPaymentToExistingOrderMutation, AddPaymentToExistingOrderMutationVariables>;
 export const GetProductDataDocument = new TypedDocumentString(`
     query GetProductData($slug: String!) {
   product(slug: $slug) {

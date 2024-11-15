@@ -22,3 +22,23 @@ export const ADD_PAYMENT_TO_ORDER = graphql(`
     }
   }
 `)
+
+export const ADD_ADDITIONAL_PAYMENT_TO_ORDER = graphql(`
+  mutation AddPaymentToExistingOrder(
+    $orderCode: String!
+    $paymentMethodCode: String!
+    $metadata: JSON
+  ) {
+    addPaymentToExistingOrder(
+      orderCode: $orderCode
+      paymentMethodCode: $paymentMethodCode
+      metadata: $metadata
+    ) {
+      ...ActiveOrder
+      ... on ErrorResult {
+        errorCode
+        message
+      }
+    }
+  }
+`)

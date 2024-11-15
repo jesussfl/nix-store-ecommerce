@@ -14,16 +14,17 @@ import Link from 'next/link'
 import { cn } from '@/libs/utils'
 import { vendureFetch } from '@/libs/vendure'
 import { ADD_PAYMENT_TO_ORDER } from '@/libs/queries/payment'
+import { useToast } from '@/components/shared/toast/use-toast'
+import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
 
 const formSchema = z.object({
-  paymentDetails: z
-    .object({
-      paymentMethod: z.string().optional(),
-      reference: z.string().optional(),
-      phone: z.any().optional(),
-      date: z.any().optional(),
-    })
-    .optional(),
+  paymentDetails: z.object({
+    paymentMethod: z.string().optional(),
+    reference: z.string().optional(),
+    phone: z.any().optional(),
+    date: z.any().optional(),
+    totalPaid: z.any(),
+  }),
 })
 
 type FormSchema = z.infer<typeof formSchema>
@@ -31,6 +32,7 @@ type FormSchema = z.infer<typeof formSchema>
 export default function PaymentForm() {
   const { isLogged, isLoading, activeOrder } = useCart()
   const router = useRouter()
+  const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
   useEffect(() => {
     if (!isLogged && !isLoading) {
@@ -57,21 +59,35 @@ export default function PaymentForm() {
         input: {
           method: 'pago-movil',
           metadata: {
-            reference: 'sarabquinonesv@gmail.com',
+            reference: values.paymentDetails.reference,
+            totalPaid: values.paymentDetails.totalPaid,
           },
         },
       },
     })
 
     if (data?.addPaymentToOrder) {
-      router.replace('/checkout/confirmation/' + activeOrder?.code)
+      const { data, error } = await vendureFetch({
+        query: TRANSITION_ORDER_STATE,
+        variables: {
+          state: 'ValidatingPayment',
+        },
+      })
+
+      console.log(data, error, 'transition')
+      // router.replace('/checkout/confirmation/' + activeOrder?.code)
     }
 
     if (error) {
       console.error(error)
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      })
       return
     }
-    console.log('Payment details:', values.paymentDetails)
+    // console.log('Payment details:', values.paymentDetails)
   }
 
   return (
