@@ -51,7 +51,26 @@ export default function PaymentForm() {
       paymentDetails: {},
     },
   })
+  const backToShipping = async () => {
+    const { data, error } = await vendureFetch({
+      query: TRANSITION_ORDER_STATE,
+      variables: {
+        state: 'AddingItems',
+      },
+    })
 
+    if (!error) {
+      router.push('/checkout')
+    }
+    if (error) {
+      console.error(error)
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      })
+    }
+  }
   const onSubmit = async (values: FormSchema) => {
     const { data, error } = await vendureFetch({
       query: ADD_PAYMENT_TO_ORDER,
@@ -95,12 +114,16 @@ export default function PaymentForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <PaymentFields />
         <div className="flex justify-between">
-          <Link
-            href="/checkout"
-            className={cn(buttonVariants({ variant: 'outline' }))}
+          <Button
+            type="submit"
+            className="ml-auto"
+            variant={'outline'}
+            disabled={form.formState.isSubmitting}
+            onClick={backToShipping}
           >
             Volver a Envío
-          </Link>
+          </Button>
+
           <Button
             type="submit"
             className="ml-auto"

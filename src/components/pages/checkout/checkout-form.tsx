@@ -16,23 +16,10 @@ import {
 import { shippingDetailsSchema } from '@/utils/schemas/shipping'
 import ShippingFields from './shipping-form'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
+import { MobileBottomBar } from '@/app/[locale]/(customers)/checkout/mobile-bottom-bar'
 
 const formSchema = z.object({
-  shippingDetails: shippingDetailsSchema.refine(
-    (data) => {
-      if (data.shippingType === 'national') {
-        return !!data.officeCode && !!data.shippingCompany
-      }
-      if (data.shippingType === 'delivery') {
-        return !!data.location
-      }
-      return true
-    },
-    {
-      message: 'Campos requeridos faltantes para el tipo de envío seleccionado',
-      path: ['shippingType'],
-    }
-  ),
+  shippingDetails: shippingDetailsSchema,
 })
 
 type FormSchema = z.infer<typeof formSchema>
@@ -41,6 +28,7 @@ export default function ShippingForm() {
   const { isLogged, isLoading, activeOrder } = useCart()
   const router = useRouter()
   const isOrderEmpty = activeOrder?.lines.length === 0
+
   useEffect(() => {
     if (!isLogged && !isLoading) {
       router.push('/')
@@ -56,14 +44,14 @@ export default function ShippingForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       shippingDetails: {
-        separateShipping: false,
+        // separateShipping: false,
         shippingType: 'national',
       },
     },
   })
 
   const onSubmit = async (values: FormSchema) => {
-    console.log('values', values)
+    console.log(values)
     const { data: addressData, error: addressError } = await vendureFetch({
       query: SET_ORDER_SHIPPING_ADDRESS_MUTATION,
       variables: {
@@ -71,7 +59,11 @@ export default function ShippingForm() {
           fullName: values.shippingDetails.fullName,
           streetLine1: values.shippingDetails.streetLine1,
           streetLine2: values.shippingDetails.streetLine2,
-          city: values.shippingDetails.location || values.shippingDetails.city,
+          city:
+            values.shippingDetails.shippingType === 'delivery' ||
+            values.shippingDetails.shippingType === 'personal'
+              ? values.shippingDetails.location
+              : values.shippingDetails.city,
           province: values.shippingDetails.state,
           phoneNumber: values.shippingDetails.phoneNumber,
           countryCode: 'VE',
@@ -84,24 +76,12 @@ export default function ShippingForm() {
       return
     }
 
-    const { data: shippingData, error: shippingError } = await vendureFetch({
-      query: SET_SHIPPING_METHOD_MUTATION,
-      variables: {
-        id: '3',
-      },
-    })
-
-    if (shippingError) {
-      console.error('Error setting shipping method:', shippingError)
-      return
-    }
     const { data, error } = await vendureFetch({
       query: TRANSITION_ORDER_STATE,
       variables: {
         state: 'ArrangingPayment',
       },
     })
-
     if (data?.transitionOrderToState) {
       router.push('/checkout/payment')
     }
@@ -118,6 +98,15 @@ export default function ShippingForm() {
         >
           Continuar al Pago
         </Button>
+        <MobileBottomBar bcvPrice={3}>
+          <Button
+            type="submit"
+            className="ml-auto"
+            disabled={form.formState.isSubmitting}
+          >
+            Continuar al Pago
+          </Button>
+        </MobileBottomBar>
       </form>
     </Form>
   )
