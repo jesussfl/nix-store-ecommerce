@@ -50,6 +50,60 @@ export const GET_ACTIVE_CUSTOMER = graphql(`
       firstName
       lastName
       emailAddress
+      orders {
+        items {
+          id
+          code
+          state
+          totalWithTax
+          currencyCode
+          createdAt
+          updatedAt
+          orderPlacedAt
+          type
+          totalWithTax
+          shippingWithTax
+          totalQuantity
+          payments {
+            id
+            method
+            amount
+            state
+            metadata
+            createdAt
+            updatedAt
+            transactionId
+            errorMessage
+          }
+        }
+      }
+    }
+  }
+`)
+
+export const GET_CUSTOMER_ORDERS = graphql(`
+  query GetCustomerOrders {
+    activeCustomer {
+      id
+      orders {
+        items {
+          id
+          code
+          state
+          totalWithTax
+          currencyCode
+
+          createdAt
+        }
+      }
+    }
+  }
+`)
+
+export const LOG_OUT_MUTATION = graphql(`
+  mutation Logout {
+    logout {
+      success
     }
   }
 `)

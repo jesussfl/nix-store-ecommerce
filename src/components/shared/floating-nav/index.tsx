@@ -53,7 +53,7 @@ function NavbarLogo() {
 function NavbarMenu() {
   const menu = [
     { title: 'Catálogo', path: '/catalog' },
-    { title: 'Colecciones', path: '/collections' },
+    // { title: 'Colecciones', path: '/collections' },
   ]
 
   return (
@@ -82,11 +82,14 @@ async function NavbarActions() {
     <div className="flex w-full justify-end gap-2">
       <Search className="hidden md:inline" />
       <CartModal bcvPrice={bcvPrice} />
-      <Button variant="outline" size={'icon'}>
+      <Link
+        href="/account/profile"
+        className={buttonVariants({ variant: 'outline', size: 'icon' })}
+      >
         <RiUser3Line
           className={clsx('h-5 w-5 transition-all ease-in-out hover:scale-110')}
         />
-      </Button>
+      </Link>
       <div className="block flex-none md:hidden">
         <MobileMenu />
       </div>

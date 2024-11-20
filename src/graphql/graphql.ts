@@ -3489,7 +3489,17 @@ export type RequestPasswordResetMutation = { __typename?: 'Mutation', requestPas
 export type GetActiveCustomerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetActiveCustomerQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, title?: string | null, firstName: string, lastName: string, emailAddress: string } | null };
+export type GetActiveCustomerQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, title?: string | null, firstName: string, lastName: string, emailAddress: string, orders: { __typename?: 'OrderList', items: Array<{ __typename?: 'Order', id: string, code: string, state: string, totalWithTax: number, currencyCode: CurrencyCode, createdAt: any, updatedAt: any, orderPlacedAt?: any | null, type: OrderType, shippingWithTax: number, totalQuantity: number, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, metadata?: any | null, createdAt: any, updatedAt: any, transactionId?: string | null, errorMessage?: string | null }> | null }> } } | null };
+
+export type GetCustomerOrdersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCustomerOrdersQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, orders: { __typename?: 'OrderList', items: Array<{ __typename?: 'Order', id: string, code: string, state: string, totalWithTax: number, currencyCode: CurrencyCode, createdAt: any }> } } | null };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'Success', success: boolean } };
 
 export type GetCollectionQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -4294,9 +4304,60 @@ export const GetActiveCustomerDocument = new TypedDocumentString(`
     firstName
     lastName
     emailAddress
+    orders {
+      items {
+        id
+        code
+        state
+        totalWithTax
+        currencyCode
+        createdAt
+        updatedAt
+        orderPlacedAt
+        type
+        totalWithTax
+        shippingWithTax
+        totalQuantity
+        payments {
+          id
+          method
+          amount
+          state
+          metadata
+          createdAt
+          updatedAt
+          transactionId
+          errorMessage
+        }
+      }
+    }
   }
 }
     `) as unknown as TypedDocumentString<GetActiveCustomerQuery, GetActiveCustomerQueryVariables>;
+export const GetCustomerOrdersDocument = new TypedDocumentString(`
+    query GetCustomerOrders {
+  activeCustomer {
+    id
+    orders {
+      items {
+        id
+        code
+        state
+        totalWithTax
+        currencyCode
+        createdAt
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetCustomerOrdersQuery, GetCustomerOrdersQueryVariables>;
+export const LogoutDocument = new TypedDocumentString(`
+    mutation Logout {
+  logout {
+    success
+  }
+}
+    `) as unknown as TypedDocumentString<LogoutMutation, LogoutMutationVariables>;
 export const GetCollectionDocument = new TypedDocumentString(`
     query GetCollection($slug: String!) {
   collection(slug: $slug) {

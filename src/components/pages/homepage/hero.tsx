@@ -27,7 +27,7 @@ const Hero = async () => {
       </div>
       <div>
         <Link
-          href="/dashboard"
+          href="/catalog"
           className={cn(
             buttonVariants({ variant: 'default', size: 'lg' }),
             'w-full sm:w-auto'

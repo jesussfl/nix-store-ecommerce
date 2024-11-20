@@ -6,7 +6,6 @@ import {
 } from '@/components/shared/card/card'
 import ShippingForm from '@/components/pages/checkout/checkout-form'
 import OrderSummary from '@/components/pages/checkout/order-summary'
-import { BackLink } from '@/components/shared/back-link'
 import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 export default async function CheckoutPage() {

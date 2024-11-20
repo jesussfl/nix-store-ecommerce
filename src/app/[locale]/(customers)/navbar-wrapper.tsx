@@ -11,7 +11,6 @@ const shouldHideNavbar = (pathname: string, locale: string) => {
 }
 export function NavbarScrollWrapper({ children }: { children: ReactNode }) {
   const [isVisible, setIsVisible] = useState(true)
-  const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
   const pathname = usePathname()
   const locale = useLocale()

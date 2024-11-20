@@ -3,6 +3,7 @@ import {
   ActiveOrderFragment,
   CreateAddressInput,
   GetActiveCustomerQuery,
+  GetCustomerOrdersQuery,
   SetOrderShippingAddressMutationVariables,
 } from '@/graphql/graphql'
 import {
@@ -12,7 +13,11 @@ import {
   SET_ORDER_SHIPPING_ADDRESS_MUTATION,
   SET_SHIPPING_METHOD_MUTATION,
 } from '@/libs/mutations/order'
-import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
+import {
+  GET_ACTIVE_CUSTOMER,
+  GET_CUSTOMER_ORDERS,
+  LOG_OUT_MUTATION,
+} from '@/libs/queries/account'
 import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
 import { vendureFetch } from '@/libs/vendure'
 import { useState } from 'react'
@@ -25,7 +30,8 @@ const useCartContainer = createContainer(() => {
   const [isLogged, setIsLogged] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-
+  const [customerOrders, setCustomerOrders] =
+    useState<GetCustomerOrdersQuery['activeCustomer']>()
   const open = () => setOpen(true)
   const close = () => setOpen(false)
 
@@ -169,10 +175,38 @@ const useCartContainer = createContainer(() => {
     }
   }
 
+  const getCustomerOrders = async () => {
+    try {
+      const { data } = await vendureFetch({
+        query: GET_CUSTOMER_ORDERS,
+      })
+
+      if (data?.activeCustomer?.orders?.items) {
+        setCustomerOrders(data.activeCustomer)
+      }
+      // return data?.activeCustomer?.orders?.items
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const logOut = async () => {
+    try {
+      const { data } = await vendureFetch({
+        query: LOG_OUT_MUTATION,
+      })
+      return data?.logout
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return {
     isLogged,
     activeOrder,
     cart: activeOrder,
+    customerOrders,
+    getCustomerOrders,
     addToCart,
     setItemQuantityInCart,
     setShippingOrderAddress,
@@ -184,6 +218,7 @@ const useCartContainer = createContainer(() => {
     close,
     isLoading,
     currentCustomer,
+    logOut,
   }
 })
 
