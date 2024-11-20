@@ -3591,7 +3591,7 @@ export type SearchProductsQueryVariables = Exact<{
 }>;
 
 
-export type SearchProductsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', totalItems: number, facetValues: Array<{ __typename?: 'FacetValueResult', count: number, facetValue: { __typename?: 'FacetValue', id: string, name: string, facet: { __typename?: 'Facet', id: string, name: string } } }>, items: Array<{ __typename?: 'SearchResult', productName: string, productId: string, slug: string, collectionIds: Array<string>, productVariantId: string, productVariantName: string, currencyCode: CurrencyCode, productAsset?: { __typename?: 'SearchResultAsset', id: string, preview: string } | null, priceWithTax: { __typename?: 'PriceRange', min: number, max: number } | { __typename?: 'SinglePrice', value: number } }> } };
+export type SearchProductsQuery = { __typename?: 'Query', search: { __typename?: 'SearchResponse', totalItems: number, facetValues: Array<{ __typename?: 'FacetValueResult', count: number, facetValue: { __typename?: 'FacetValue', id: string, name: string, code: string, facet: { __typename?: 'Facet', id: string, name: string, code: string } } }>, items: Array<{ __typename?: 'SearchResult', productName: string, productId: string, slug: string, collectionIds: Array<string>, facetIds: Array<string>, facetValueIds: Array<string>, productVariantId: string, productVariantName: string, currencyCode: CurrencyCode, productAsset?: { __typename?: 'SearchResultAsset', id: string, preview: string } | null, priceWithTax: { __typename?: 'PriceRange', min: number, max: number } | { __typename?: 'SinglePrice', value: number } }> } };
 
 export type GetSearchSuggestionsQueryVariables = Exact<{
   input: SearchInput;
@@ -4900,9 +4900,11 @@ export const SearchProductsDocument = new TypedDocumentString(`
       facetValue {
         id
         name
+        code
         facet {
           id
           name
+          code
         }
       }
     }
@@ -4911,6 +4913,8 @@ export const SearchProductsDocument = new TypedDocumentString(`
       productId
       slug
       collectionIds
+      facetIds
+      facetValueIds
       productAsset {
         id
         preview

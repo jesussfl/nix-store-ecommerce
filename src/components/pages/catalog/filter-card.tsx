@@ -1,4 +1,7 @@
 'use client'
+
+import { useState, useEffect } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Card,
   CardContent,
@@ -14,11 +17,9 @@ import {
 } from '@/components/shared/accordion'
 import { SearchProductsQuery } from '@/graphql/graphql'
 import { cn } from '@/libs/utils'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/shared/sheet'
 import { Button } from '@/components/shared/button'
 import { FilterIcon, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
 import SortBy from './sort-by'
 
 export const Filters = ({
@@ -31,55 +32,58 @@ export const Filters = ({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
-    {}
-  )
+  const [activeFilters, setActiveFilters] = useState<
+    Record<string, { id: string; name: string }[]>
+  >({})
 
   useEffect(() => {
-    const newActiveFilters: Record<string, string[]> = {}
+    const newActiveFilters: Record<string, { id: string; name: string }[]> = {}
     searchParams.forEach((value, key) => {
-      if (key !== 'page') {
-        newActiveFilters[key] = value.split(',')
+      if (key !== 'page' && key !== 'sort' && key !== 'q') {
+        newActiveFilters[key] = value.split(',').map((id) => {
+          const facet = results.find((f) => f.facetValue.id === id)
+          return { id, name: facet ? facet.facetValue.name : id }
+        })
       }
     })
     setActiveFilters(newActiveFilters)
-  }, [searchParams])
+  }, [searchParams, results])
 
-  const updateUrlParams = (facetKey: string, facetValue: string) => {
+  const updateUrlParams = (
+    facetKey: string,
+    facetId: string,
+    facetName: string
+  ) => {
     const currentParams = new URLSearchParams(searchParams.toString())
     const existingFacet = currentParams.get(facetKey)
 
     if (existingFacet) {
       const facetValues = existingFacet.split(',')
-      if (facetValues.includes(facetValue)) {
-        const updatedFacetValues = facetValues.filter(
-          (val) => val !== facetValue
-        )
+      if (facetValues.includes(facetId)) {
+        const updatedFacetValues = facetValues.filter((val) => val !== facetId)
         if (updatedFacetValues.length === 0) {
           currentParams.delete(facetKey)
         } else {
           currentParams.set(facetKey, updatedFacetValues.join(','))
         }
       } else {
-        currentParams.set(facetKey, [...facetValues, facetValue].join(','))
+        currentParams.set(facetKey, [...facetValues, facetId].join(','))
       }
     } else {
-      currentParams.set(facetKey, facetValue)
+      currentParams.set(facetKey, facetId)
     }
 
-    // Reset page to 1 when changing filters
     currentParams.set('page', '1')
-
     router.push(`${pathname}?${currentParams.toString()}`)
   }
 
-  const removeFilter = (facetKey: string, facetValue: string) => {
+  const removeFilter = (facetKey: string, facetId: string) => {
     const currentParams = new URLSearchParams(searchParams.toString())
     const existingFacet = currentParams.get(facetKey)
 
     if (existingFacet) {
       const facetValues = existingFacet.split(',')
-      const updatedFacetValues = facetValues.filter((val) => val !== facetValue)
+      const updatedFacetValues = facetValues.filter((val) => val !== facetId)
       if (updatedFacetValues.length === 0) {
         currentParams.delete(facetKey)
       } else {
@@ -87,14 +91,11 @@ export const Filters = ({
       }
     }
 
-    // Reset page to 1 when removing filters
     currentParams.set('page', '1')
-
     router.push(`${pathname}?${currentParams.toString()}`)
   }
 
   const clearAllFilters = () => {
-    // Reset to page 1 and remove all filters
     router.push(`${pathname}?page=1`)
   }
 
@@ -114,18 +115,18 @@ export const Filters = ({
     <>
       {Object.keys(activeFilters).length > 0 && (
         <div className="mb-4">
-          <h3 className="mb-2 text-sm font-semibold">Active Filters:</h3>
+          <h3 className="mb-2 text-sm font-semibold">Filtros activos:</h3>
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters).map(([key, values]) =>
-              values.map((value) => (
+              values.map(({ id, name }) => (
                 <Button
-                  key={`${key}-${value}`}
+                  key={`${key}-${id}`}
                   variant="secondary"
                   size="sm"
-                  onClick={() => removeFilter(key, value)}
+                  onClick={() => removeFilter(key, id)}
                   className="flex items-center gap-1"
                 >
-                  {value}
+                  {name}
                   <X className="h-3 w-3" />
                 </Button>
               ))
@@ -137,7 +138,7 @@ export const Filters = ({
             onClick={clearAllFilters}
             className="mt-2"
           >
-            Clear All Filters
+            Limpiar todos los filtros
           </Button>
         </div>
       )}
@@ -156,13 +157,14 @@ export const Filters = ({
                     className="flex items-center gap-2 py-1"
                   >
                     <Checkbox
-                      checked={activeFilters[f.facetValue.facet.name]?.includes(
-                        f.facetValue.id
+                      checked={activeFilters[f.facetValue.facet.name]?.some(
+                        (filter) => filter.id === f.facetValue.id
                       )}
                       onClick={() =>
                         updateUrlParams(
                           f.facetValue.facet.name,
-                          f.facetValue.id
+                          f.facetValue.id,
+                          f.facetValue.name
                         )
                       }
                     />
@@ -176,8 +178,6 @@ export const Filters = ({
           ))}
         </Accordion>
         <SortBy />
-        {/* <div className="mb-4 mr-2 flex justify-end md:mr-4">
-        </div> */}
       </FilterCard>
 
       {children}

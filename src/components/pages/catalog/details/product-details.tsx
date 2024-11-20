@@ -64,7 +64,16 @@ export default function ProductDetails({
   const optionGroups = product?.optionGroups || []
   const variants = product?.variants || []
   const currentVariant = variants.find((v) => v.id === initialVariantId) || null
-  const facets = product?.facetValues.map((facet) => facet.name) || []
+  const specialBadges = [
+    'disponibilidad-inmediata',
+    'por-encargo',
+    'personalizado',
+  ]
+
+  const facets =
+    product?.facetValues.filter((facet) =>
+      specialBadges.includes(facet.code)
+    ) || []
 
   // Fetch the active order on mount
   useEffect(() => {
@@ -160,7 +169,7 @@ export default function ProductDetails({
 
   return (
     <div className="space-y-10 rounded-lg md:border md:p-6 lg:sticky lg:top-32 lg:w-[450px] lg:self-start">
-      <ProductBadges facets={facets} />
+      <ProductBadges facets={facets.map((f) => f.name)} />
       <ProductHeading
         productName={product.name}
         currentVariant={currentVariant}

@@ -105,9 +105,11 @@ export const SEARCH_PRODUCTS = graphql(`
         facetValue {
           id
           name
+          code
           facet {
             id
             name
+            code
           }
         }
       }
@@ -116,6 +118,8 @@ export const SEARCH_PRODUCTS = graphql(`
         productId
         slug
         collectionIds
+        facetIds
+        facetValueIds
         productAsset {
           id
           preview

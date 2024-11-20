@@ -20,6 +20,29 @@ export const ProductsGrid = async ({
 
       <ProductGrid>
         {results.items.map((product) => {
+          const specialBadges = [
+            'disponibilidad-inmediata',
+            'por-encargo',
+            'personalizado',
+          ]
+          const currentFacetValueIds = product.facetValueIds
+
+          const facetValueNames = results.facetValues
+            .filter((facet) =>
+              currentFacetValueIds.includes(facet.facetValue.id)
+            )
+            .map((facet) => {
+              return {
+                name: facet.facetValue.name,
+                code: facet.facetValue.code,
+              }
+            })
+
+          const facets =
+            facetValueNames.filter((facet) =>
+              specialBadges.includes(facet.code)
+            ) || []
+
           const {
             productId,
             productName,
@@ -38,7 +61,7 @@ export const ProductsGrid = async ({
             image: productAsset?.preview,
             priceInUSD: priceValue,
             lastPriceInUSD: 0,
-            type: 'Disponibilidad inmediata',
+            type: facets[0]?.name || 'Por encargo',
             slug: product.slug,
             variantId: product.productVariantId,
           }
