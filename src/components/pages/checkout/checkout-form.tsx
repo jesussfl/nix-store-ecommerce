@@ -17,6 +17,7 @@ import { shippingDetailsSchema } from '@/utils/schemas/shipping'
 import ShippingFields from './shipping-form'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
 import { MobileBottomBar } from '@/app/[locale]/(customers)/checkout/mobile-bottom-bar'
+import { useToast } from '@/components/shared/toast/use-toast'
 
 const formSchema = z.object({
   shippingDetails: shippingDetailsSchema,
@@ -27,6 +28,7 @@ type FormSchema = z.infer<typeof formSchema>
 export default function ShippingForm() {
   const { isLogged, isLoading, activeOrder } = useCart()
   const router = useRouter()
+  const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
 
   useEffect(() => {
@@ -51,7 +53,6 @@ export default function ShippingForm() {
   })
 
   const onSubmit = async (values: FormSchema) => {
-    console.log(values)
     const { data: addressData, error: addressError } = await vendureFetch({
       query: SET_ORDER_SHIPPING_ADDRESS_MUTATION,
       variables: {
@@ -71,8 +72,15 @@ export default function ShippingForm() {
       },
     })
 
-    if (addressError) {
+    if (addressError || !addressData?.setOrderShippingAddress) {
       console.error('Error setting shipping address:', addressError)
+      toast({
+        title: 'Error',
+        description:
+          addressError +
+          ' Parece que hubo un error en la dirección de envío. Inténtalo de nuevo.',
+        variant: 'destructive',
+      })
       return
     }
 
@@ -82,8 +90,17 @@ export default function ShippingForm() {
         state: 'ArrangingPayment',
       },
     })
-    if (data?.transitionOrderToState) {
+    if (data?.transitionOrderToState && !error) {
       router.push('/checkout/payment')
+    }
+
+    if (error) {
+      console.error(error)
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      })
     }
   }
 

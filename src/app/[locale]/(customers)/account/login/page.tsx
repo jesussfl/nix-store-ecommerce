@@ -2,10 +2,32 @@ import Image from 'next/image'
 import AuthForm from './auth-form'
 import H1 from '@/components/shared/headings'
 import Link from 'next/link'
+import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
+import { redirect } from 'next/navigation'
+import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
 
-export default function AuthPage() {
+export default async function AuthPage({
+  searchParams,
+}: {
+  searchParams: {
+    callback?: string
+  }
+}) {
+  const { data } = await vendureFetchSSR({
+    query: GET_ACTIVE_CUSTOMER,
+  })
+
+  if (data?.activeCustomer) {
+    if (searchParams.callback) {
+      redirect(searchParams.callback)
+    }
+
+    if (!searchParams.callback) {
+      redirect('/')
+    }
+  }
   return (
-    <div className="w-full">
+    <div className="mt-24 w-full">
       <div className="sm:mx-auto sm:w-full sm:max-w-lg">
         <Link href="/" className="flex items-center">
           <Image
