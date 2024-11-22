@@ -28,6 +28,7 @@ import {
   resetPasswordSchema,
 } from '@/utils/schemas/account'
 import { Loader2 } from 'lucide-react'
+import { useCart } from '@/components/cart/cart-context'
 
 export default function AuthForm() {
   const searchParams = useSearchParams()
@@ -36,6 +37,7 @@ export default function AuthForm() {
   )
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const { isLoading, isLogged, fetchActiveOrder, addToCart } = useCart()
 
   const loginForm = useForm<LoginInputs>({
     resolver: zodResolver(loginSchema),
@@ -150,8 +152,15 @@ export default function AuthForm() {
       )
     }
   }
-  const handleRedirect = () => {
+  const handleRedirect = async () => {
     const callbackUrl = searchParams.get('callback')
+    const variantId = searchParams.get('variant')
+    const quantity = searchParams.get('quantity')
+
+    if (variantId && quantity) {
+      await addToCart(variantId, Number(quantity))
+    }
+
     if (callbackUrl) {
       window.location.href = callbackUrl
       // router.push(callbackUrl)

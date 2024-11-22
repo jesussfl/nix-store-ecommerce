@@ -388,7 +388,11 @@ const PurchaseActions = ({
   const t = useTranslations('common')
   const handleCheckout = async () => {
     if (!isLogged && !isLoading) {
-      router.push('/account/login?callback=/checkout')
+      router.push(
+        '/account/login?callback=/checkout&variant=' +
+          currentVariant.id +
+          `&quantity=${quantity}`
+      )
       return
     }
     await addToCart(currentVariant.id, quantity)
