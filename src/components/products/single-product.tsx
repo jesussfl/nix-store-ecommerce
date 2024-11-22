@@ -13,6 +13,7 @@ export type ProductCardInfo = {
   type: string
   slug: string
   variantId: string
+  priceInBs: string
 }
 
 type Props = {
@@ -41,10 +42,10 @@ export const SingleProduct = ({ product }: Props) => {
               <p className="text-sm font-medium text-primary md:text-base">
                 {product.priceInUSD}
               </p>
-              {product.lastPriceInUSD > 0 && (
-                <p className="text-xs font-medium text-gray-400 line-through md:text-sm">
-                  ${product.lastPriceInUSD}
-                </p>
+              {product.priceInBs && (
+                <Badge variant="success" className="bg-slate-600 text-xs">
+                  {product.priceInBs}
+                </Badge>
               )}
             </div>
           </div>

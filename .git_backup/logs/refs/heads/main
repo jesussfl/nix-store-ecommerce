@@ -1,0 +1,57 @@
+0000000000000000000000000000000000000000 8372a905b50457be378bad19c23a44a907a9b337 Jesus Lopez <jesussflr@gmail.com> 1726770639 -0400	commit (initial): First commit
+8372a905b50457be378bad19c23a44a907a9b337 e0c7445756a36ded19768ebc27222e9e1c5e89d2 Jesus Lopez <jesussflr@gmail.com> 1726771916 -0400	rebase (finish): refs/heads/main onto ed02050ad461a7293c601e2471482e731e4e4347
+e0c7445756a36ded19768ebc27222e9e1c5e89d2 61868dc2e6bddddf410b60b7788fd5502b95ae1f Jesus Lopez <jesussflr@gmail.com> 1726802228 -0400	commit: setup basic project architecture
+61868dc2e6bddddf410b60b7788fd5502b95ae1f af60460caa3bdbd6cdc54d3c65ba8a72981692d3 Jesus Lopez <jesussflr@gmail.com> 1726802720 -0400	commit: delete empty pages in app directory to solve build errors
+af60460caa3bdbd6cdc54d3c65ba8a72981692d3 81d20588dcf8217cb1ca555a220e4e23f79cce27 Jesus Lopez <jesussflr@gmail.com> 1726865051 -0400	commit: migrate some files from nextjs storefront vendure to fetch collections and products (This is for guidance only)
+81d20588dcf8217cb1ca555a220e4e23f79cce27 d3d591c7af35984b8c5e9715c77911d192c2c541 Jesus Lopez <jesussflr@gmail.com> 1726872646 -0400	commit: feat: add new styles to Tailwind configurations
+d3d591c7af35984b8c5e9715c77911d192c2c541 a513711d46302f14bd644d457c819d3d47b33cfe Jesus Lopez <jesussflr@gmail.com> 1726883537 -0400	commit: feat: add new header & footer components
+a513711d46302f14bd644d457c819d3d47b33cfe 92df66f92fbc7d983b705e18f482408d9079c73f Jesus Lopez <jesussflr@gmail.com> 1726884855 -0400	commit: fix: solve bug that crash the homepage due to i18n routing
+92df66f92fbc7d983b705e18f482408d9079c73f 682c26901040373c482c5f888bac0ce54e5ae6a5 Jesus Lopez <jesussflr@gmail.com> 1726885051 -0400	commit: feat: disable products fetching for production purposes
+682c26901040373c482c5f888bac0ce54e5ae6a5 a13057fb5dbf0432a1f213b65b8dc273a8ec28e0 Jesus Lopez <jesussflr@gmail.com> 1726967285 -0400	commit: feat: add metadata & favicon of website in addition to the i18n minor improvements
+a13057fb5dbf0432a1f213b65b8dc273a8ec28e0 3e91d454e814e87416a6ef6afa945e48e3279d63 Jesus Lopez <jesussflr@gmail.com> 1726967556 -0400	commit: add global styles
+3e91d454e814e87416a6ef6afa945e48e3279d63 9990b35c9878d694ec8b6120a8a6bf7db738fa18 Jesus Lopez <jesussflr@gmail.com> 1727062033 -0400	commit: feat: Implement product cards and carousel sections in homepage
+9990b35c9878d694ec8b6120a8a6bf7db738fa18 efdc32fd23b6054dcd6576a8e947405bc7ed83cf Jesus Lopez <jesussflr@gmail.com> 1727065683 -0400	commit: fix: improve some responsive problems with product cards and carousels
+efdc32fd23b6054dcd6576a8e947405bc7ed83cf 663b9a11533c6d72deb6b0470f4efadcb30907e5 Jesus Lopez <jesussflr@gmail.com> 1727097940 -0400	commit: feat: implement floating navbar and cart modal
+663b9a11533c6d72deb6b0470f4efadcb30907e5 ce0642fdc374e4243c5cd0c98a2d575427f1c3d0 Jesus Lopez <jesussflr@gmail.com> 1727113229 -0400	commit: feat: implement we offer section, slideshow and improve products showcase
+ce0642fdc374e4243c5cd0c98a2d575427f1c3d0 44b387f03fb67a0343d25b7b47faafa2e510abff Jesus Lopez <jesussflr@gmail.com> 1727178932 -0400	commit: feat: Implement faqs section, brands section and improve responsive design in general
+44b387f03fb67a0343d25b7b47faafa2e510abff 975d9f205b563b9e7f0dc7f84637a3dbb890fdff Jesus Lopez <jesussflr@gmail.com> 1727179450 -0400	commit: fix: switch brands section with customized products section
+975d9f205b563b9e7f0dc7f84637a3dbb890fdff 18a14a6d0e397dc6c22ce5b6336c850235c562a7 Jesus Lopez <jesussflr@gmail.com> 1727181098 -0400	commit: feat: implement collections and metrics section to homepage
+18a14a6d0e397dc6c22ce5b6336c850235c562a7 cb805c5c65c678f7415433caec48c3b38960b218 Jesus Lopez <jesussflr@gmail.com> 1727230738 -0400	commit: feat: implement a section with marquee animation and improve i18n
+cb805c5c65c678f7415433caec48c3b38960b218 1f10cf5917a2e7e185bdab575b45cdd0aabf1df4 Jesus Lopez <jesussflr@gmail.com> 1727271217 -0400	commit: feat: add catalog initial code for catalog page
+1f10cf5917a2e7e185bdab575b45cdd0aabf1df4 3459dfbca9db21d3dbce4baeca60f652c45ea080 Jesus Lopez <jesussflr@gmail.com> 1727311334 -0400	pull --tags origin main: Fast-forward
+3459dfbca9db21d3dbce4baeca60f652c45ea080 da23515d95d3c8206bb27b64b34c04a084203bc2 Jesus Lopez <jesussflr@gmail.com> 1727472778 -0400	pull --tags origin main: Fast-forward
+da23515d95d3c8206bb27b64b34c04a084203bc2 909ae4f3a43c83add6b378d9c86469a71393979c Jesus Lopez <jesussflr@gmail.com> 1727473370 -0400	commit: style: improve catalog layout for responsive
+909ae4f3a43c83add6b378d9c86469a71393979c 691cd55c1eca76b963ecb6ed24af72ad8f7fcc48 Jesus Lopez <jesussflr@gmail.com> 1727481884 -0400	commit: fix: solve async await error on a client component
+691cd55c1eca76b963ecb6ed24af72ad8f7fcc48 f7e50b776ec368a2b26f53e4edc788a715d939a3 Jesus Lopez <jesussflr@gmail.com> 1728050439 -0400	pull --tags origin main: Fast-forward
+f7e50b776ec368a2b26f53e4edc788a715d939a3 f5c36b6d4bd2241d19384fcf098b541b4aac8797 Jesus Lopez <jesussflr@gmail.com> 1728050562 -0400	commit: change locale to en by default in vendure fetch
+f5c36b6d4bd2241d19384fcf098b541b4aac8797 5c4a6f0c092f0d05c8613dc54ab7d42dfc8cda8f Jesus Lopez <jesussflr@gmail.com> 1728050976 -0400	commit: delete default language and channel from vendure fetch
+5c4a6f0c092f0d05c8613dc54ab7d42dfc8cda8f 1be86f3020ecefe74862cbc1387c388a8d1f9c97 Jesus Lopez <jesussflr@gmail.com> 1728356828 -0400	commit: feat: implement sort by and pagination system for catalog
+1be86f3020ecefe74862cbc1387c388a8d1f9c97 1a65991f0b0e3e433a6db4a446f231a8c3057271 Jesus Lopez <jesussflr@gmail.com> 1728614943 -0400	commit: partial-feat: Impelement new product details page and vendure query for products
+1a65991f0b0e3e433a6db4a446f231a8c3057271 a94884bef760e10dd1a282d913c6ce842ee37f79 Jesus Lopez <jesussflr@gmail.com> 1728952859 -0400	commit: feat: translate details page routing
+a94884bef760e10dd1a282d913c6ce842ee37f79 09b123c165e4a749c8c07bb68c6e052ace9f9c70 Jesus Lopez <jesussflr@gmail.com> 1728960979 -0400	commit: feat: add options to product details
+09b123c165e4a749c8c07bb68c6e052ace9f9c70 8c0695cc17f65025db06ec9f13fd6c57d81c4014 Jesus Lopez <jesussflr@gmail.com> 1729131786 -0400	commit: feat: Improve product details UI and remove async in HEADINGS components to solve a bug that cause a hard refresh
+8c0695cc17f65025db06ec9f13fd6c57d81c4014 b752e5db9a5ff90d605bdc7741f091e394e22693 Jesus Lopez <jesussflr@gmail.com> 1729212499 -0400	commit: feat: update ui of product page
+b752e5db9a5ff90d605bdc7741f091e394e22693 f921c3f929864480349b2809f6d29e3c5501c94d Jesus Lopez <jesussflr@gmail.com> 1729266309 -0400	commit: feat: change variable for next_public and implement basic auth flow
+f921c3f929864480349b2809f6d29e3c5501c94d 06995b6c25414e057fc6f0e7791cfde85ad05803 Jesus Lopez <jesussflr@gmail.com> 1729564675 -0400	commit: feat: implement new cart logic with some type errors in cart context
+06995b6c25414e057fc6f0e7791cfde85ad05803 7604350367a8e194a17ca69c59d182723e727209 Jesus Lopez <jesussflr@gmail.com> 1729645764 -0400	commit: fix: fix bug where products have different variant ids
+7604350367a8e194a17ca69c59d182723e727209 ef862252cf333e73da25f13d6bd6d2d1a064aad6 Jesus Lopez <jesussflr@gmail.com> 1729733655 -0400	commit: feat: Minor cart improvements
+ef862252cf333e73da25f13d6bd6d2d1a064aad6 f59e5a0f65435408153884b840a14955d75c7299 Jesus Lopez <jesussflr@gmail.com> 1729820892 -0400	commit: feat: implement translations, improved gallery for product details page and a loader state for that page too
+f59e5a0f65435408153884b840a14955d75c7299 40da17e881b55fb692702e1c3bce389b9998a52f Jesus Lopez <jesussflr@gmail.com> 1729824542 -0400	commit: feat: implement new autocomplete popover for search input
+40da17e881b55fb692702e1c3bce389b9998a52f 66b725c6ed5f4e7f1aafe148f1c9f9548faf7181 Jesus Lopez <jesussflr@gmail.com> 1730168362 -0400	commit: feat: implement carousel logic in homepage
+66b725c6ed5f4e7f1aafe148f1c9f9548faf7181 60642449a93ff546a463ef96ceadb45a58986cc0 Jesus Lopez <jesussflr@gmail.com> 1730422773 -0400	commit: style: Improve responsiveness in homepage
+60642449a93ff546a463ef96ceadb45a58986cc0 573a64d83152316692a12fbfc100d1086e5cfc60 Jesus Lopez <jesussflr@gmail.com> 1730424177 -0400	commit: feat: implement some improvements in catalog and collections pages
+573a64d83152316692a12fbfc100d1086e5cfc60 b906a4cdb0b3ef1757436d6b7c22ef94fd9b7a5e Jesus Lopez <jesussflr@gmail.com> 1730986219 -0400	commit: feat: implement checkout
+b906a4cdb0b3ef1757436d6b7c22ef94fd9b7a5e e5a7ccb3963f5123d5b6f24509138cd4b9ed375a Jesus Lopez <jesussflr@gmail.com> 1730988121 -0400	commit: update codegen for production
+e5a7ccb3963f5123d5b6f24509138cd4b9ed375a 8f42e6100a50f64d9c3fa47d3b449513f7333884 Jesus Lopez <jesussflr@gmail.com> 1731003243 -0400	commit: feat: add new remote pattern
+8f42e6100a50f64d9c3fa47d3b449513f7333884 391e42e08871dab2a811a43af49b2e4342251659 Jesus Lopez <jesussflr@gmail.com> 1731033436 -0400	commit: fix: ui responsiveness
+391e42e08871dab2a811a43af49b2e4342251659 a149c272643827adcf90c0b29f490ee62e858ecd Jesus Lopez <jesussflr@gmail.com> 1731033825 -0400	commit: feat: implement loader to checkout page
+a149c272643827adcf90c0b29f490ee62e858ecd 911962da69177084061fbaccb251229c5b3e4001 Jesus Lopez <jesussflr@gmail.com> 1731123598 -0400	commit: feat: Implement new ui improvements and confirmation page after payment process
+911962da69177084061fbaccb251229c5b3e4001 511f0424ef1ae800ef0af79aa5b6673ee61c0c89 Jesus Lopez <jesussflr@gmail.com> 1731377928 -0400	commit: feat: UI Improvements and bcv price implementation
+511f0424ef1ae800ef0af79aa5b6673ee61c0c89 f448a7a6ee9f130750e7a06b16f803e494f65990 Jesus Lopez <jesussflr@gmail.com> 1731377948 -0400	commit: codegen update
+f448a7a6ee9f130750e7a06b16f803e494f65990 26c180855113f00352e7078e05403d9d83b6b020 Jesus Lopez <jesussflr@gmail.com> 1731629943 -0400	commit: feat: Implement mutation to add additional payment to existing order
+26c180855113f00352e7078e05403d9d83b6b020 dffe1c5881122507dbad0b60b765b2973c588e3e Jesus Lopez <jesussflr@gmail.com> 1731639680 -0400	commit: feat: Improve UI for ordering in mobile devices
+dffe1c5881122507dbad0b60b765b2973c588e3e 1f022ef1c50cca8254aee6537a1ecc7154b67f84 Jesus Lopez <jesussflr@gmail.com> 1731640090 -0400	commit: fix: update codegen
+1f022ef1c50cca8254aee6537a1ecc7154b67f84 344141599ce19434c0f2d8be8200eac20946ce50 Jesus Lopez <jesussflr@gmail.com> 1732064970 -0400	commit: feat: Implement profile page
+344141599ce19434c0f2d8be8200eac20946ce50 f9d36a971f71b69486027f8f5af23b9d2e9530dc Jesus Lopez <jesussflr@gmail.com> 1732067367 -0400	commit: fix: improve filters with names
+f9d36a971f71b69486027f8f5af23b9d2e9530dc 1164ec6bf5f2b64f4ebe7e4a9564741faed22012 Jesus Lopez <jesussflr@gmail.com> 1732067433 -0400	commit: feat: implement profile and improve filters
+1164ec6bf5f2b64f4ebe7e4a9564741faed22012 eca7a90cbafa35692b7bf3beb8cc96963d3945dc Jesus Lopez <jesussflr@gmail.com> 1732236212 -0400	commit: feat: Improve UI for price in product cards

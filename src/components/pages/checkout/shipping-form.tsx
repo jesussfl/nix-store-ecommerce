@@ -38,7 +38,7 @@ export default function ShippingFields() {
     option: 'national' | 'delivery' | 'personal'
   ) => {
     if (option === 'delivery') {
-      const shippingMethodResult = await setShippingMethod('4')
+      const shippingMethodResult = await setShippingMethod('3')
 
       setValue('shippingDetails.state', 'aragua')
     } else if (option === 'personal') {
@@ -55,7 +55,7 @@ export default function ShippingFields() {
         'shippingDetails.city',
       ])
     } else {
-      const shippingMethodResult = await setShippingMethod('3')
+      const shippingMethodResult = await setShippingMethod('4')
       unregister([
         'shippingDetails.location',
         'shippingDetails.state',

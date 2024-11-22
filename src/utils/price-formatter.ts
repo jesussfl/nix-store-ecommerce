@@ -15,6 +15,10 @@ export function priceFormatter(price: number, currencyCode: CurrencyCode) {
     [CurrencyCode.CZK]: {
       country: 'cs-CZ',
     },
+    //VENEZUELA
+    [CurrencyCode.VES]: {
+      country: 'es-VE',
+    },
   }
   const c = translations[currencyCode]
   if (!c) {

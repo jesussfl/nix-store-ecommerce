@@ -8,23 +8,16 @@ import { Form } from '@/components/shared/form'
 import PaymentFields from './payment-fields'
 import { useCart } from '@/components/cart/cart-context'
 import { useRouter } from 'next/navigation'
-import { Button, buttonVariants } from '@/components/shared/button'
+import { Button } from '@/components/shared/button'
 
-import Link from 'next/link'
-import { cn } from '@/libs/utils'
 import { vendureFetch } from '@/libs/vendure'
 import { ADD_PAYMENT_TO_ORDER } from '@/libs/queries/payment'
 import { useToast } from '@/components/shared/toast/use-toast'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
+import { paymentDetailsSchema } from '@/utils/schemas/payment'
 
 const formSchema = z.object({
-  paymentDetails: z.object({
-    paymentMethod: z.string().optional(),
-    reference: z.string().optional(),
-    phone: z.any().optional(),
-    date: z.any().optional(),
-    totalPaid: z.any(),
-  }),
+  paymentDetails: paymentDetailsSchema,
 })
 
 type FormSchema = z.infer<typeof formSchema>
@@ -48,7 +41,9 @@ export default function PaymentForm() {
     mode: 'all',
     resolver: zodResolver(formSchema),
     defaultValues: {
-      paymentDetails: {},
+      paymentDetails: {
+        paymentMethod: 'pago-movil',
+      },
     },
   })
   const backToShipping = async () => {
@@ -76,15 +71,27 @@ export default function PaymentForm() {
       query: ADD_PAYMENT_TO_ORDER,
       variables: {
         input: {
-          method: 'pago-movil',
-          metadata: {
-            reference: values.paymentDetails.reference,
-            totalPaid: values.paymentDetails.totalPaid,
-          },
+          method: values.paymentDetails.paymentMethod,
+
+          metadata:
+            values.paymentDetails.paymentMethod === 'pago-movil' ||
+            values.paymentDetails.paymentMethod === 'transferencia'
+              ? {
+                  referencia: values.paymentDetails.reference,
+                  monto: Number(values.paymentDetails.totalPaid) * 100,
+                  'fecha de pago': values.paymentDetails.date,
+                  telefono: values.paymentDetails.phone,
+                }
+              : {
+                  monto: values.paymentDetails.totalPaid,
+                  'fecha de pago': values.paymentDetails.date,
+                  emitterEmail: values.paymentDetails.emitterEmail,
+                  telefono: values.paymentDetails.phone,
+                },
         },
       },
     })
-
+    console.log(data, error, 'payment')
     if (data?.addPaymentToOrder) {
       const { data, error } = await vendureFetch({
         query: TRANSITION_ORDER_STATE,
@@ -116,7 +123,6 @@ export default function PaymentForm() {
         <div className="flex justify-between">
           <Button
             type="submit"
-            className="ml-auto"
             variant={'outline'}
             disabled={form.formState.isSubmitting}
             onClick={backToShipping}
@@ -124,11 +130,7 @@ export default function PaymentForm() {
             Volver a Envío
           </Button>
 
-          <Button
-            type="submit"
-            className="ml-auto"
-            disabled={form.formState.isSubmitting}
-          >
+          <Button type="submit" disabled={form.formState.isSubmitting}>
             Finalizar Pedido
           </Button>
         </div>

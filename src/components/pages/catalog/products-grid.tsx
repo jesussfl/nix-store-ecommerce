@@ -1,7 +1,7 @@
 import { SingleProduct } from '@/components/products/single-product'
 import { Button } from '@/components/shared/button'
 import { H2 } from '@/components/shared/headings'
-import { SearchProductsQuery } from '@/graphql/graphql'
+import { CurrencyCode, SearchProductsQuery } from '@/graphql/graphql'
 import { priceFormatter } from '@/utils/price-formatter'
 import { RiEmotionSadLine, RiWhatsappLine } from '@remixicon/react'
 import { Filters } from './filter-card'
@@ -52,9 +52,13 @@ export const ProductsGrid = async ({
           } = product
           const priceValue =
             'value' in priceWithTax
-              ? `${priceFormatter(priceWithTax.value, currencyCode)} (${((priceWithTax.value / 100) * bcvPrice).toFixed(2)} Bs)`
-              : `${priceFormatter(priceWithTax.min, currencyCode)} (${((priceWithTax.min / 100) * bcvPrice).toFixed(2)} Bs)`
+              ? `${priceFormatter(priceWithTax.value, currencyCode)}`
+              : `Desde ${priceFormatter(priceWithTax.min, currencyCode)}`
 
+          const priceValueInBs =
+            'value' in priceWithTax
+              ? priceFormatter(priceWithTax.value * bcvPrice, CurrencyCode.VES)
+              : priceFormatter(priceWithTax.min * bcvPrice, CurrencyCode.VES)
           const formattedProduct = {
             id: productId,
             name: productName,
@@ -64,6 +68,7 @@ export const ProductsGrid = async ({
             type: facets[0]?.name || 'Por encargo',
             slug: product.slug,
             variantId: product.productVariantId,
+            priceInBs: priceValueInBs,
           }
           return <SingleProduct key={productId} product={formattedProduct} />
         })}

@@ -24,7 +24,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shared/tabs/tabs'
-
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 interface PaymentMethod {
   name: string
   info: string | string[]
@@ -39,6 +40,11 @@ type PaymentMethodKey =
   | 'transferencia'
 
 const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
+  'pago-movil': {
+    name: 'Pago Móvil',
+    info: ['📱 0412-376-1604', '🪪 V - 28456627', '🏦 0172 | Bancamiga'],
+    icon: Smartphone,
+  },
   binance: {
     name: 'Binance',
     info: 'sarabquinonesv@gmail.com',
@@ -60,11 +66,7 @@ const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
     ],
     icon: CreditCard,
   },
-  'pago-movil': {
-    name: 'Pago Móvil',
-    info: ['📱 04123761604', '🪪 V - 28456627', '🏦 0172 | Bancamiga'],
-    icon: Smartphone,
-  },
+
   transferencia: {
     name: 'Transferencia Bancamiga',
     info: [
@@ -78,9 +80,9 @@ const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
 
 export default function PaymentFields() {
   const { control, watch } = useFormContext()
-  const selectedMethod = watch('paymentDetails.paymentMethod') as
-    | PaymentMethodKey
-    | undefined
+  const selectedMethod =
+    (watch('paymentDetails.paymentMethod') as PaymentMethodKey | undefined) ||
+    'pago-movil'
 
   return (
     <>
@@ -93,7 +95,8 @@ export default function PaymentFields() {
             <FormControl>
               <Tabs
                 onValueChange={field.onChange}
-                value={field.value}
+                value={field.value || 'pago-movil'}
+                defaultValue={'pago-movil'}
                 className="w-full"
               >
                 <TabsList className="flex h-auto w-full flex-wrap gap-4">
@@ -157,30 +160,47 @@ export default function PaymentFields() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={control}
               name="paymentDetails.phone"
-              rules={{ required: 'El número de teléfono es requerido' }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Número de teléfono</FormLabel>
+                  <FormLabel>Número telefónico</FormLabel>
                   <FormControl>
-                    <Input placeholder="0412-000-0000" {...field} />
+                    <PhoneInput
+                      country={'ve'}
+                      {...field}
+                      masks={{ ve: '....-...-....' }}
+                      onChange={(value: string, data: any) => {
+                        const phoneNumber = value.split(data.dialCode)[1]
+                        const formattedPhoneNumber = `+${data.dialCode}-${phoneNumber.slice(0, 4)}-${phoneNumber.slice(4, 7)}-${phoneNumber.slice(7)}`
+                        field.onChange(formattedPhoneNumber)
+                      }}
+                      countryCodeEditable={false}
+                      disableCountryGuess
+                      disableDropdown
+                      inputClass="w-full p-2 border rounded"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="paymentDetails.totalPaid"
-              rules={{ required: 'El total pagado es requerido' }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Total pagado</FormLabel>
+                  <FormLabel>
+                    Total pagado{' '}
+                    {selectedMethod === 'transferencia' ||
+                    selectedMethod === 'pago-movil'
+                      ? '(Bs)'
+                      : '(USD)'}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Monto" {...field} />
+                    <Input placeholder="Monto" type="number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,7 +209,6 @@ export default function PaymentFields() {
             <FormField
               control={control}
               name="paymentDetails.date"
-              rules={{ required: 'La fecha del pago es requerida' }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Fecha del pago</FormLabel>
