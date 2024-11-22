@@ -26,20 +26,15 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>
 
 export default function ShippingForm() {
-  const { isLogged, isLoading, activeOrder } = useCart()
+  const { activeOrder, isOrderLoading } = useCart()
   const router = useRouter()
   const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
-
   useEffect(() => {
-    if (!isLogged && !isLoading) {
-      router.push('/')
-    }
-
     if (isOrderEmpty) {
       router.push('/')
     }
-  }, [isLogged, isLoading, router, isOrderEmpty])
+  }, [router, isOrderEmpty])
 
   const form = useForm<FormSchema>({
     mode: 'all',
@@ -111,7 +106,7 @@ export default function ShippingForm() {
         <Button
           type="submit"
           className="ml-auto"
-          disabled={form.formState.isSubmitting}
+          disabled={form.formState.isSubmitting || isOrderLoading}
         >
           Continuar al Pago
         </Button>
@@ -119,7 +114,7 @@ export default function ShippingForm() {
           <Button
             type="submit"
             className="ml-auto"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || isOrderLoading}
           >
             Continuar al Pago
           </Button>

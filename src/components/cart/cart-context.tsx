@@ -30,6 +30,7 @@ const useCartContainer = createContainer(() => {
   const [isLogged, setIsLogged] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isOrderLoading, setIsOrderLoading] = useState(false)
   const [customerOrders, setCustomerOrders] =
     useState<GetCustomerOrdersQuery['activeCustomer']>()
   const open = () => setOpen(true)
@@ -141,7 +142,7 @@ const useCartContainer = createContainer(() => {
 
   const setShippingOrderAddress = async (address: CreateAddressInput) => {
     try {
-      // setIsLoading(true)
+      setIsOrderLoading(true)
       const { data } = await vendureFetch({
         query: SET_ORDER_SHIPPING_ADDRESS_MUTATION,
         variables: {
@@ -154,6 +155,8 @@ const useCartContainer = createContainer(() => {
       return data?.setOrderShippingAddress
     } catch (e) {
       console.error(e)
+    } finally {
+      setIsOrderLoading(false)
     }
   }
 
@@ -219,6 +222,8 @@ const useCartContainer = createContainer(() => {
     isLoading,
     currentCustomer,
     logOut,
+    setIsOrderLoading,
+    isOrderLoading,
   }
 })
 

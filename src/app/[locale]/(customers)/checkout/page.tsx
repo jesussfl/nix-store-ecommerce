@@ -7,9 +7,19 @@ import {
 import ShippingForm from '@/components/pages/checkout/checkout-form'
 import OrderSummary from '@/components/pages/checkout/order-summary'
 import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
+import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
+import { redirect } from 'next/navigation'
 
 export default async function CheckoutPage() {
   const bcvPrice = await GetBCVPrice()
+  const { data } = await vendureFetchSSR({
+    query: GET_ACTIVE_CUSTOMER,
+  })
+
+  if (!data?.activeCustomer) {
+    redirect('/account/login?callback=/checkout')
+  }
   return (
     <div className="-mt-8 space-y-4 sm:-mt-16 md:mx-24">
       <div className="grid items-start gap-6 md:grid-cols-2">

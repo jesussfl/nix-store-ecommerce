@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from '@/components/shared/form'
 import { Card, CardContent } from '@/components/shared/card/card'
 import { Input } from '@/components/shared/input/input'
@@ -26,6 +27,8 @@ import {
 } from '@/components/shared/tabs/tabs'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { useEffect, useState } from 'react'
 interface PaymentMethod {
   name: string
   info: string | string[]
@@ -80,6 +83,25 @@ const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
 
 export default function PaymentFields() {
   const { control, watch } = useFormContext()
+  const [bcvPrice, setBcvPrice] = useState(0)
+  const [usdConverted, setUsdConverted] = useState('')
+  const totalPaid = watch('paymentDetails.totalPaid')
+  useEffect(() => {
+    const getBCVPrice = async () => {
+      const price = await GetBCVPrice()
+      setBcvPrice(price)
+    }
+
+    getBCVPrice()
+  }, [])
+
+  useEffect(() => {
+    if (!bcvPrice || !totalPaid) return
+
+    const usdConverted = (Number(totalPaid) / bcvPrice).toFixed(2)
+    setUsdConverted(usdConverted)
+  }, [bcvPrice, totalPaid])
+
   const selectedMethod =
     (watch('paymentDetails.paymentMethod') as PaymentMethodKey | undefined) ||
     'pago-movil'
@@ -202,6 +224,9 @@ export default function PaymentFields() {
                   <FormControl>
                     <Input placeholder="Monto" type="number" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Conversión: {usdConverted} USD
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -15,6 +15,7 @@ import { ADD_PAYMENT_TO_ORDER } from '@/libs/queries/payment'
 import { useToast } from '@/components/shared/toast/use-toast'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
 import { paymentDetailsSchema } from '@/utils/schemas/payment'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 const formSchema = z.object({
   paymentDetails: paymentDetailsSchema,
@@ -67,6 +68,9 @@ export default function PaymentForm() {
     }
   }
   const onSubmit = async (values: FormSchema) => {
+    const bcvDolar = await GetBCVPrice()
+    const monto = (Number(values.paymentDetails.totalPaid) / bcvDolar) * 100
+    console.log(monto, 'monto', bcvDolar, values.paymentDetails.totalPaid)
     const { data, error } = await vendureFetch({
       query: ADD_PAYMENT_TO_ORDER,
       variables: {
@@ -78,12 +82,12 @@ export default function PaymentForm() {
             values.paymentDetails.paymentMethod === 'transferencia'
               ? {
                   referencia: values.paymentDetails.reference,
-                  monto: Number(values.paymentDetails.totalPaid) * 100,
+                  monto: Math.round(monto),
                   'fecha de pago': values.paymentDetails.date,
                   telefono: values.paymentDetails.phone,
                 }
               : {
-                  monto: values.paymentDetails.totalPaid,
+                  monto: Math.round(monto),
                   'fecha de pago': values.paymentDetails.date,
                   emitterEmail: values.paymentDetails.emitterEmail,
                   telefono: values.paymentDetails.phone,

@@ -253,12 +253,12 @@ export default function ShippingFields() {
 
 function DeliveryFields() {
   const { control, watch, setValue } = useFormContext()
-  const { setShippingMethod, setShippingOrderAddress } = useCart()
+  const { isOrderLoading, setShippingOrderAddress } = useCart()
   const selectedLocation = watch('shippingDetails.locationObject')
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false)
+  // const [isLoadingLocation, setIsLoadingLocation] = useState(false)
   const handleLocationChange = async (value: string) => {
     const location = LOCATIONS.find((loc) => loc.name === value)
-    setIsLoadingLocation(true)
+    // setIsLoadingLocation(true)
     if (location) {
       const shippingAddressResult = await setShippingOrderAddress({
         city: location.name,
@@ -272,7 +272,7 @@ function DeliveryFields() {
         setValue('shippingDetails.locationObject', location)
       }
 
-      setIsLoadingLocation(false)
+      // setIsLoadingLocation(false)
     }
   }
 
@@ -305,7 +305,7 @@ function DeliveryFields() {
 
             <div className="mt-4 rounded-md bg-secondary p-4">
               <p className="text-lg font-semibold">Detalles de la ubicación:</p>
-              {isLoadingLocation ? (
+              {isOrderLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
