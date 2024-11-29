@@ -35,7 +35,7 @@ export const MobileBottomBar = ({
         <div className="flex flex-row gap-2">
           <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <SheetTrigger asChild>
-              <Button variant={'secondary'} size={'sm'}>
+              <Button variant={'ghost'} size={'sm'}>
                 Ver resumen
               </Button>
             </SheetTrigger>

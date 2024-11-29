@@ -165,23 +165,44 @@ export default function PaymentFields() {
         <div className="mt-8 space-y-6">
           <h3 className="text-xl font-semibold">Detalles del Pago</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormField
-              control={control}
-              name="paymentDetails.reference"
-              rules={{ required: 'El número de referencia es requerido' }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Número de Referencia</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Todos los números de la referencia"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {selectedMethod === 'pago-movil' ||
+            selectedMethod === 'transferencia' ? (
+              <FormField
+                control={control}
+                name="paymentDetails.reference"
+                rules={{ required: 'El número de referencia es requerido' }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Número de Referencia</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Todos los números de la referencia"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={control}
+                name="paymentDetails.reference"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Correo electrónico emisor</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Correo electrónico emisor"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <FormField
               control={control}
               name="paymentDetails.phone"

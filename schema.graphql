@@ -12,7 +12,7 @@ type Address implements Node {
   company: String
   country: Country!
   createdAt: DateTime!
-  customFields: JSON
+  customFields: AddressCustomFields
   defaultBillingAddress: Boolean
   defaultShippingAddress: Boolean
   fullName: String
@@ -23,6 +23,11 @@ type Address implements Node {
   streetLine1: String!
   streetLine2: String
   updatedAt: DateTime!
+}
+
+type AddressCustomFields {
+  officeCode: String
+  shippingCompany: String
 }
 
 type Adjustment {
@@ -319,6 +324,11 @@ type CouponCodeLimitError implements ErrorResult {
   message: String!
 }
 
+input CreateAddressCustomFieldsInput {
+  officeCode: String
+  shippingCompany: String
+}
+
 """
 Input used to create an Address.
 
@@ -330,7 +340,7 @@ input CreateAddressInput {
   city: String
   company: String
   countryCode: String!
-  customFields: JSON
+  customFields: CreateAddressCustomFieldsInput
   defaultBillingAddress: Boolean
   defaultShippingAddress: Boolean
   fullName: String
@@ -1860,7 +1870,7 @@ type OrderAddress {
   company: String
   country: String
   countryCode: String
-  customFields: JSON
+  customFields: AddressCustomFields
   fullName: String
   phoneNumber: String
   postalCode: String
@@ -3052,6 +3062,11 @@ type TextCustomFieldConfig implements CustomField {
 
 union TransitionOrderToStateResult = Order | OrderStateTransitionError
 
+input UpdateAddressCustomFieldsInput {
+  officeCode: String
+  shippingCompany: String
+}
+
 """
 Input used to update an Address.
 
@@ -3063,7 +3078,7 @@ input UpdateAddressInput {
   city: String
   company: String
   countryCode: String
-  customFields: JSON
+  customFields: UpdateAddressCustomFieldsInput
   defaultBillingAddress: Boolean
   defaultShippingAddress: Boolean
   fullName: String

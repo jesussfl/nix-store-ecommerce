@@ -105,7 +105,7 @@ export default function PaymentForm() {
       })
 
       console.log(data, error, 'transition')
-      // router.replace('/checkout/confirmation/' + activeOrder?.code)
+      window.location.href = '/checkout/confirmation/' + activeOrder?.code
     }
 
     if (error) {

@@ -14,7 +14,7 @@ import {
   SET_SHIPPING_METHOD_MUTATION,
 } from '@/libs/mutations/order'
 import { shippingDetailsSchema } from '@/utils/schemas/shipping'
-import ShippingFields from './shipping-form'
+import ShippingFields from './shipping/shipping-form'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
 import { MobileBottomBar } from '@/app/[locale]/(customers)/checkout/mobile-bottom-bar'
 import { useToast } from '@/components/shared/toast/use-toast'
@@ -30,6 +30,7 @@ export default function ShippingForm() {
   const router = useRouter()
   const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
+
   useEffect(() => {
     if (isOrderEmpty) {
       router.push('/')
@@ -40,10 +41,7 @@ export default function ShippingForm() {
     mode: 'all',
     resolver: zodResolver(formSchema),
     defaultValues: {
-      shippingDetails: {
-        // separateShipping: false,
-        shippingType: 'national',
-      },
+      shippingDetails: {},
     },
   })
 
@@ -63,6 +61,16 @@ export default function ShippingForm() {
           province: values.shippingDetails.state,
           phoneNumber: values.shippingDetails.phoneNumber,
           countryCode: 'VE',
+          customFields: {
+            officeCode:
+              values.shippingDetails.shippingType === 'national'
+                ? values.shippingDetails.officeCode
+                : undefined,
+            shippingCompany:
+              values.shippingDetails.shippingType === 'national'
+                ? values.shippingDetails.shippingCompany
+                : undefined,
+          },
         },
       },
     })
