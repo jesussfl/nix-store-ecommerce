@@ -13,13 +13,7 @@ import { redirect } from 'next/navigation'
 
 export default async function CheckoutPage() {
   const bcvPrice = await GetBCVPrice()
-  const { data } = await vendureFetchSSR({
-    query: GET_ACTIVE_CUSTOMER,
-  })
 
-  if (!data?.activeCustomer) {
-    redirect('/account/login?callback=/checkout')
-  }
   return (
     <div className="-mt-8 space-y-4 sm:-mt-16 md:mx-24">
       <div className="grid items-start gap-6 md:grid-cols-2">

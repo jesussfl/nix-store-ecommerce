@@ -26,11 +26,15 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>
 
 export default function ShippingForm() {
-  const { activeOrder, isOrderLoading } = useCart()
+  const { isLogged, isLoading, activeOrder, isOrderLoading } = useCart()
   const router = useRouter()
   const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
-
+  useEffect(() => {
+    if (!isLogged && !isLoading) {
+      window.location.href = '/account/login?callback=/checkout'
+    }
+  }, [isLogged, isLoading])
   useEffect(() => {
     if (isOrderEmpty) {
       router.push('/')

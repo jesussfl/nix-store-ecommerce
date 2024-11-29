@@ -68,8 +68,14 @@ interface Order {
 
 export default function Component() {
   const [activeTab, setActiveTab] = useState('orders')
-  const { currentCustomer, logOut } = useCart()
+  const { isLogged, isLoading, currentCustomer, logOut } = useCart()
   const orders = currentCustomer?.orders?.items || []
+
+  useEffect(() => {
+    if (!isLogged && !isLoading) {
+      window.location.href = '/account/login?callback=/account/profile'
+    }
+  }, [isLogged, isLoading])
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('es-VE', {
