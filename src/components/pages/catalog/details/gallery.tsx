@@ -113,12 +113,12 @@ export function Gallery({ images }: GalleryProps) {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-      <Carousel className="w-[80%] xl:hidden">
+      <Carousel className="w-[70%] xl:hidden">
         <CarouselContent className="">
           {images.map((image, index) => (
             <CarouselItem
               key={index}
-              className="basis-1/4 sm:basis-1/5 lg:basis-1/4"
+              className="basis-1/3 sm:basis-1/5 lg:basis-1/4"
             >
               <div className="p-1">
                 <Card>

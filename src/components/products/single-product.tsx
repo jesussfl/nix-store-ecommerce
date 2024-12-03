@@ -43,11 +43,20 @@ export const SingleProduct = ({ product }: Props) => {
                 {product.priceInUSD}
               </p>
               {product.priceInBs && (
-                <Badge variant="success" className="bg-slate-600 text-xs">
+                <Badge
+                  variant="success"
+                  className="hidden bg-slate-600 text-xs md:block"
+                >
                   {product.priceInBs}
                 </Badge>
               )}
             </div>
+            <Badge
+              variant="success"
+              className="mt-1 self-start bg-slate-600 md:hidden"
+            >
+              {product.priceInBs}
+            </Badge>
           </div>
         </CardContent>
       </Card>

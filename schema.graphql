@@ -28,6 +28,7 @@ type Address implements Node {
 type AddressCustomFields {
   officeCode: String
   shippingCompany: String
+  shippingDescription: String
 }
 
 type Adjustment {
@@ -327,6 +328,7 @@ type CouponCodeLimitError implements ErrorResult {
 input CreateAddressCustomFieldsInput {
   officeCode: String
   shippingCompany: String
+  shippingDescription: String
 }
 
 """
@@ -1627,14 +1629,14 @@ type Mutation {
   """
   Adds an item to the order. If custom fields are defined on the OrderLine entity, a third argument 'customFields' will be available.
   """
-  addItemToOrder(productVariantId: ID!, quantity: Int!): UpdateOrderItemsResult!
+  addItemToOrder(customFields: OrderLineCustomFieldsInput = null, productVariantId: ID!, quantity: Int!): UpdateOrderItemsResult!
   addPaymentToExistingOrder(metadata: JSON, orderCode: String!, paymentMethodCode: String!): MyCustomMutationResult
   """Add a Payment to the Order"""
   addPaymentToOrder(input: PaymentInput!): AddPaymentToOrderResult!
   """
   Adjusts an OrderLine. If custom fields are defined on the OrderLine entity, a third argument 'customFields' of type `OrderLineCustomFieldsInput` will be available.
   """
-  adjustOrderLine(orderLineId: ID!, quantity: Int!): UpdateOrderItemsResult!
+  adjustOrderLine(customFields: OrderLineCustomFieldsInput = null, orderLineId: ID!, quantity: Int!): UpdateOrderItemsResult!
   """Applies the given coupon code to the active Order"""
   applyCouponCode(couponCode: String!): ApplyCouponCodeResult!
   """Authenticates the user using a named authentication strategy"""
@@ -1909,7 +1911,7 @@ type OrderLimitError implements ErrorResult {
 
 type OrderLine implements Node {
   createdAt: DateTime!
-  customFields: JSON
+  customFields: OrderLineCustomFields
   """The price of the line including discounts, excluding tax"""
   discountedLinePrice: Money!
   """The price of the line including discounts and tax"""
@@ -1972,6 +1974,14 @@ type OrderLine implements Node {
   """
   unitPriceWithTaxChangeSinceAdded: Money!
   updatedAt: DateTime!
+}
+
+type OrderLineCustomFields {
+  shippingType: String
+}
+
+input OrderLineCustomFieldsInput {
+  shippingType: String
 }
 
 type OrderList implements PaginatedList {
@@ -3065,6 +3075,7 @@ union TransitionOrderToStateResult = Order | OrderStateTransitionError
 input UpdateAddressCustomFieldsInput {
   officeCode: String
   shippingCompany: String
+  shippingDescription: String
 }
 
 """

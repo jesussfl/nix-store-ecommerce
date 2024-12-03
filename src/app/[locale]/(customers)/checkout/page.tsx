@@ -7,9 +7,6 @@ import {
 import ShippingForm from '@/components/pages/checkout/checkout-form'
 import OrderSummary from '@/components/pages/checkout/order-summary'
 import { GetBCVPrice } from '@/utils/get-bcv-price'
-import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
-import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
-import { redirect } from 'next/navigation'
 
 export default async function CheckoutPage() {
   const bcvPrice = await GetBCVPrice()

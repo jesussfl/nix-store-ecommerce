@@ -204,6 +204,24 @@ const useCartContainer = createContainer(() => {
     }
   }
 
+  const adjustOrderLine = async (lineId: string, quantity: number) => {
+    try {
+      const { data } = await vendureFetch({
+        query: SET_ITEM_QUANTITY_IN_CART_MUTATION,
+        variables: {
+          lineId,
+          quantity,
+        },
+      })
+
+      if (data?.adjustOrderLine.__typename === 'Order') {
+        setActiveOrder(data?.adjustOrderLine)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return {
     isLogged,
     activeOrder,
@@ -216,6 +234,7 @@ const useCartContainer = createContainer(() => {
     setShippingMethod,
     removeFromCart,
     fetchActiveOrder,
+    adjustOrderLine,
     isOpen,
     open,
     close,

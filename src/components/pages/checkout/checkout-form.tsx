@@ -9,10 +9,7 @@ import { useCart } from '@/components/cart/cart-context'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/shared/button'
 import { vendureFetch } from '@/libs/vendure'
-import {
-  SET_ORDER_SHIPPING_ADDRESS_MUTATION,
-  SET_SHIPPING_METHOD_MUTATION,
-} from '@/libs/mutations/order'
+import { SET_ORDER_SHIPPING_ADDRESS_MUTATION } from '@/libs/mutations/order'
 import { shippingDetailsSchema } from '@/utils/schemas/shipping'
 import ShippingFields from './shipping/shipping-form'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
@@ -28,8 +25,10 @@ type FormSchema = z.infer<typeof formSchema>
 export default function ShippingForm() {
   const { isLogged, isLoading, activeOrder, isOrderLoading } = useCart()
   const router = useRouter()
+
   const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
+
   useEffect(() => {
     if (!isLogged && !isLoading) {
       window.location.href = '/account/login?callback=/checkout'

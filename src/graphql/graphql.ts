@@ -51,6 +51,7 @@ export type AddressCustomFields = {
   __typename?: 'AddressCustomFields';
   officeCode?: Maybe<Scalars['String']['output']>;
   shippingCompany?: Maybe<Scalars['String']['output']>;
+  shippingDescription?: Maybe<Scalars['String']['output']>;
 };
 
 export type Adjustment = {
@@ -374,6 +375,7 @@ export type CouponCodeLimitError = ErrorResult & {
 export type CreateAddressCustomFieldsInput = {
   officeCode?: InputMaybe<Scalars['String']['input']>;
   shippingCompany?: InputMaybe<Scalars['String']['input']>;
+  shippingDescription?: InputMaybe<Scalars['String']['input']>;
 };
 
 /**
@@ -1783,6 +1785,7 @@ export type Mutation = {
 
 
 export type MutationAddItemToOrderArgs = {
+  customFields?: InputMaybe<OrderLineCustomFieldsInput>;
   productVariantId: Scalars['ID']['input'];
   quantity: Scalars['Int']['input'];
 };
@@ -1801,6 +1804,7 @@ export type MutationAddPaymentToOrderArgs = {
 
 
 export type MutationAdjustOrderLineArgs = {
+  customFields?: InputMaybe<OrderLineCustomFieldsInput>;
   orderLineId: Scalars['ID']['input'];
   quantity: Scalars['Int']['input'];
 };
@@ -2111,7 +2115,7 @@ export type OrderLimitError = ErrorResult & {
 export type OrderLine = Node & {
   __typename?: 'OrderLine';
   createdAt: Scalars['DateTime']['output'];
-  customFields?: Maybe<Scalars['JSON']['output']>;
+  customFields?: Maybe<OrderLineCustomFields>;
   /** The price of the line including discounts, excluding tax */
   discountedLinePrice: Scalars['Money']['output'];
   /** The price of the line including discounts and tax */
@@ -2170,6 +2174,15 @@ export type OrderLine = Node & {
   /** Non-zero if the unitPriceWithTax has changed since it was initially added to Order */
   unitPriceWithTaxChangeSinceAdded: Scalars['Money']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type OrderLineCustomFields = {
+  __typename?: 'OrderLineCustomFields';
+  shippingType?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderLineCustomFieldsInput = {
+  shippingType?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OrderList = PaginatedList & {
@@ -3333,6 +3346,7 @@ export type TransitionOrderToStateResult = Order | OrderStateTransitionError;
 export type UpdateAddressCustomFieldsInput = {
   officeCode?: InputMaybe<Scalars['String']['input']>;
   shippingCompany?: InputMaybe<Scalars['String']['input']>;
+  shippingDescription?: InputMaybe<Scalars['String']['input']>;
 };
 
 /**
@@ -3478,6 +3492,17 @@ export type SetShippingMethodMutation = { __typename?: 'Mutation', setOrderShipp
     { __typename: 'Order' }
     & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
   ) | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
+
+export type AdjustOrderLineMutationVariables = Exact<{
+  lineId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+}>;
+
+
+export type AdjustOrderLineMutation = { __typename?: 'Mutation', adjustOrderLine: { __typename?: 'InsufficientStockError' } | { __typename?: 'NegativeQuantityError' } | (
+    { __typename?: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | { __typename?: 'OrderLimitError' } | { __typename?: 'OrderModificationError' } };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -4272,6 +4297,86 @@ export const SetShippingMethodDocument = new TypedDocumentString(`
     }
   }
 }`) as unknown as TypedDocumentString<SetShippingMethodMutation, SetShippingMethodMutationVariables>;
+export const AdjustOrderLineDocument = new TypedDocumentString(`
+    mutation AdjustOrderLine($lineId: ID!, $quantity: Int!) {
+  adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {
+    ...ActiveOrder
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<AdjustOrderLineMutation, AdjustOrderLineMutationVariables>;
 export const LoginDocument = new TypedDocumentString(`
     mutation Login($email: String!, $password: String!, $rememberMe: Boolean!) {
   login(username: $email, password: $password, rememberMe: $rememberMe) {

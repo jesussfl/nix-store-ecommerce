@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { Separator } from '@/components/shared/separator/separator'
 import { debounce } from 'lodash'
 import { SpecialOrderMessage } from '../catalog/details/product-details'
+import { Badge } from '@/components/shared/badge'
+import { ScrollArea } from '@/components/shared/scroll-area/scroll-area'
 
 interface OrderSummaryProps {
   isPaymentStep: boolean
@@ -18,25 +20,34 @@ interface LocalQuantities {
   [key: string]: number
 }
 
-interface OrderLine {
-  id: string
-  quantity: number
-  unitPriceWithTax: number
-  productVariant: {
-    name: string
-  }
-  featuredAsset?: {
-    preview: string
-  }
-}
+// interface OrderLine {
+//   id: string
+//   quantity: number
+//   unitPriceWithTax: number
+//   productVariant: {
+//     name: string
+//   }
+//   featuredAsset?: {
+//     preview: string
+//   }
+//   product: {
+//     facetValues: {
+//       id: string
+//       name: string
+//       code: string
+//     }[]
+//     name: string
+//     slug: string
+//   }
+// }
 
-interface ActiveOrder {
-  lines: OrderLine[]
-  currencyCode: string
-  subTotalWithTax: number
-  shippingWithTax: number
-  totalWithTax: number
-}
+// interface ActiveOrder {
+//   lines: OrderLine[]
+//   currencyCode: string
+//   subTotalWithTax: number
+//   shippingWithTax: number
+//   totalWithTax: number
+// }
 
 export default function OrderSummary({
   isPaymentStep,
@@ -109,69 +120,85 @@ export default function OrderSummary({
 
   return (
     <div className="space-y-4">
-      {(activeOrder as ActiveOrder).lines.map((line) => (
-        <div
-          key={line.id}
-          className="flex flex-col items-start space-y-2 py-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
-        >
-          <div className="relative h-20 w-20 flex-shrink-0">
-            <Image
-              src={
-                line.featuredAsset?.preview ||
-                '/placeholder.svg?height=80&width=80'
-              }
-              alt={line.productVariant.name}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
-            />
-          </div>
-          <div className="flex-grow space-y-1">
-            <h3 className="text-sm font-medium">{line.productVariant.name}</h3>
-            <p className="text-sm text-muted-foreground">
-              {formatCurrency(
-                line.unitPriceWithTax,
-                (activeOrder as ActiveOrder).currencyCode
-              )}
-            </p>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuantityChange(line.id, line.quantity, -1)}
-                disabled={isPaymentStep}
-                aria-label="Decrease quantity"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="min-w-[1.5rem] text-center text-sm">
-                {localQuantities[line.id] !== undefined
-                  ? localQuantities[line.id]
-                  : line.quantity}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuantityChange(line.id, line.quantity, 1)}
-                disabled={isPaymentStep}
-                aria-label="Increase quantity"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleRemoveItem(line.id)}
-            className="flex-shrink-0"
-            disabled={isPaymentStep}
-            aria-label="Remove item"
+      <ScrollArea className="h-[calc(100vh-400px)] pr-4">
+        {activeOrder.lines.map((line) => (
+          <div
+            key={line.id}
+            className="flex flex-col items-start space-y-2 py-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
           >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ))}
+            <div className="relative h-20 w-20 flex-shrink-0">
+              <Image
+                src={
+                  line.featuredAsset?.preview ||
+                  '/placeholder.svg?height=80&width=80'
+                }
+                alt={line.productVariant.name}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-md"
+              />
+            </div>
+            <div className="flex-grow space-y-1">
+              <h3 className="text-sm font-medium">
+                {line.productVariant.name}
+              </h3>
+              <Badge variant="default" className="text-xs">
+                {line.productVariant.product?.facetValues?.find(
+                  (f) =>
+                    f.code === 'por-encargo' ||
+                    f.code === 'disponibilidad-inmediata' ||
+                    f.code === 'personalizado'
+                )?.name || 'Por encargo'}
+              </Badge>
+              <p className="text-sm text-muted-foreground">
+                {formatCurrency(
+                  line.unitPriceWithTax,
+                  activeOrder.currencyCode
+                )}
+              </p>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleQuantityChange(line.id, line.quantity, -1)
+                  }
+                  disabled={isPaymentStep}
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="min-w-[1.5rem] text-center text-sm">
+                  {localQuantities[line.id] !== undefined
+                    ? localQuantities[line.id]
+                    : line.quantity}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleQuantityChange(line.id, line.quantity, 1)
+                  }
+                  disabled={isPaymentStep}
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleRemoveItem(line.id)}
+              className="flex-shrink-0"
+              disabled={isPaymentStep}
+              aria-label="Remove item"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </ScrollArea>
       <Separator className="my-4" />
       <div className="space-y-2">
         <div className="flex justify-between">
@@ -181,8 +208,8 @@ export default function OrderSummary({
           ) : (
             <span>
               {formatCurrency(
-                (activeOrder as ActiveOrder).subTotalWithTax,
-                (activeOrder as ActiveOrder).currencyCode
+                activeOrder.subTotalWithTax,
+                activeOrder.currencyCode
               )}
             </span>
           )}
@@ -194,8 +221,8 @@ export default function OrderSummary({
           ) : (
             <span>
               {formatCurrency(
-                (activeOrder as ActiveOrder).shippingWithTax,
-                (activeOrder as ActiveOrder).currencyCode
+                activeOrder.shippingWithTax,
+                activeOrder.currencyCode
               )}
             </span>
           )}
@@ -207,8 +234,8 @@ export default function OrderSummary({
           ) : (
             <span>
               {formatCurrency(
-                (activeOrder as ActiveOrder).totalWithTax,
-                (activeOrder as ActiveOrder).currencyCode
+                activeOrder.totalWithTax,
+                activeOrder.currencyCode
               )}{' '}
               {`${((activeOrder.totalWithTax / 100) * bcvPrice).toFixed(2)} Bs`}
             </span>

@@ -20,7 +20,7 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
     setItemQuantityInCart,
     isLoading,
   } = useCart()
-
+  const [isOpen, setIsOpen] = useState(false)
   const [pricingLoading, setPricingLoading] = useState(false) // Loader for pricing
   const [localQuantities, setLocalQuantities] = useState<{
     [key: string]: number
@@ -59,7 +59,7 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
     debouncedUpdateQuantity(lineId, newQuantity)
   }
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="relative">
           <RiShoppingCartLine className="h-5 w-5" />
@@ -190,6 +190,7 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
                 buttonVariants({ variant: 'default' }),
                 'mt-4 w-full'
               )}
+              onClick={() => setIsOpen(false)}
             >
               Continuar compra
             </Link>

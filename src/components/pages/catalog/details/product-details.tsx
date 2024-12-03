@@ -12,7 +12,7 @@ import {
   Share2,
   ShoppingCart,
 } from 'lucide-react'
-import { GetProductDataQuery } from '@/graphql/graphql'
+import { CurrencyCode, GetProductDataQuery } from '@/graphql/graphql'
 import { RadioGroup, RadioGroupItem } from '@/components/shared/radio-group'
 import { Label } from '@/components/shared/label/label'
 import H1 from '@/components/shared/headings'
@@ -21,6 +21,7 @@ import { useCart } from '@/components/cart/cart-context'
 import { useTranslations } from 'next-intl'
 import { is } from 'date-fns/locale'
 import { Alert, AlertDescription, AlertTitle } from '@/components/shared/alert'
+import { priceFormatter } from '@/utils/price-formatter'
 
 interface Asset {
   id: string
@@ -208,14 +209,19 @@ export default function ProductDetails({
 
 const ProductBadges = ({ facets }: { facets: string[] }) => (
   <div className="flex flex-wrap items-center gap-2">
-    {facets.map((facet) => (
+    {facets.length === 0 && (
+      <Badge variant="default" className="text-xs">
+        Por encargo
+      </Badge>
+    )}
+    {facets?.map((facet) => (
       <Badge key={facet} variant="default" className="text-xs">
         {facet}
       </Badge>
     ))}
-    <Button variant="secondary" size="icon">
+    {/* <Button variant="secondary" size="icon">
       <Share2 className="h-4 w-4" />
-    </Button>
+    </Button> */}
   </div>
 )
 
@@ -359,11 +365,13 @@ const TotalPrice = ({
   const t = useTranslations(`common`)
 
   return (
-    <div className="flex justify-between text-sm font-medium text-gray-900">
-      <p>{t(`total_price`)}</p>
+    <div className="text-sm font-medium text-gray-900">
+      <p className="mb-2 text-sm font-semibold">{t(`total_price`)}</p>
       <p>
-        ${(totalPrice / 100).toFixed(2)} {currencyCode} (
-        {((totalPrice / 100) * bcvPrice).toFixed(2)} Bs)
+        {`$${(totalPrice / 100).toFixed(2)} ${currencyCode}`}{' '}
+        <Badge variant="success" className="w-auto bg-slate-600 text-xs">
+          {priceFormatter(totalPrice * bcvPrice, CurrencyCode.VES)}
+        </Badge>
       </p>
     </div>
   )
@@ -447,7 +455,7 @@ const PaymentMethods = () => {
   const t = useTranslations('product_details')
   return (
     <div className="space-y-2">
-      <p className="text-sm font-semibold">{t('accepted_payment_methods')}</p>
+      {/* <p className="text-sm font-semibold">{t('accepted_payment_methods')}</p> */}
       <div className="flex space-x-2">
         {/* Insert icons for payment methods here */}
       </div>

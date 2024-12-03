@@ -106,3 +106,11 @@ export const SET_SHIPPING_METHOD_MUTATION = graphql(`
     }
   }
 `)
+
+export const ADJUST_ORDER_LINE = graphql(`
+  mutation AdjustOrderLine($lineId: ID!, $quantity: Int!) {
+    adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {
+      ...ActiveOrder
+    }
+  }
+`)

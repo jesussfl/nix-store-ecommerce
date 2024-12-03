@@ -19,6 +19,7 @@ import {
 } from '@/components/shared/select/select'
 import { Loader2 } from 'lucide-react'
 import { LOCATIONS } from './locations'
+import { useEffect } from 'react'
 
 export default function DeliveryFields() {
   const { control, watch, setValue } = useFormContext()

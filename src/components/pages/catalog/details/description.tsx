@@ -7,7 +7,7 @@ interface DescriptionProps {
 }
 
 export function Description({ content }: DescriptionProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
 
   return (
     <div className="w-full rounded-lg border p-4">

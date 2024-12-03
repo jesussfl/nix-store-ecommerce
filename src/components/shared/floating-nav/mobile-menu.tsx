@@ -24,9 +24,15 @@ export default function MobileMenu({}) {
   const { collections } = useNavbar()
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleSearchSubmit = () => {
     setIsSearchOpen(false)
+    setIsMenuOpen(false)
+  }
+
+  const handleLinkClick = () => {
+    setIsMenuOpen(false)
   }
 
   return (
@@ -43,7 +49,7 @@ export default function MobileMenu({}) {
           </div>
         </SheetContent>
       </Sheet>
-      <Sheet>
+      <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon">
             <RiMenu2Line className="h-5 w-5" />
@@ -59,6 +65,7 @@ export default function MobileMenu({}) {
               buttonVariants({ variant: 'link', size: 'lg' }),
               'w-full justify-start px-0 text-left text-base font-medium text-foreground'
             )}
+            onClick={handleLinkClick}
           >
             {`Catálogo `}
           </Link>
@@ -78,6 +85,7 @@ export default function MobileMenu({}) {
                       buttonVariants({ variant: 'link' }),
                       'justify-start text-left text-base font-normal text-foreground'
                     )}
+                    onClick={handleLinkClick}
                   >
                     {collection.name}
                   </Link>
