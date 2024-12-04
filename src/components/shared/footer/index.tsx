@@ -7,14 +7,10 @@ import { Button, buttonVariants } from '../button'
 import Logo from '../logo'
 import Link from 'next/link'
 import {
-  RiArrowRightUpLine,
   RiArrowUpLine,
-  RiFacebookLine,
   RiInstagramLine,
   RiMailLine,
   RiWhatsappLine,
-  RiTwitterLine,
-  RiLinkedinLine,
   RiFacebookCircleLine,
 } from '@remixicon/react'
 import { HorizontalDivider } from '../divider'
@@ -36,39 +32,22 @@ export default function Footer() {
             <H5 className="mt-4">{t('slogan')}</H5>
             <div className="mt-6 flex gap-4">
               <SocialButton
-                href="https://www.instagram.com/nixstore.co/"
+                href="https://www.instagram.com/nixstore.mcy/?hl=es"
                 icon={<RiInstagramLine />}
                 label="Instagram"
               />
               <SocialButton
-                href="https://www.facebook.com/nixstore.co/"
+                href="https://www.facebook.com/profile.php?id=100077743659195"
                 icon={<RiFacebookCircleLine />}
                 label="Facebook"
-              />
-              <SocialButton
-                href="https://twitter.com/nixstore_co"
-                icon={<RiTwitterLine />}
-                label="Twitter"
-              />
-              <SocialButton
-                href="https://www.linkedin.com/company/nixstore"
-                icon={<RiLinkedinLine />}
-                label="LinkedIn"
               />
             </div>
           </div>
           <div>
             <H6 className="mb-4">{t(`quick-links`)}</H6>
             <nav className="flex flex-col space-y-2">
-              <Link href="/about" className="hover:underline">
-                Sobre nosotros
-              </Link>
               <Link href="/catalog" className="hover:underline">
                 Catálogo
-              </Link>
-
-              <Link href="/contact" className="hover:underline">
-                Contact
               </Link>
             </nav>
           </div>
@@ -78,15 +57,10 @@ export default function Footer() {
               <Link href="/faq" className="hover:underline">
                 Preguntas Frecuentes
               </Link>
-              {/* <Link href="/shipping" className="hover:underline">
-                Shipping & Returns
-              </Link> */}
+
               <Link href="/terms" className="hover:underline">
                 Nuestras políticas de la tienda
               </Link>
-              {/* <Link href="/privacy" className="hover:underline">
-                Privacy Policy
-              </Link> */}
             </nav>
           </div>
           <div>
@@ -140,7 +114,7 @@ function ContactButtons() {
   return (
     <div className="flex flex-col gap-2">
       <Link
-        href="https://wa.me/1234567890"
+        href="https://wa.me/+584123761604"
         className={cn(
           buttonVariants({ variant: 'outline', size: 'sm' }),
           'justify-start'
@@ -150,7 +124,7 @@ function ContactButtons() {
         WhatsApp
       </Link>
       <Link
-        href="mailto:info@nixstore.co"
+        href="mailto:nixstore.mcy@gmail.com"
         className={cn(
           buttonVariants({ variant: 'outline', size: 'sm' }),
           'justify-start'

@@ -245,9 +245,13 @@ export default function PaymentFields() {
                   <FormControl>
                     <Input placeholder="Monto" type="number" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Conversión: {usdConverted} USD
-                  </FormDescription>
+                  {selectedMethod === 'transferencia' ||
+                  selectedMethod === 'pago-movil' ? (
+                    <FormDescription>
+                      Conversión: {usdConverted} USD
+                    </FormDescription>
+                  ) : null}
+
                   <FormMessage />
                 </FormItem>
               )}

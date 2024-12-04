@@ -28,12 +28,16 @@ export default function ShippingForm() {
 
   const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
-
+  const isOrderArranging = activeOrder?.state === 'ArrangingPayment'
   useEffect(() => {
     if (!isLogged && !isLoading) {
       window.location.href = '/account/login?callback=/checkout'
     }
-  }, [isLogged, isLoading])
+
+    if (isOrderArranging) {
+      window.location.href = '/checkout/payment'
+    }
+  }, [isLogged, isLoading, isOrderArranging])
   useEffect(() => {
     if (isOrderEmpty) {
       router.push('/')

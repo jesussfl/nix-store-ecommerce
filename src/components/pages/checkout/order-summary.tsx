@@ -10,6 +10,8 @@ import { debounce } from 'lodash'
 import { SpecialOrderMessage } from '../catalog/details/product-details'
 import { Badge } from '@/components/shared/badge'
 import { ScrollArea } from '@/components/shared/scroll-area/scroll-area'
+import { priceFormatter } from '@/utils/price-formatter'
+import { CurrencyCode } from '@/graphql/graphql'
 
 interface OrderSummaryProps {
   isPaymentStep: boolean
@@ -120,7 +122,7 @@ export default function OrderSummary({
 
   return (
     <div className="space-y-4">
-      <ScrollArea className="h-[calc(100vh-400px)] pr-4">
+      <ScrollArea type="always" className="h-[calc(100vh-400px)] pr-4">
         {activeOrder.lines.map((line) => (
           <div
             key={line.id}
@@ -198,51 +200,56 @@ export default function OrderSummary({
             </Button>
           </div>
         ))}
+        <Separator className="my-4" />
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <span>Subtotal</span>
+            {pricingLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <span>
+                {formatCurrency(
+                  activeOrder.subTotalWithTax,
+                  activeOrder.currencyCode
+                )}
+              </span>
+            )}
+          </div>
+          <div className="flex justify-between">
+            <span>Envío</span>
+            {pricingLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <span>
+                {formatCurrency(
+                  activeOrder.shippingWithTax,
+                  activeOrder.currencyCode
+                )}
+              </span>
+            )}
+          </div>
+          <div className="flex justify-between font-semibold">
+            <span>Total</span>
+            {pricingLoading || isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <span>
+                {formatCurrency(
+                  activeOrder.totalWithTax,
+                  activeOrder.currencyCode
+                )}{' '}
+                <Badge variant="success" className="bg-slate-600">
+                  {priceFormatter(
+                    activeOrder.totalWithTax * bcvPrice,
+                    CurrencyCode.VES
+                  )}
+                </Badge>
+              </span>
+            )}
+          </div>
+          <SpecialOrderMessage />
+        </div>
       </ScrollArea>
-      <Separator className="my-4" />
-      <div className="space-y-2">
-        <div className="flex justify-between">
-          <span>Subtotal</span>
-          {pricingLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <span>
-              {formatCurrency(
-                activeOrder.subTotalWithTax,
-                activeOrder.currencyCode
-              )}
-            </span>
-          )}
-        </div>
-        <div className="flex justify-between">
-          <span>Envío</span>
-          {pricingLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <span>
-              {formatCurrency(
-                activeOrder.shippingWithTax,
-                activeOrder.currencyCode
-              )}
-            </span>
-          )}
-        </div>
-        <div className="flex justify-between font-semibold">
-          <span>Total</span>
-          {pricingLoading || isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <span>
-              {formatCurrency(
-                activeOrder.totalWithTax,
-                activeOrder.currencyCode
-              )}{' '}
-              {`${((activeOrder.totalWithTax / 100) * bcvPrice).toFixed(2)} Bs`}
-            </span>
-          )}
-        </div>
-        <SpecialOrderMessage />
-      </div>
     </div>
   )
 }

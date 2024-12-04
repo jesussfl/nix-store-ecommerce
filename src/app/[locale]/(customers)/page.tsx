@@ -13,7 +13,7 @@ import { CollectionsSection } from '@/components/pages/homepage/collections'
 import CoolSection from '@/components/pages/homepage/cool-section'
 import { MetricsSection } from '@/components/pages/homepage/metrics'
 
-const Home = async () => {
+const Home = () => {
   return (
     <div className="w-full">
       <Header />

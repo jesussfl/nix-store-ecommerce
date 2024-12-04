@@ -10,8 +10,9 @@ import { CheckCircle2, Package, Truck, User } from 'lucide-react'
 // import { formatDate } from '@/libs/utils'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
-import { format } from 'date-fns'
 import Image from 'next/image'
+import { Button } from '@/components/shared/button'
+import DownloadReceipt from './download-button'
 
 export default async function ConfirmationPage({
   params,
@@ -197,6 +198,7 @@ export default async function ConfirmationPage({
                 </div>
               </div>
             </div>
+            <DownloadReceipt orderCode={order.code} />
           </CardContent>
         </Card>
       </div>

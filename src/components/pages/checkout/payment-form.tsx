@@ -67,10 +67,35 @@ export default function PaymentForm() {
       })
     }
   }
+  const cancelOrder = async () => {
+    const { data, error } = await vendureFetch({
+      query: TRANSITION_ORDER_STATE,
+      variables: {
+        state: 'Cancelled',
+      },
+    })
+    if (!error) {
+      window.location.href = '/'
+    }
+    if (error || !data) {
+      console.error(error)
+      toast({
+        title: 'Error',
+        description: error || 'Error al cancelar el pedido',
+        variant: 'destructive',
+      })
+    }
+  }
   const onSubmit = async (values: FormSchema) => {
     const bcvDolar = await GetBCVPrice()
-    const monto = (Number(values.paymentDetails.totalPaid) / bcvDolar) * 100
-    console.log(monto, 'monto', bcvDolar, values.paymentDetails.totalPaid)
+    const isAmountInBS =
+      values.paymentDetails.paymentMethod === 'pago-movil' ||
+      values.paymentDetails.paymentMethod === 'transferencia'
+    const amount = isAmountInBS
+      ? Math.round(Number(values.paymentDetails.totalPaid) / bcvDolar)
+      : Number(values.paymentDetails.totalPaid)
+
+    console.log('amount', amount)
     const { data, error } = await vendureFetch({
       query: ADD_PAYMENT_TO_ORDER,
       variables: {
@@ -82,14 +107,14 @@ export default function PaymentForm() {
             values.paymentDetails.paymentMethod === 'transferencia'
               ? {
                   referencia: values.paymentDetails.reference,
-                  monto: Math.round(monto),
+                  monto: amount,
                   'fecha de pago': values.paymentDetails.date,
                   telefono: values.paymentDetails.phone,
                 }
               : {
-                  monto: Math.round(monto),
+                  monto: amount,
                   'fecha de pago': values.paymentDetails.date,
-                  emitterEmail: values.paymentDetails.emitterEmail,
+                  referencia: values.paymentDetails.reference,
                   telefono: values.paymentDetails.phone,
                 },
         },
@@ -117,7 +142,7 @@ export default function PaymentForm() {
       })
       return
     }
-    // console.log('Payment details:', values.paymentDetails)
+    console.log('Payment details:', values.paymentDetails)
   }
 
   return (
@@ -125,14 +150,24 @@ export default function PaymentForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <PaymentFields />
         <div className="flex justify-between">
-          <Button
-            type="submit"
-            variant={'outline'}
-            disabled={form.formState.isSubmitting}
-            onClick={backToShipping}
-          >
-            Volver a Envío
-          </Button>
+          <div className="flex space-x-2">
+            <Button
+              type="button"
+              variant={'destructive'}
+              disabled={form.formState.isSubmitting}
+              onClick={cancelOrder}
+            >
+              Cancelar Pedido
+            </Button>
+            <Button
+              type="button"
+              variant={'outline'}
+              disabled={form.formState.isSubmitting}
+              onClick={backToShipping}
+            >
+              Corregir datos de envío
+            </Button>
+          </div>
 
           <Button type="submit" disabled={form.formState.isSubmitting}>
             Finalizar Pedido

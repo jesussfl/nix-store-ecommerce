@@ -14,7 +14,8 @@ import { getTranslations } from 'next-intl/server'
 import { vendureFetch } from '@/libs/vendure'
 import { SEARCH_PRODUCTS } from '@/libs/queries/products'
 import { priceFormatter } from '@/utils/price-formatter'
-import { SearchProductsQuery } from '@/graphql/graphql'
+import { CurrencyCode, SearchProductsQuery } from '@/graphql/graphql'
+import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 // Utility to fetch and handle product data
 async function fetchProducts(collectionSlug: string) {
@@ -35,39 +36,59 @@ async function fetchProducts(collectionSlug: string) {
     return null
   }
 
-  return data.search.items
+  return data.search
 }
 
 // Utility to format product data
 function formatProductData(
   product: SearchProductsQuery['search']['items'][0],
-  type: string
+  facetValues: SearchProductsQuery['search']['facetValues'],
+  bcvPrice: number
 ) {
-  const {
-    productId,
-    productName,
-    priceWithTax,
-    currencyCode,
-    productAsset,
-    slug,
-    productVariantId,
-  } = product
+  const specialBadges = [
+    'disponibilidad-inmediata',
+    'por-encargo',
+    'personalizado',
+  ]
+  const currentFacetValueIds = product.facetValueIds
+
+  const facetValueNames = facetValues
+    .filter((facet) => currentFacetValueIds.includes(facet.facetValue.id))
+    .map((facet) => {
+      return {
+        name: facet.facetValue.name,
+        code: facet.facetValue.code,
+      }
+    })
+
+  const facets =
+    facetValueNames.filter((facet) => specialBadges.includes(facet.code)) || []
+
+  const { productId, productName, priceWithTax, currencyCode, productAsset } =
+    product
   const priceValue =
     'value' in priceWithTax
-      ? priceFormatter(priceWithTax.value, currencyCode)
+      ? `${priceFormatter(priceWithTax.value, currencyCode)}`
       : priceWithTax.min === priceWithTax.max
-        ? priceFormatter(priceWithTax.min, currencyCode)
-        : `${priceFormatter(priceWithTax.min, currencyCode)} - ${priceFormatter(priceWithTax.max, currencyCode)}`
+        ? `${priceFormatter(priceWithTax.min, currencyCode)}`
+        : `Desde ${priceFormatter(priceWithTax.min, currencyCode)}`
 
+  const priceValueInBs =
+    'value' in priceWithTax
+      ? priceFormatter(priceWithTax.value * bcvPrice, CurrencyCode.VES)
+      : priceWithTax.min === priceWithTax.max
+        ? priceFormatter(priceWithTax.min * bcvPrice, CurrencyCode.VES)
+        : priceFormatter(priceWithTax.min * bcvPrice, CurrencyCode.VES)
   return {
     id: productId,
     name: productName,
     image: productAsset?.preview,
     priceInUSD: priceValue,
     lastPriceInUSD: 0,
-    type,
-    slug,
-    variantId: productVariantId,
+    type: facets[0]?.name || 'Por encargo',
+    slug: product.slug,
+    variantId: product.productVariantId,
+    priceInBs: priceValueInBs,
   }
 }
 
@@ -102,11 +123,12 @@ const ProductCarousel = ({
 // Carousel sections with unique slugs and titles
 export const ImmediatelyAvailableProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-disponibilidad-inmediata')
+  const bcvPrice = await GetBCVPrice()
   if (!productsData) return null
 
   const t = await getTranslations('homepage')
-  const products = productsData.map((product) =>
-    formatProductData(product, 'Disponibilidad inmediata')
+  const products = productsData.items.map((product) =>
+    formatProductData(product, productsData.facetValues, bcvPrice)
   )
   return (
     <ProductCarousel
@@ -119,10 +141,11 @@ export const ImmediatelyAvailableProductsSection = async () => {
 export const CustomMadeProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-por-encargo')
   if (!productsData) return null
+  const bcvPrice = await GetBCVPrice()
 
   const t = await getTranslations('homepage')
-  const products = productsData.map((product) =>
-    formatProductData(product, 'Por encargo')
+  const products = productsData.items.map((product) =>
+    formatProductData(product, productsData.facetValues, bcvPrice)
   )
   return (
     <ProductCarousel
@@ -135,10 +158,10 @@ export const CustomMadeProductsSection = async () => {
 export const CustomizedProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-personalizados')
   if (!productsData) return null
-
+  const bcvPrice = await GetBCVPrice()
   const t = await getTranslations('homepage')
-  const products = productsData.map((product) =>
-    formatProductData(product, 'Personalizados')
+  const products = productsData.items.map((product) =>
+    formatProductData(product, productsData.facetValues, bcvPrice)
   )
   return (
     <ProductCarousel

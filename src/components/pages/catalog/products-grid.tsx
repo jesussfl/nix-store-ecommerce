@@ -53,12 +53,16 @@ export const ProductsGrid = async ({
           const priceValue =
             'value' in priceWithTax
               ? `${priceFormatter(priceWithTax.value, currencyCode)}`
-              : `Desde ${priceFormatter(priceWithTax.min, currencyCode)}`
+              : priceWithTax.min === priceWithTax.max
+                ? `${priceFormatter(priceWithTax.min, currencyCode)}`
+                : `Desde ${priceFormatter(priceWithTax.min, currencyCode)}`
 
           const priceValueInBs =
             'value' in priceWithTax
               ? priceFormatter(priceWithTax.value * bcvPrice, CurrencyCode.VES)
-              : priceFormatter(priceWithTax.min * bcvPrice, CurrencyCode.VES)
+              : priceWithTax.min === priceWithTax.max
+                ? priceFormatter(priceWithTax.min * bcvPrice, CurrencyCode.VES)
+                : priceFormatter(priceWithTax.min * bcvPrice, CurrencyCode.VES)
           const formattedProduct = {
             id: productId,
             name: productName,
