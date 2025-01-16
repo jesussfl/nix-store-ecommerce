@@ -1677,6 +1677,15 @@ export enum LogicalOperator {
   OR = 'OR'
 }
 
+export type Lote = Node & {
+  __typename?: 'Lote';
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 /** Returned when attempting to register or verify a customer account without a password, when one is required. */
 export type MissingPasswordError = ErrorResult & {
   __typename?: 'MissingPasswordError';
@@ -2016,7 +2025,7 @@ export type Order = Node & {
   couponCodes: Array<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   currencyCode: CurrencyCode;
-  customFields?: Maybe<Scalars['JSON']['output']>;
+  customFields?: Maybe<OrderCustomFields>;
   customer?: Maybe<Customer>;
   discounts: Array<Discount>;
   fulfillments?: Maybe<Array<Fulfillment>>;
@@ -2081,6 +2090,11 @@ export type OrderAddress = {
   province?: Maybe<Scalars['String']['output']>;
   streetLine1?: Maybe<Scalars['String']['output']>;
   streetLine2?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderCustomFields = {
+  __typename?: 'OrderCustomFields';
+  lote?: Maybe<Lote>;
 };
 
 export type OrderFilterParameter = {
@@ -2222,6 +2236,7 @@ export type OrderSortParameter = {
   code?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  lote?: InputMaybe<SortOrder>;
   orderPlacedAt?: InputMaybe<SortOrder>;
   shipping?: InputMaybe<SortOrder>;
   shippingWithTax?: InputMaybe<SortOrder>;
@@ -3384,8 +3399,12 @@ export type UpdateCustomerInput = {
 
 export type UpdateCustomerPasswordResult = InvalidCredentialsError | NativeAuthStrategyError | PasswordValidationError | Success;
 
+export type UpdateOrderCustomFieldsInput = {
+  loteId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type UpdateOrderInput = {
-  customFields?: InputMaybe<Scalars['JSON']['input']>;
+  customFields?: InputMaybe<UpdateOrderCustomFieldsInput>;
 };
 
 export type UpdateOrderItemsResult = InsufficientStockError | NegativeQuantityError | Order | OrderLimitError | OrderModificationError;
@@ -3530,7 +3549,7 @@ export type RequestPasswordResetMutation = { __typename?: 'Mutation', requestPas
 export type GetActiveCustomerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetActiveCustomerQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, title?: string | null, firstName: string, lastName: string, emailAddress: string, orders: { __typename?: 'OrderList', items: Array<{ __typename?: 'Order', id: string, code: string, state: string, totalWithTax: number, currencyCode: CurrencyCode, createdAt: any, updatedAt: any, orderPlacedAt?: any | null, type: OrderType, shippingWithTax: number, totalQuantity: number, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, metadata?: any | null, createdAt: any, updatedAt: any, transactionId?: string | null, errorMessage?: string | null }> | null }> } } | null };
+export type GetActiveCustomerQuery = { __typename?: 'Query', activeCustomer?: { __typename?: 'Customer', id: string, title?: string | null, firstName: string, lastName: string, emailAddress: string, orders: { __typename?: 'OrderList', items: Array<{ __typename?: 'Order', id: string, code: string, state: string, totalWithTax: number, currencyCode: CurrencyCode, createdAt: any, updatedAt: any, orderPlacedAt?: any | null, type: OrderType, shippingWithTax: number, totalQuantity: number, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, productVariant: { __typename?: 'ProductVariant', id: string, name: string } }>, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, metadata?: any | null, createdAt: any, updatedAt: any, transactionId?: string | null, errorMessage?: string | null }> | null }> } } | null };
 
 export type GetCustomerOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4439,6 +4458,15 @@ export const GetActiveCustomerDocument = new TypedDocumentString(`
         totalWithTax
         shippingWithTax
         totalQuantity
+        lines {
+          id
+          productVariant {
+            id
+            name
+          }
+          quantity
+          linePriceWithTax
+        }
         payments {
           id
           method

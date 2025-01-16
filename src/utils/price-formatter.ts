@@ -1,6 +1,9 @@
 import { CurrencyCode } from '@/graphql/graphql'
 
-export function priceFormatter(price: number, currencyCode: CurrencyCode) {
+export function priceFormatter(
+  price: number,
+  currencyCode: CurrencyCode | string
+) {
   //TODO: more universal solution
   const translations: Partial<Record<CurrencyCode, { country: string }>> = {
     [CurrencyCode.USD]: {
@@ -20,7 +23,7 @@ export function priceFormatter(price: number, currencyCode: CurrencyCode) {
       country: 'es-VE',
     },
   }
-  const c = translations[currencyCode]
+  const c = translations[currencyCode as CurrencyCode]
   if (!c) {
     const formatterCode = new Intl.NumberFormat('en-US', {
       style: 'currency',

@@ -64,6 +64,15 @@ export const GET_ACTIVE_CUSTOMER = graphql(`
           totalWithTax
           shippingWithTax
           totalQuantity
+          lines {
+            id
+            productVariant {
+              id
+              name
+            }
+            quantity
+            linePriceWithTax
+          }
           payments {
             id
             method
@@ -92,7 +101,6 @@ export const GET_CUSTOMER_ORDERS = graphql(`
           state
           totalWithTax
           currencyCode
-
           createdAt
         }
       }
