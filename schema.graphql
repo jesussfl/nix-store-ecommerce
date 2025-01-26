@@ -1612,14 +1612,6 @@ enum LogicalOperator {
   OR
 }
 
-type Lote implements Node {
-  createdAt: DateTime!
-  description: String!
-  id: ID!
-  name: String!
-  updatedAt: DateTime!
-}
-
 """
 Returned when attempting to register or verify a customer account without a password, when one is required.
 """
@@ -1824,7 +1816,7 @@ type Order implements Node {
   couponCodes: [String!]!
   createdAt: DateTime!
   currencyCode: CurrencyCode!
-  customFields: OrderCustomFields
+  customFields: JSON
   customer: Customer
   discounts: [Discount!]!
   fulfillments: [Fulfillment!]
@@ -1887,10 +1879,6 @@ type OrderAddress {
   province: String
   streetLine1: String
   streetLine2: String
-}
-
-type OrderCustomFields {
-  lote: Lote
 }
 
 input OrderFilterParameter {
@@ -2036,7 +2024,6 @@ input OrderSortParameter {
   code: SortOrder
   createdAt: SortOrder
   id: SortOrder
-  lote: SortOrder
   orderPlacedAt: SortOrder
   shipping: SortOrder
   shippingWithTax: SortOrder
@@ -3126,12 +3113,8 @@ input UpdateCustomerInput {
 
 union UpdateCustomerPasswordResult = InvalidCredentialsError | NativeAuthStrategyError | PasswordValidationError | Success
 
-input UpdateOrderCustomFieldsInput {
-  loteId: ID
-}
-
 input UpdateOrderInput {
-  customFields: UpdateOrderCustomFieldsInput
+  customFields: JSON
 }
 
 union UpdateOrderItemsResult = InsufficientStockError | NegativeQuantityError | Order | OrderLimitError | OrderModificationError

@@ -1677,15 +1677,6 @@ export enum LogicalOperator {
   OR = 'OR'
 }
 
-export type Lote = Node & {
-  __typename?: 'Lote';
-  createdAt: Scalars['DateTime']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
 /** Returned when attempting to register or verify a customer account without a password, when one is required. */
 export type MissingPasswordError = ErrorResult & {
   __typename?: 'MissingPasswordError';
@@ -2025,7 +2016,7 @@ export type Order = Node & {
   couponCodes: Array<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   currencyCode: CurrencyCode;
-  customFields?: Maybe<OrderCustomFields>;
+  customFields?: Maybe<Scalars['JSON']['output']>;
   customer?: Maybe<Customer>;
   discounts: Array<Discount>;
   fulfillments?: Maybe<Array<Fulfillment>>;
@@ -2090,11 +2081,6 @@ export type OrderAddress = {
   province?: Maybe<Scalars['String']['output']>;
   streetLine1?: Maybe<Scalars['String']['output']>;
   streetLine2?: Maybe<Scalars['String']['output']>;
-};
-
-export type OrderCustomFields = {
-  __typename?: 'OrderCustomFields';
-  lote?: Maybe<Lote>;
 };
 
 export type OrderFilterParameter = {
@@ -2236,7 +2222,6 @@ export type OrderSortParameter = {
   code?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
-  lote?: InputMaybe<SortOrder>;
   orderPlacedAt?: InputMaybe<SortOrder>;
   shipping?: InputMaybe<SortOrder>;
   shippingWithTax?: InputMaybe<SortOrder>;
@@ -3399,12 +3384,8 @@ export type UpdateCustomerInput = {
 
 export type UpdateCustomerPasswordResult = InvalidCredentialsError | NativeAuthStrategyError | PasswordValidationError | Success;
 
-export type UpdateOrderCustomFieldsInput = {
-  loteId?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export type UpdateOrderInput = {
-  customFields?: InputMaybe<UpdateOrderCustomFieldsInput>;
+  customFields?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateOrderItemsResult = InsufficientStockError | NegativeQuantityError | Order | OrderLimitError | OrderModificationError;
@@ -3632,7 +3613,7 @@ export type GetProductDataQueryVariables = Exact<{
 }>;
 
 
-export type GetProductDataQuery = { __typename?: 'Query', product?: { __typename: 'Product', id: string, name: string, slug: string, description: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }>, optionGroups: Array<{ __typename?: 'ProductOptionGroup', id: string, code: string, name: string, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }>, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, price: number, currencyCode: CurrencyCode, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }> } | null };
+export type GetProductDataQuery = { __typename?: 'Query', product?: { __typename: 'Product', id: string, name: string, slug: string, description: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }>, optionGroups: Array<{ __typename?: 'ProductOptionGroup', id: string, code: string, name: string, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }>, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, variants: Array<{ __typename?: 'ProductVariant', id: string, sku: string, priceWithTax: number, stockLevel: string, price: number, currencyCode: CurrencyCode, assets: Array<{ __typename?: 'Asset', id: string, preview: string }>, options: Array<{ __typename?: 'ProductOption', id: string, code: string, name: string, groupId: string }> }> } | null };
 
 export type GetAllCollectionsQueryVariables = Exact<{
   options?: InputMaybe<CollectionListOptions>;
@@ -4993,6 +4974,7 @@ export const GetProductDataDocument = new TypedDocumentString(`
       id
       sku
       priceWithTax
+      stockLevel
       price
       currencyCode
       assets {

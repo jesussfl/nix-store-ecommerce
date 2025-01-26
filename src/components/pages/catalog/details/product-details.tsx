@@ -19,7 +19,6 @@ import H1 from '@/components/shared/headings'
 import { Badge } from '@/components/shared/badge'
 import { useCart } from '@/components/cart/cart-context'
 import { useTranslations } from 'next-intl'
-import { is } from 'date-fns/locale'
 import { Alert, AlertDescription, AlertTitle } from '@/components/shared/alert'
 import { priceFormatter } from '@/utils/price-formatter'
 
@@ -43,6 +42,7 @@ interface Variant {
   currencyCode: string
   assets: Asset[]
   options: ProductOption[]
+  stockLevel: string
 }
 
 export default function ProductDetails({
@@ -231,19 +231,38 @@ const ProductHeading = ({
 }: {
   productName: string
   currentVariant: Variant
-}) => (
-  <div className="space-y-2">
-    <H1 className="text-base font-semibold lg:text-xl lg:font-semibold">
-      {productName}
-    </H1>
-    <div className="flex items-baseline gap-2">
-      <span className="text-xl font-medium text-primary">
-        ${(currentVariant.priceWithTax / 100).toFixed(2)}{' '}
-        {currentVariant.currencyCode}
-      </span>
+}) => {
+  const stockLevels: Record<string, string> = {
+    OUT_OF_STOCK: 'Agotado',
+    LOW_STOCK: 'Pocas unidades',
+    NOT_SPECIFIED: 'No especificado',
+    IN_STOCK: 'Disponible',
+  }
+  console.log(currentVariant.stockLevel)
+  return (
+    <div className="space-y-2">
+      <H1 className="text-base font-semibold lg:text-xl lg:font-semibold">
+        {productName}
+      </H1>
+      <div className="flex items-baseline gap-2">
+        <span className="text-xl font-medium text-primary">
+          ${(currentVariant.priceWithTax / 100).toFixed(2)}{' '}
+          {currentVariant.currencyCode}
+        </span>
+      </div>
+      <div>
+        <p className="text-sm text-gray-600">
+          Estado del producto:{' '}
+          <span className="font-semibold text-gray-800">
+            {currentVariant.stockLevel
+              ? stockLevels[currentVariant.stockLevel]
+              : 'No disponible'}
+          </span>
+        </p>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 const ProductOptions = ({
   optionGroups,
@@ -394,6 +413,7 @@ const PurchaseActions = ({
 }) => {
   const router = useRouter()
   const t = useTranslations('common')
+
   const handleCheckout = async () => {
     if (!isLogged && !isLoading) {
       router.push(
@@ -406,6 +426,7 @@ const PurchaseActions = ({
     await addToCart(currentVariant.id, quantity)
     router.push(`/checkout`)
   }
+
   const handleAddToCart = async () => {
     if (!isLogged && !isLoading) {
       router.push(
@@ -419,11 +440,13 @@ const PurchaseActions = ({
     await addToCart(currentVariant.id, quantity)
   }
 
+  const isOutOfStock = currentVariant.stockLevel === 'OUT_OF_STOCK'
+
   return (
     <div className="space-y-4">
       <Button
         variant="default"
-        disabled={isLoading}
+        disabled={isLoading || isOutOfStock}
         onClick={handleCheckout}
         className="w-full"
         size={'lg'}
@@ -439,6 +462,7 @@ const PurchaseActions = ({
         onClick={handleAddToCart}
         className="w-full"
         size={'lg'}
+        disabled={isOutOfStock}
       >
         <ShoppingCart className="mr-2 h-4 w-4" />
         {isLoading ? (
@@ -447,6 +471,11 @@ const PurchaseActions = ({
           t(`add_to_cart`)
         )}
       </Button>
+      {isOutOfStock && (
+        <p className="text-sm text-red-600">
+          Este producto está actualmente agotado.
+        </p>
+      )}
     </div>
   )
 }

@@ -23,9 +23,15 @@ export function Description({ content }: DescriptionProps) {
         )}
       </button>
       <div
-        className={`mt-2 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[1000px]' : 'max-h-0'}`}
+        className={`mt-2 overflow-hidden transition-all duration-300 ease-in-out ${
+          isExpanded ? 'max-h-[1000px]' : 'max-h-0'
+        }`}
       >
-        <p className="text-gray-600">{content}</p>
+        {/* Renderizar HTML con formato */}
+        <div
+          className="text-gray-600"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       </div>
     </div>
   )

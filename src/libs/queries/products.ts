@@ -36,6 +36,7 @@ export const GET_PRODUCT_INFO = graphql(`
         id
         sku
         priceWithTax
+        stockLevel
         # facetValues {
         #   id
         #   name
