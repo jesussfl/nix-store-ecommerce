@@ -1677,15 +1677,6 @@ export enum LogicalOperator {
   OR = 'OR'
 }
 
-export type Lote = Node & {
-  __typename?: 'Lote';
-  createdAt: Scalars['DateTime']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
 /** Returned when attempting to register or verify a customer account without a password, when one is required. */
 export type MissingPasswordError = ErrorResult & {
   __typename?: 'MissingPasswordError';
@@ -2025,7 +2016,7 @@ export type Order = Node & {
   couponCodes: Array<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   currencyCode: CurrencyCode;
-  customFields?: Maybe<OrderCustomFields>;
+  customFields?: Maybe<Scalars['JSON']['output']>;
   customer?: Maybe<Customer>;
   discounts: Array<Discount>;
   fulfillments?: Maybe<Array<Fulfillment>>;
@@ -2090,11 +2081,6 @@ export type OrderAddress = {
   province?: Maybe<Scalars['String']['output']>;
   streetLine1?: Maybe<Scalars['String']['output']>;
   streetLine2?: Maybe<Scalars['String']['output']>;
-};
-
-export type OrderCustomFields = {
-  __typename?: 'OrderCustomFields';
-  lote?: Maybe<Lote>;
 };
 
 export type OrderFilterParameter = {
@@ -2236,7 +2222,6 @@ export type OrderSortParameter = {
   code?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
-  lote?: InputMaybe<SortOrder>;
   orderPlacedAt?: InputMaybe<SortOrder>;
   shipping?: InputMaybe<SortOrder>;
   shippingWithTax?: InputMaybe<SortOrder>;
@@ -3399,12 +3384,8 @@ export type UpdateCustomerInput = {
 
 export type UpdateCustomerPasswordResult = InvalidCredentialsError | NativeAuthStrategyError | PasswordValidationError | Success;
 
-export type UpdateOrderCustomFieldsInput = {
-  loteId?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export type UpdateOrderInput = {
-  customFields?: InputMaybe<UpdateOrderCustomFieldsInput>;
+  customFields?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateOrderItemsResult = InsufficientStockError | NegativeQuantityError | Order | OrderLimitError | OrderModificationError;
@@ -3568,7 +3549,7 @@ export type GetCollectionQueryVariables = Exact<{
 
 export type GetCollectionQuery = { __typename?: 'Query', collection?: { __typename?: 'Collection', id: string, name: string, slug: string, parentId: string, children?: Array<{ __typename?: 'Collection', id: string, slug: string, name: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null }> | null, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null } | null };
 
-export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
+export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, customFields?: any | null, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
 
 export type OrderFragment = (
   { __typename?: 'Order', shippingAddress?: { __typename?: 'OrderAddress', fullName?: string | null, streetLine1?: string | null, streetLine2?: string | null, city?: string | null, province?: string | null, postalCode?: string | null } | null, billingAddress?: { __typename?: 'OrderAddress', fullName?: string | null, streetLine1?: string | null, streetLine2?: string | null, city?: string | null, province?: string | null, postalCode?: string | null } | null }
@@ -3598,7 +3579,7 @@ export type GetOrderByCodeQueryVariables = Exact<{
 }>;
 
 
-export type GetOrderByCodeQuery = { __typename?: 'Query', orderByCode?: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customFields?: { __typename?: 'OrderCustomFields', lote?: { __typename?: 'Lote', id: string, name: string, description: string } | null } | null, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingAddress?: { __typename?: 'OrderAddress', fullName?: string | null, streetLine1?: string | null, streetLine2?: string | null, city?: string | null, province?: string | null, postalCode?: string | null } | null, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } | null };
+export type GetOrderByCodeQuery = { __typename?: 'Query', orderByCode?: { __typename?: 'Order', id: string, customFields?: any | null, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingAddress?: { __typename?: 'OrderAddress', fullName?: string | null, streetLine1?: string | null, streetLine2?: string | null, city?: string | null, province?: string | null, postalCode?: string | null } | null, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } | null };
 
 export type GetPaymentMethodsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3689,6 +3670,7 @@ export const ActiveOrderFragmentDoc = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -3784,6 +3766,7 @@ export const OrderFragmentDoc = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -3887,6 +3870,7 @@ export const AddItemToOrderDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -3976,6 +3960,7 @@ export const RemoveItemFromOrderDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4079,6 +4064,7 @@ export const AdjustItemQuantityInOrderDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4164,6 +4150,7 @@ export const SetOrderShippingAddressDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4249,6 +4236,7 @@ export const SetShippingMethodDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4329,6 +4317,7 @@ export const AdjustOrderLineDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4543,6 +4532,7 @@ export const GetActiveOrderDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4630,6 +4620,7 @@ export const TransitionToStateDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4701,13 +4692,7 @@ export const GetOrderByCodeDocument = new TypedDocumentString(`
     query GetOrderByCode($code: String!) {
   orderByCode(code: $code) {
     id
-    customFields {
-      lote {
-        id
-        name
-        description
-      }
-    }
+    customFields
     createdAt
     updatedAt
     totalQuantity
@@ -4817,6 +4802,7 @@ export const AddPaymentToOrderDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress
@@ -4905,6 +4891,7 @@ export const AddPaymentToExistingOrderDocument = new TypedDocumentString(`
   totalQuantity
   couponCodes
   code
+  customFields
   customer {
     id
     emailAddress

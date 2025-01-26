@@ -7,6 +7,7 @@ export const ACTIVE_ORDER_FRAGMENT = graphql(`
     totalQuantity
     couponCodes
     code
+    customFields
     customer {
       id
       emailAddress
@@ -124,13 +125,7 @@ export const GET_ORDER_BY_CODE = graphql(`
   query GetOrderByCode($code: String!) {
     orderByCode(code: $code) {
       id
-      customFields {
-        lote {
-          id
-          name
-          description
-        }
-      }
+      customFields
       createdAt
       updatedAt
       totalQuantity
