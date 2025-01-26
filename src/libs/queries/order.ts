@@ -124,6 +124,13 @@ export const GET_ORDER_BY_CODE = graphql(`
   query GetOrderByCode($code: String!) {
     orderByCode(code: $code) {
       id
+      customFields {
+        lote {
+          id
+          name
+          description
+        }
+      }
       createdAt
       updatedAt
       totalQuantity
@@ -149,6 +156,15 @@ export const GET_ORDER_BY_CODE = graphql(`
         amountWithTax
         adjustmentSource
       }
+      shippingAddress {
+        fullName
+        streetLine1
+        streetLine2
+        city
+        province
+        postalCode
+      }
+
       shipping
       shippingWithTax
       totalWithTax
