@@ -16,6 +16,7 @@ import Link from 'next/link'
 
 async function fetchCollections() {
   const { data, error } = await vendureFetch({
+    cache: 'no-cache',
     query: GET_COLLECTION,
     variables: {
       slug: 'colecciones-especiales',

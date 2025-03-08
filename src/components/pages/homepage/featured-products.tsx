@@ -20,6 +20,7 @@ import { GetBCVPrice } from '@/utils/get-bcv-price'
 // Utility to fetch and handle product data
 async function fetchProducts(collectionSlug: string) {
   const { data, error } = await vendureFetch({
+    cache: 'no-cache',
     query: SEARCH_PRODUCTS,
     variables: {
       input: {

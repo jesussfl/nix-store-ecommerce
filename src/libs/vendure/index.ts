@@ -19,7 +19,7 @@ type VendureFetchProps<TResult, TVariables> = {
 }
 
 export async function vendureFetch<TResult, TVariables>({
-  cache = 'force-cache',
+  cache = 'no-cache',
   headers,
   query,
   tags,

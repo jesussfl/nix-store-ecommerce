@@ -43,7 +43,7 @@ export default async function CatalogPage({
   const sortOption = getSortOption(sort)
 
   const { data, error } = await vendureFetch({
-    revalidate: 900,
+    cache: 'no-cache',
     query: SEARCH_PRODUCTS,
     languageCode: locale,
     variables: {
