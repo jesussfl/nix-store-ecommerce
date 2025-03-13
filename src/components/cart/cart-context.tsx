@@ -72,7 +72,7 @@ const useCartContainer = createContainer(() => {
       (c) => c && { ...c, totalQuantity: (c.totalQuantity || 0) + q }
     )
     try {
-      const { data } = await vendureFetch({
+      const { data, error } = await vendureFetch({
         query: ADD_TO_CART_MUTATION,
         variables: {
           productVariantId: id,
@@ -86,9 +86,42 @@ const useCartContainer = createContainer(() => {
         }
 
         if (o) open()
+
+        return {
+          success: true,
+        }
+      } else if (data?.addItemToOrder.__typename === 'InsufficientStockError') {
+        // Revertimos el cambio optimista
+        await fetchActiveOrder()
+
+        return {
+          success: false,
+          errorCode: 'INSUFFICIENT_STOCK_ERROR',
+          message: data.addItemToOrder.message,
+          quantityAvailable: data.addItemToOrder.quantityAvailable,
+        }
+      } else if (data?.addItemToOrder) {
+        await fetchActiveOrder()
+
+        return {
+          success: false,
+          errorCode: data.addItemToOrder.__typename,
+          message: data.addItemToOrder.message || 'Error al añadir al carrito',
+        }
+      }
+
+      return {
+        success: false,
+        errorCode: 'UNKNOWN_ERROR',
+        message: 'Error desconocido al añadir al carrito',
       }
     } catch (e) {
       console.error(e)
+      return {
+        success: false,
+        errorCode: 'UNEXPECTED_ERROR',
+        message: 'Error inesperado al añadir al carrito',
+      }
     }
   }
 
@@ -131,12 +164,50 @@ const useCartContainer = createContainer(() => {
           quantity: q,
         },
       })
+
       if (data?.adjustOrderLine.__typename === 'Order') {
         setActiveOrder(data?.adjustOrderLine)
+        return {
+          success: true,
+        }
+      } else if (
+        data?.adjustOrderLine.__typename === 'InsufficientStockError'
+      ) {
+        // Revertimos el cambio optimista
+        await fetchActiveOrder()
+
+        return {
+          success: false,
+          errorCode: 'INSUFFICIENT_STOCK_ERROR',
+          message: data.adjustOrderLine.message,
+          quantityAvailable: data.adjustOrderLine.quantityAvailable,
+        }
+      } else if (data?.adjustOrderLine) {
+        await fetchActiveOrder()
+
+        return {
+          success: false,
+          errorCode: data.adjustOrderLine.__typename,
+          message:
+            data.adjustOrderLine.message || 'Error al ajustar la cantidad',
+        }
       }
-      return data?.adjustOrderLine
+
+      return {
+        success: false,
+        errorCode: 'UNKNOWN_ERROR',
+        message: 'Error desconocido al ajustar la cantidad',
+      }
     } catch (e) {
       console.error(e)
+      // Revertimos el cambio optimista en caso de error
+      await fetchActiveOrder()
+
+      return {
+        success: false,
+        errorCode: 'UNEXPECTED_ERROR',
+        message: 'Error inesperado al ajustar la cantidad',
+      }
     }
   }
 
