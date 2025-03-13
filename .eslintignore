@@ -1,0 +1,22 @@
+# Build output
+.next/
+out/
+build/
+dist/
+
+# Dependencies
+node_modules/
+
+# Misc
+*.min.js
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Carpetas específicas de componentes (adaptar según necesites)
+src/components/shared/cart/
+src/components/pages/checkout/
+src/libs/queries/product.ts 

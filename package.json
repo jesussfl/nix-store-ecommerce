@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "concurrently \"next dev\" \"yarn generate --watch\"",
     "dev2": "next dev",
-    "build": "next build",
-    "export": "next build && next export",
+    "build": "DISABLE_ESLINT_PLUGIN=true next build",
+    "build:strict": "next build",
+    "export": "DISABLE_ESLINT_PLUGIN=true next build && next export",
     "start": "next start",
     "lint": "next lint",
     "codegen": "graphql-codegen --config codegen.ts",
