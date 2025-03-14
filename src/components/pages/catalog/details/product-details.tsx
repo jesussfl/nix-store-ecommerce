@@ -97,7 +97,12 @@ export default function ProductDetails({
           currencyCode={currentVariant.currencyCode}
         />
       )}
-      <SpecialOrderMessage />
+      <SpecialOrderMessage
+        isImmediatelyAvailable={
+          facets.find((facet) => facet.code === 'disponibilidad-inmediata') !==
+          undefined
+        }
+      />
       <PurchaseActions
         isLogged={isLogged}
         isLoading={isLoading}

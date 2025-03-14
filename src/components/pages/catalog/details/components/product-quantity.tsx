@@ -30,7 +30,9 @@ export const ProductQuantity = ({
           <span className="text-xs font-medium text-gray-500">
             {isOutOfStock
               ? `No hay stock`
-              : `Quedan ${availableStock} unidades`}
+              : availableStock > 10
+                ? ``
+                : `Quedan ${availableStock} unidades`}
           </span>
         )}
       </div>

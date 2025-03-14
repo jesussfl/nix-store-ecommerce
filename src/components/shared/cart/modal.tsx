@@ -371,8 +371,9 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
                   {/* Stock disponible */}
                   {!stockLevels[line.id]?.loading && (
                     <div className="ml-20 text-xs text-gray-500">
-                      Disponible: {stockLevels[line.id]?.available || 0}{' '}
-                      unidades
+                      {(stockLevels[line.id]?.available || 0) > 10
+                        ? ''
+                        : `Disponible: ${stockLevels[line.id]?.available || 0} unidades`}
                     </div>
                   )}
 

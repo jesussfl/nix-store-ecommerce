@@ -339,7 +339,9 @@ export default function OrderSummary({
 
               {!stockLevels[line.id]?.loading && (
                 <div className="text-xs text-gray-500">
-                  Disponible: {stockLevels[line.id]?.available || 0} unidades
+                  {(stockLevels[line.id]?.available || 0) > 10
+                    ? ''
+                    : `Disponible: ${stockLevels[line.id]?.available || 0} unidades`}
                 </div>
               )}
 
@@ -411,7 +413,14 @@ export default function OrderSummary({
               </span>
             )}
           </div>
-          <SpecialOrderMessage />
+          <SpecialOrderMessage
+            isImmediatelyAvailable={activeOrder.lines.some(
+              (line) =>
+                line.productVariant.product?.facetValues?.find(
+                  (f) => f.code === 'disponibilidad-inmediata'
+                ) !== undefined
+            )}
+          />
         </div>
       </ScrollArea>
     </div>
