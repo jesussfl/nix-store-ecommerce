@@ -10,7 +10,7 @@ import { Separator } from '@/components/shared/separator/separator'
 import { debounce } from 'lodash'
 import { Badge } from '@/components/shared/badge'
 import { ScrollArea } from '@/components/shared/scroll-area/scroll-area'
-import { priceFormatter } from '@/utils/price-formatter'
+import { priceFormatter, priceFormatterFromMajor } from '@/utils/price-formatter'
 import { CurrencyCode } from '@/graphql/graphql'
 import { SpecialOrderMessage } from '../catalog/details/components/special-order-message'
 import { Alert, AlertDescription } from '@/components/shared/alert'
@@ -239,13 +239,6 @@ export default function OrderSummary({
     [isPaymentStep, removeFromCart]
   )
 
-  const formatCurrency = (amount: number, currencyCode: string) => {
-    return (amount / 100).toLocaleString('es-ES', {
-      style: 'currency',
-      currency: currencyCode,
-    })
-  }
-
   if (!activeOrder || !activeOrder.lines || activeOrder.lines.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -293,7 +286,7 @@ export default function OrderSummary({
                 )?.name || 'Por encargo'}
               </Badge>
               <p className="text-sm text-muted-foreground">
-                {formatCurrency(
+                {priceFormatter(
                   line.unitPriceWithTax,
                   activeOrder.currencyCode
                 )}
@@ -374,7 +367,7 @@ export default function OrderSummary({
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <span>
-                {formatCurrency(
+                {priceFormatter(
                   activeOrder.subTotalWithTax,
                   activeOrder.currencyCode
                 )}
@@ -387,7 +380,7 @@ export default function OrderSummary({
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <span>
-                {formatCurrency(
+                {priceFormatter(
                   activeOrder.shippingWithTax,
                   activeOrder.currencyCode
                 )}
@@ -400,13 +393,13 @@ export default function OrderSummary({
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <span>
-                {formatCurrency(
+                {priceFormatter(
                   activeOrder.totalWithTax,
                   activeOrder.currencyCode
                 )}{' '}
                 <Badge variant="success" className="bg-slate-600">
-                  {priceFormatter(
-                    activeOrder.totalWithTax * bcvPrice,
+                  {priceFormatterFromMajor(
+                    (activeOrder.totalWithTax / 100) * bcvPrice,
                     CurrencyCode.VES
                   )}
                 </Badge>

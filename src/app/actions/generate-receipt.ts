@@ -205,14 +205,8 @@ export async function generateReceipt(orderCode) {
   doc.setTextColor(0, 0, 0)
 
   order.lines.forEach((line) => {
-    const unitPrice = (line.unitPriceWithTax / 100).toLocaleString('es-ES', {
-      style: 'currency',
-      currency: order.currencyCode,
-    })
-    const lineTotal = (line.linePriceWithTax / 100).toLocaleString('es-ES', {
-      style: 'currency',
-      currency: order.currencyCode,
-    })
+    const unitPrice = priceFormatter(line.unitPriceWithTax, order.currencyCode)
+    const lineTotal = priceFormatter(line.linePriceWithTax, order.currencyCode)
     const provider = line.productVariant.customFields?.provider || 'N/A'
 
     const rowY = currentY + 5
@@ -278,10 +272,7 @@ export async function generateReceipt(orderCode) {
 
   doc.text('SUBTOTAL:', rightX, summaryY)
   doc.text(
-    (order.subTotalWithTax / 100).toLocaleString('es-ES', {
-      style: 'currency',
-      currency: order.currencyCode,
-    }),
+    priceFormatter(order.subTotalWithTax, order.currencyCode),
     rightX + 40,
     summaryY,
     { align: 'right' }
@@ -292,10 +283,7 @@ export async function generateReceipt(orderCode) {
   const totalDiscount =
     order.discounts?.reduce((acc, d) => acc + d.amountWithTax, 0) || 0
   doc.text(
-    (totalDiscount / 100).toLocaleString('es-ES', {
-      style: 'currency',
-      currency: order.currencyCode,
-    }),
+    priceFormatter(totalDiscount, order.currencyCode),
     rightX + 40,
     summaryY,
     { align: 'right' }
@@ -305,10 +293,7 @@ export async function generateReceipt(orderCode) {
   doc.setFont('helvetica', 'bold')
   doc.text('TOTAL:', rightX, summaryY)
   doc.text(
-    (order.totalWithTax / 100).toLocaleString('es-ES', {
-      style: 'currency',
-      currency: order.currencyCode,
-    }),
+    priceFormatter(order.totalWithTax, order.currencyCode),
     rightX + 40,
     summaryY,
     { align: 'right' }

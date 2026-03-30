@@ -11,6 +11,7 @@ import Image from 'next/image'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
 import DownloadReceipt from './download-button'
+import { priceFormatter } from '@/utils/price-formatter'
 
 export default async function ConfirmationPage({
   params,
@@ -150,10 +151,7 @@ export default async function ConfirmationPage({
                     {line.shippingMethod.description}
                   </p>
                   <p className="mt-1 font-medium">
-                    {(line.priceWithTax / 100).toLocaleString('es-ES', {
-                      style: 'currency',
-                      currency: order.currencyCode,
-                    })}
+                    {priceFormatter(line.priceWithTax, order.currencyCode)}
                   </p>
                 </div>
               ))}
@@ -189,10 +187,7 @@ export default async function ConfirmationPage({
                       Cantidad: {line.quantity}
                     </p>
                     <p className="mt-1 font-medium">
-                      {(line.linePriceWithTax / 100).toLocaleString('es-ES', {
-                        style: 'currency',
-                        currency: order.currencyCode,
-                      })}
+                      {priceFormatter(line.linePriceWithTax, order.currencyCode)}
                     </p>
                   </div>
                 </div>
@@ -205,19 +200,13 @@ export default async function ConfirmationPage({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>
-                    {(order.subTotalWithTax / 100).toLocaleString('es-ES', {
-                      style: 'currency',
-                      currency: order.currencyCode,
-                    })}
+                    {priceFormatter(order.subTotalWithTax, order.currencyCode)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Envío</span>
                   <span>
-                    {(order.shippingWithTax / 100).toLocaleString('es-ES', {
-                      style: 'currency',
-                      currency: order.currencyCode,
-                    })}
+                    {priceFormatter(order.shippingWithTax, order.currencyCode)}
                   </span>
                 </div>
                 {order.discounts.length > 0 && (
@@ -225,26 +214,19 @@ export default async function ConfirmationPage({
                     <span>Descuentos</span>
                     <span>
                       -
-                      {(
+                      {priceFormatter(
                         order.discounts.reduce(
                           (acc, d) => acc + d.amountWithTax,
                           0
-                        ) / 100
-                      ).toLocaleString('es-ES', {
-                        style: 'currency',
-                        currency: order.currencyCode,
-                      })}
+                        ),
+                        order.currencyCode
+                      )}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span>
-                    {(order.totalWithTax / 100).toLocaleString('es-ES', {
-                      style: 'currency',
-                      currency: order.currencyCode,
-                    })}
-                  </span>
+                  <span>{priceFormatter(order.totalWithTax, order.currencyCode)}</span>
                 </div>
               </div>
 
@@ -256,20 +238,12 @@ export default async function ConfirmationPage({
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Abonado</span>
                       <span>
-                        {(partialPaid / 100).toLocaleString('es-ES', {
-                          style: 'currency',
-                          currency: order.currencyCode,
-                        })}
+                        {priceFormatter(partialPaid, order.currencyCode)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Restan</span>
-                      <span>
-                        {(partialRemaining / 100).toLocaleString('es-ES', {
-                          style: 'currency',
-                          currency: order.currencyCode,
-                        })}
-                      </span>
+                      <span>{priceFormatter(partialRemaining, order.currencyCode)}</span>
                     </div>
                   </div>
                 </>

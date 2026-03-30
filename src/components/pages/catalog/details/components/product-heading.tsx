@@ -1,4 +1,5 @@
 import H1 from '@/components/shared/headings'
+import { priceFormatter } from '@/utils/price-formatter'
 import { Variant } from '../hooks/use-product-details'
 
 export interface ProductHeadingProps {
@@ -24,8 +25,10 @@ export const ProductHeading = ({
       </H1>
       <div className="flex items-baseline gap-2">
         <span className="text-xl font-medium text-primary">
-          ${(currentVariant.priceWithTax / 100).toFixed(2)}{' '}
-          {currentVariant.currencyCode}
+          {priceFormatter(
+            currentVariant.priceWithTax,
+            currentVariant.currencyCode
+          )}
         </span>
       </div>
       <div>

@@ -19,7 +19,8 @@ import {
 } from '@/components/shared/select/select'
 import { Loader2 } from 'lucide-react'
 import { LOCATIONS } from './locations'
-import { useEffect } from 'react'
+import { CurrencyCode } from '@/graphql/graphql'
+import { priceFormatterFromMajor } from '@/utils/price-formatter'
 
 export default function DeliveryFields() {
   const { control, watch, setValue } = useFormContext()
@@ -78,7 +79,13 @@ export default function DeliveryFields() {
                 <>
                   <p>Nombre: {selectedLocation?.name || ''}</p>
                   <p className="mt-2 text-xl font-bold">
-                    Precio: ${selectedLocation?.price.toFixed(2) || ''}
+                    Precio:{' '}
+                    {selectedLocation?.price
+                      ? priceFormatterFromMajor(
+                          selectedLocation.price,
+                          CurrencyCode.USD
+                        )
+                      : ''}
                   </p>
                 </>
               )}

@@ -14,6 +14,8 @@ import Link from 'next/link'
 import { cn } from '@/libs/utils'
 import { fetchCurrentStockLevel } from '@/libs/queries/product'
 import { Alert, AlertDescription } from '@/components/shared/alert'
+import { CurrencyCode } from '@/graphql/graphql'
+import { priceFormatter, priceFormatterFromMajor } from '@/utils/price-formatter'
 
 // Definir tipos para los componentes de tooltip
 interface TooltipComponentProps {
@@ -291,10 +293,10 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
                         {line.productVariant.name}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {(line.unitPriceWithTax / 100).toLocaleString('es-ES', {
-                          style: 'currency',
-                          currency: activeOrder.currencyCode,
-                        })}
+                        {priceFormatter(
+                          line.unitPriceWithTax,
+                          activeOrder.currencyCode
+                        )}
                       </p>
                       <div className="mt-2 flex items-center space-x-2">
                         <Button
@@ -399,12 +401,9 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
                   <span className="loader">Cargando...</span>
                 ) : (
                   <span>
-                    {(activeOrder.subTotalWithTax / 100).toLocaleString(
-                      'es-ES',
-                      {
-                        style: 'currency',
-                        currency: activeOrder.currencyCode,
-                      }
+                    {priceFormatter(
+                      activeOrder.subTotalWithTax,
+                      activeOrder.currencyCode
                     )}
                   </span>
                 )}
@@ -415,12 +414,9 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
                   <span className="loader">Cargando...</span>
                 ) : (
                   <span>
-                    {(activeOrder.shippingWithTax / 100).toLocaleString(
-                      'es-ES',
-                      {
-                        style: 'currency',
-                        currency: activeOrder.currencyCode,
-                      }
+                    {priceFormatter(
+                      activeOrder.shippingWithTax,
+                      activeOrder.currencyCode
                     )}
                   </span>
                 )}
@@ -431,11 +427,14 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
                   <span className="loader">Cargando...</span>
                 ) : (
                   <span>
-                    {(activeOrder.totalWithTax / 100).toLocaleString('es-ES', {
-                      style: 'currency',
-                      currency: activeOrder.currencyCode,
-                    })}{' '}
-                    {`${((activeOrder.totalWithTax / 100) * bcvPrice).toFixed(2)} Bs`}
+                    {priceFormatter(
+                      activeOrder.totalWithTax,
+                      activeOrder.currencyCode
+                    )}{' '}
+                    {priceFormatterFromMajor(
+                      (activeOrder.totalWithTax / 100) * bcvPrice,
+                      CurrencyCode.VES
+                    )}
                   </span>
                 )}
               </div>

@@ -10,8 +10,8 @@ import {
 } from '@/components/shared/card/card'
 import { Sheet, SheetTrigger, SheetContent } from '@/components/shared/sheet'
 import { CurrencyCode } from '@/graphql/graphql'
-import { priceFormatter } from '@/utils/price-formatter'
-import { RiArrowDropDownLine, RiArrowUpSLine } from '@remixicon/react'
+import { priceFormatter, priceFormatterFromMajor } from '@/utils/price-formatter'
+import { RiArrowUpSLine } from '@remixicon/react'
 import { useState } from 'react'
 
 export const MobileBottomBar = ({
@@ -24,15 +24,19 @@ export const MobileBottomBar = ({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const { activeOrder } = useCart()
 
-  const totalInDollars = activeOrder ? activeOrder.totalWithTax / 100 : 0
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[100] bg-background p-4 shadow-md md:hidden">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">Total:</p>
-          <p className="text-lg font-bold">${totalInDollars.toFixed(2)}</p>
+          <p className="text-lg font-bold">
+            {priceFormatter(activeOrder?.totalWithTax ?? 0, activeOrder?.currencyCode ?? CurrencyCode.USD)}
+          </p>
           <Badge variant="success" className="w-auto bg-slate-600 text-xs">
-            {priceFormatter(totalInDollars * bcvPrice, CurrencyCode.VES)}
+            {priceFormatterFromMajor(
+              ((activeOrder?.totalWithTax ?? 0) / 100) * bcvPrice,
+              CurrencyCode.VES
+            )}
           </Badge>
         </div>
         <div className="flex flex-row gap-2">
