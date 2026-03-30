@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server'
+import Link from 'next/link'
 import {
   RiExternalLinkLine,
   RiLinksLine,
@@ -6,6 +7,8 @@ import {
   RiWallet3Line,
   RiNotification3Line,
   RiAlertLine,
+  RiArrowRightUpLine,
+  RiWhatsappLine,
 } from '@remixicon/react'
 
 const stepIcons = [
@@ -90,6 +93,22 @@ export default async function StepsPage() {
               <p className="mt-3 text-base leading-7 text-muted-foreground">
                 {t('disclaimer-2')}
               </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="https://wa.me/+584123761604"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-button-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_36px_rgba(100,30,200,0.22)] transition-transform duration-200 hover:-translate-y-1"
+                >
+                  <RiWhatsappLine className="h-5 w-5" />
+                  {t('whatsappButton')}
+                </Link>
+                <Link
+                  href="/terms"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-white px-5 py-3 text-sm font-semibold text-primary transition-transform duration-200 hover:-translate-y-1"
+                >
+                  {t('policiesButton')}
+                  <RiArrowRightUpLine className="h-5 w-5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
