@@ -18,7 +18,17 @@
     },
     "faqs-section": {
       "title": "Preguntas Frecuentes",
-      "description": "Si tienes más dudas contáctanos"
+      "description": "Si tienes más dudas contáctanos",
+      "question-1": "¿Hacen entregas personales en Maracay?",
+      "answer-1": "Sí, realizamos entregas personales en zonas céntricas de Maracay. También contamos con pick-up y delivery.",
+      "question-2": "¿Realizan envíos a nivel nacional?",
+      "answer-2": "¡Sí! Realizamos envíos a toda Venezuela a través de las agencias de tu preferencia (MRW, Zoom, Tealca o Liberty Express) con cobro en destino.",
+      "question-3": "¿Cuáles son los métodos de pago?",
+      "answer-3": "Aceptamos pago móvil, transferencias, efectivo (solo Maracay), Zelle, Paypal, Zinli y Binance (USDT).",
+      "question-4": "¿Puedo pedir algo que no esté en el catálogo?",
+      "answer-4": "¡Por supuesto! Ofrecemos servicio de personal shopper (encargos de importaciones personalizados). Si viste algo en Amazon, SHEIN o cualquier tienda internacional, envíanos el link y nosotros nos encargamos de hacerlo llegar a tus manos.",
+      "question-5": "¿Tienen sistema de apartado?",
+      "answer-5": "Sí, tanto para realizar un encargo como para apartar productos en disponibilidad inmediata, puedes realizar tu pedido con un abono del 50% y el resto lo cancelas antes de la entrega o envío."
     },
     "we-offer-section": {
       "title": "Te ofrecemos",

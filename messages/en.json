@@ -3,6 +3,20 @@
         "hero-h1": "Hassle-free online shopping throughout Venezuela",
         "hero-description": "Order what you like from your favorite websites or shop our products with immediate availability.",
         "hero-button": "View catalog",
+        "faqs-section": {
+            "title": "Frequently Asked Questions",
+            "description": "If you have more questions, contact us",
+            "question-1": "Do you offer personal delivery in Maracay?",
+            "answer-1": "Yes, we offer personal deliveries in central areas of Maracay. We also provide pick-up and delivery.",
+            "question-2": "Do you ship nationwide?",
+            "answer-2": "Yes! We ship throughout Venezuela through the agency of your choice (MRW, Zoom, Tealca, or Liberty Express) with payment due on delivery.",
+            "question-3": "What payment methods do you accept?",
+            "answer-3": "We accept mobile payment, bank transfers, cash (Maracay only), Zelle, PayPal, Zinli, and Binance (USDT).",
+            "question-4": "Can I order something that is not in the catalog?",
+            "answer-4": "Absolutely! We offer a personal shopper service for custom import requests. If you saw something on Amazon, SHEIN, or any international store, send us the link and we will handle the rest.",
+            "question-5": "Do you offer layaway?",
+            "answer-5": "Yes. For both custom orders and in-stock products, you can place your order with a 50% deposit and pay the rest before delivery or shipping."
+        },
         "footer": {
             "slogan": "Buy, pay, and sell in Venezuela",
             "social-networks": "Our social networks"

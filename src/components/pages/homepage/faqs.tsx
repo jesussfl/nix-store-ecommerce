@@ -13,23 +13,24 @@ export const FaqsSection = async () => {
     <Section title={t('title')} description={t('description')} centered>
       <Accordion type="single" collapsible className="mx-auto max-w-3xl">
         <AccordionItem value="item-1">
-          <AccordionTrigger>Is it accessible?</AccordionTrigger>
-          <AccordionContent>
-            Yes. It adheres to the WAI-ARIA design pattern.
-          </AccordionContent>
+          <AccordionTrigger>{t('question-1')}</AccordionTrigger>
+          <AccordionContent>{t('answer-1')}</AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
-          <AccordionTrigger>Is it styled?</AccordionTrigger>
-          <AccordionContent>
-            Yes. It comes with default styles that matches the other
-            components&apos; aesthetic.
-          </AccordionContent>
+          <AccordionTrigger>{t('question-2')}</AccordionTrigger>
+          <AccordionContent>{t('answer-2')}</AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
-          <AccordionTrigger>Is it animated?</AccordionTrigger>
-          <AccordionContent>
-            {` Yes. It's animated by default, but you can disable it if you prefer.`}
-          </AccordionContent>
+          <AccordionTrigger>{t('question-3')}</AccordionTrigger>
+          <AccordionContent>{t('answer-3')}</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-4">
+          <AccordionTrigger>{t('question-4')}</AccordionTrigger>
+          <AccordionContent>{t('answer-4')}</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-5">
+          <AccordionTrigger>{t('question-5')}</AccordionTrigger>
+          <AccordionContent>{t('answer-5')}</AccordionContent>
         </AccordionItem>
       </Accordion>
     </Section>
