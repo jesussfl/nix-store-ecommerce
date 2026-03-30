@@ -1,10 +1,9 @@
 'use client'
 
-import Image from 'next/image'
 import { AspectRatio } from '../shared/aspect-ratio'
-import { Eye, ImageOff, ShoppingCart } from 'lucide-react'
-import { Button } from '../shared/button'
+import { ImageOff } from 'lucide-react'
 import { optimizeImage } from '@/utils/optimizeImage'
+import { ImageWithFallback } from '../shared/image-with-fallback/image-with-fallback'
 
 export const HoverImage = ({
   imageUrl,
@@ -19,16 +18,15 @@ export const HoverImage = ({
       ratio={4 / 5}
     >
       {imageUrl ? (
-        <Image
+        <ImageWithFallback
           src={optimizeImage({ size: 'popup', src: imageUrl }) || ''}
           alt={`Product image of ${productName}`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-75"
+          fallbackClassName="h-full w-full rounded-sm"
           loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = '/placeholder.svg'
-          }}
+          showRetry={false}
         />
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center rounded-sm border border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-4 text-center">

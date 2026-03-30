@@ -55,7 +55,7 @@ export async function generateMetadata({
           height: 1600,
         },
       ],
-      locale: 'en_US',
+      locale: 'es_VE',
       type: 'website',
     },
   }

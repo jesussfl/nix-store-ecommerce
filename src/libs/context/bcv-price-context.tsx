@@ -27,7 +27,7 @@ const useCartContainer = createContainer(() => {
     if (!isLoading) return
     setIsLoading(true)
     try {
-      const data = await fetch('https://pydolarve.org/api/v1/dollar?page=bcv', {
+      const data = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', {
         method: 'GET',
         cache: 'force-cache',
         next: {
@@ -35,7 +35,7 @@ const useCartContainer = createContainer(() => {
         },
       }).then((res) => res.json())
 
-      setBcvPrice(data)
+      setBcvPrice(data.promedio || 0)
     } catch (e) {
       console.error(e)
     } finally {

@@ -1,9 +1,21 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
 
+const isProd = 
+  process.env.NODE_ENV === 'production' || 
+  process.env.RAILWAY_ENVIRONMENT === 'production' ||
+  process.env.VERCEL_ENV === 'production';
+
+let schemaUrl = isProd 
+  ? 'https://nix-store-admin-production.up.railway.app/shop-api'
+  : 'http://localhost:3000/shop-api';
+
+if (process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN) {
+  schemaUrl = `${process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN}/shop-api`;
+}
+
 const config: CodegenConfig = {
   // overwrite: true,
-  schema: 'https://nix-store-admin-production.up.railway.app/shop-api',
-  // schema: 'http://localhost:3000/shop-api',
+  schema: schemaUrl,
   documents: 'src/**/*.{ts,tsx}',
   ignoreNoDocuments: true,
   generates: {

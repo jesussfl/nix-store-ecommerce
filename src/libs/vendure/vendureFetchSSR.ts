@@ -8,9 +8,12 @@ export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
-const domain = process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || ''
-const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
+const domain = process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || 
+  (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.VERCEL_ENV === 'production'
+    ? 'https://nix-store-admin-production.up.railway.app' 
+    : 'http://localhost:3000')
 
+const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
 type VendureFetchProps<TResult, TVariables> = {
   url?: string
   cache?: RequestCache

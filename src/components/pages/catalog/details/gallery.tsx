@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
 import { ImageOff, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ImageWithFallback } from '@/components/shared/image-with-fallback/image-with-fallback'
 import {
   Carousel,
   CarouselContent,
@@ -96,12 +96,13 @@ export function Gallery({ images }: GalleryProps) {
                       onMouseEnter={() => handleImageSelect(image, index)}
                       onClick={() => handleImageSelect(image, index)}
                     >
-                      <Image
+                      <ImageWithFallback
                         src={image}
                         alt={`Product thumbnail ${index + 1}`}
                         width={60}
                         height={60}
                         className="h-full w-full rounded-sm object-cover"
+                        fallbackClassName="h-full w-full rounded-sm"
                       />
                     </Button>
                   </CardContent>
@@ -132,12 +133,13 @@ export function Gallery({ images }: GalleryProps) {
                       onMouseEnter={() => handleImageSelect(image, index)}
                       onClick={() => handleImageSelect(image, index)}
                     >
-                      <Image
+                      <ImageWithFallback
                         src={image}
                         alt={`Product thumbnail ${index + 1}`}
                         width={60}
                         height={60}
                         className="h-full w-full rounded-sm object-cover"
+                        fallbackClassName="h-full w-full rounded-sm"
                       />
                     </Button>
                   </CardContent>
@@ -155,12 +157,12 @@ export function Gallery({ images }: GalleryProps) {
           onClick={toggleZoom}
           onMouseMove={handleZoom}
         >
-          <Image
+          <ImageWithFallback
             src={selectedImage}
             alt="Selected product image"
-            layout="fill"
-            objectFit="contain"
-            className="transition-transform duration-300 ease-in-out"
+            fill
+            className="object-contain transition-transform duration-300 ease-in-out"
+            fallbackClassName="h-full w-full rounded-md"
             style={{
               transform: `scale(${zoomLevel})`,
               transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,

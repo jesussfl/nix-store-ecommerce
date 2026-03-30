@@ -3,8 +3,8 @@ import { createSharedPathnamesNavigation } from 'next-intl/navigation'
 
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: ['es', 'en'],
-  localePrefix: 'always',
+  locales: ['es'],
+  localePrefix: 'as-needed',
   // Used when no locale matches
   defaultLocale: 'es',
   // The `pathnames` object holds pairs of internal and
@@ -15,46 +15,13 @@ export const routing = defineRouting({
     // external path can be used for all locales
     '/': '/',
     '/blog': '/blog',
-    '/search': {
-      en: '/search',
-      es: '/busqueda',
-    },
-    collections: {
-      en: '/collections',
-      es: '/colecciones',
-    },
+    '/search': '/busqueda',
+    collections: '/colecciones',
     // If locales use different paths, you can
     // specify each external path per locale
-    '/catalog': {
-      en: '/catalog',
-      es: '/catalogo',
-    },
-    '/catalog/[collection]': {
-      en: '/catalog/[collection]',
-      es: '/catalogo/[collection]',
-    },
-    '/catalog/details/[productSlug]': {
-      en: '/catalog/details/[productSlug]',
-      es: '/catalogo/detalles/[productSlug]',
-    },
-    // Dynamic params are supported via square brackets
-    // '/news/[articleSlug]-[articleId]': {
-    //   en: '/news/[articleSlug]-[articleId]',
-    //   es: '/neuigkeiten/[articleSlug]-[articleId]'
-    // },
-
-    // Static pathnames that overlap with dynamic segments
-    // will be prioritized over the dynamic segment
-    // '/news/just-in': {
-    //   en: '/news/just-in',
-    //   es: '/neuigkeiten/aktuell'
-    // },
-
-    // Also (optional) catch-all segments are supported
-    // '/categories/[...slug]': {
-    //   en: '/categories/[...slug]',
-    //   es: '/kategorien/[...slug]'
-    // }
+    '/catalog': '/catalogo',
+    '/catalog/[collection]': '/catalogo/[collection]',
+    '/catalog/details/[productSlug]': '/catalogo/detalles/[productSlug]',
   },
 })
 
