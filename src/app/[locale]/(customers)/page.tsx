@@ -12,6 +12,7 @@ import BrandsSection from '@/components/pages/homepage/brands'
 import { CollectionsSection } from '@/components/pages/homepage/collections'
 import CoolSection from '@/components/pages/homepage/cool-section'
 import { MetricsSection } from '@/components/pages/homepage/metrics'
+import StepsCtaSection from '@/components/pages/homepage/steps-cta'
 //test
 const Home = () => {
   return (
@@ -24,6 +25,7 @@ const Home = () => {
         <CoolSection />
         <ImmediatelyAvailableProductsSection />
         <CustomMadeProductsSection />
+        <StepsCtaSection />
         <BrandsSection />
         <MetricsSection />
         <CustomizedProductsSection />

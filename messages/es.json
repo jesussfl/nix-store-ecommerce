@@ -57,6 +57,14 @@
     "immediately-available-products-title": "Productos de disponibilidad inmediata",
     "custom-made-products-title": "Productos por encargo",
     "customized-products-title": "Productos personalizados",
+    "steps-cta": {
+      "eyebrow": "Pedidos personalizados",
+      "title": "¿Primera vez haciendo un encargo? Te guiamos paso a paso.",
+      "description": "Preparamos una guía visual para que entiendas cómo cotizar, confirmar y recibir tus pedidos internacionales con Nix Store.",
+      "highlight-1": "Proceso claro, rápido y fácil de compartir por WhatsApp.",
+      "highlight-2": "Incluye tiempos, cotización, pago inicial y notificación final.",
+      "button": "Ver cómo funciona"
+    },
 
     "footer": {
       "slogan": "La mejor tienda online en Venezuela",
@@ -102,5 +110,47 @@
   },
   "NotFound": {
     "title": "Esta página no se encontró (404)"
+  },
+  "TermsPage": {
+    "badge": "Nix Store",
+    "title": "Términos y Condiciones",
+    "description": "Encargos personalizados de importaciones. Estas condiciones establecen el alcance de nuestro servicio y el proceso aplicable a cada pedido confirmado.",
+    "sectionTitle": "ENCARGOS PERSONALIZADOS DE IMPORTACIONES",
+    "sectionDescription": "Al realizar un pedido especial con Nix Store, el cliente acepta las siguientes condiciones comerciales, logísticas y de resguardo.",
+    "item-1": "Una vez procesado el pedido, este no podrá ser modificado ni cancelado.",
+    "item-2": "De igual forma, no será válida su cancelación dentro del plazo estimado.",
+    "item-3": "El plazo estimado puede sufrir retrasos por motivos relacionados con el envío de los proveedores (página donde se compra el producto), la agencia de importación, días feriados, dificultades climáticas u otros imprevistos; situaciones que están fuera de nuestras manos. De ocurrir esto, que es poco frecuente, se le notificará. Dicho retraso no aplica como motivo de cancelación de pedido.",
+    "item-4": "Se le enviará un aviso vía Whatsapp al recibir de su pedido y, de ser el caso, el monto restante por cancelar. A partir de este aviso, se le otorgarán 30 días continuos para cancelar y retirar o solicitar el envío de la mercancía.",
+    "item-5": "Si supera este tiempo, se le cobrará un monto adicional por almacenamiento, siendo este 1$ por cada día que pase sin retirar, por un máximo de 10 días.",
+    "item-6": "En caso de no retirar su pedido pasado el tiempo máximo (40 días), la mercancía se considerará como abandonada, sin derecho a reembolso ni entrega.",
+    "item-7": "No se realiza devolución de dinero por todo lo anterior mencionado, así como por otras eventualidades fuera de nuestro control en nuestra función de intermediarios (ej.: error en la talla del producto por parte del proveedor o el comprador, el cliente ya no desea el producto, insatisfacción con la calidad, daños de fábrica, entre otros). El cliente es responsable por verificar la calidad del producto y todas sus especificaciones, así como la fiabilidad del proveedor. En caso de tener dudas, podemos asesorarle durante el proceso sin ningún problema.",
+    "item-8": "Nix Store no se hace responsable por daños de fábrica ni cualquier inconveniente relacionado con el proveedor, sin embargo brindaremos asistencia en el proceso de reclamo si es necesario y el cliente lo solicita.",
+    "item-9": "Contamos con garantía por extravío solo si el producto fue recibido en nuestro almacén pero no llegó a nuestras manos. En caso de que el proveedor no envíe el producto o se extravíe previo a recibirlo, aplicará el término previo.",
+    "item-10": "El costo del envío internacional se calculará basándose en el peso aproximado que sea mayor entre el físico y el volumétrico, según las políticas de la agencia de importaciones.",
+    "item-11": "Al concretar el pedido, está aceptando de forma automática los términos y condiciones."
+  },
+  "StepsPage": {
+    "eyebrow": "Guía de Encargos",
+    "title": "Cómo hacer un encargo en Nix Store",
+    "description": "Te dejamos el proceso claro y simple para que puedas pedir desde tus tiendas favoritas sin perderte en el camino.",
+    "stepLabel": "Paso {number}",
+    "item-1-title": "Configura la ubicación de la tienda",
+    "item-1-accent": "en Estados Unidos.",
+    "item-1-description": "Antes de agregar productos al carrito, asegúrate de colocar la página o tienda con envío hacia Estados Unidos para que podamos procesar el pedido correctamente.",
+    "item-2-title": "Envíanos los links",
+    "item-2-accent": "y especificaciones.",
+    "item-2-description": "Compártenos los enlaces de los productos que deseas junto con talla, color, modelo, cantidad o cualquier detalle importante para cotizar con precisión.",
+    "item-3-title": "Recibe tu cotización",
+    "item-3-accent": "y tiempo estimado.",
+    "item-3-description": "Te enviaremos el precio completo del encargo junto con un estimado de llegada para que sepas con claridad cómo avanzará tu pedido.",
+    "item-4-title": "Cancela el 50% o más",
+    "item-4-accent": "para procesarlo.",
+    "item-4-description": "Una vez aprobada la cotización, debes realizar un abono inicial de al menos el 50% del monto total para confirmar y comenzar el proceso.",
+    "item-5-title": "Te notificaremos",
+    "item-5-accent": "cuando llegue.",
+    "item-5-description": "Cuando el pedido esté en nuestras manos, te contactaremos para indicarte el siguiente paso: retiro, envío o pago restante en caso de aplicar.",
+    "disclaimerTitle": "Importante",
+    "disclaimer-1": "La cotización incluye precio de página, envío a Venezuela, impuestos nacionales e internacionales, gastos de importación, empaque, logística, comisiones del cambio de divisas, entre otros.",
+    "disclaimer-2": "El tiempo varía dependiendo de la página de origen del producto y otros factores externos a nuestro control."
   }
 }
