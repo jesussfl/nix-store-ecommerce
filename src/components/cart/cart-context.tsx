@@ -126,9 +126,21 @@ const useCartContainer = createContainer(() => {
   }
 
   const removeFromCart = async (id: string) => {
-    setActiveOrder(
-      (c) => c && { ...c, lines: c.lines.filter((l) => l.id !== id) }
-    )
+    setActiveOrder((currentOrder) => {
+      if (!currentOrder) return currentOrder
+
+      const lineToRemove = currentOrder.lines.find((line) => line.id === id)
+      const nextLines = currentOrder.lines.filter((line) => line.id !== id)
+
+      return {
+        ...currentOrder,
+        lines: nextLines,
+        totalQuantity: Math.max(
+          0,
+          currentOrder.totalQuantity - (lineToRemove?.quantity ?? 0)
+        ),
+      }
+    })
     try {
       const { data } = await vendureFetch({
         query: REMOVE_FROM_CART_MUTATION,
@@ -147,14 +159,21 @@ const useCartContainer = createContainer(() => {
   }
 
   const setItemQuantityInCart = async (id: string, q: number) => {
-    setActiveOrder((c) => {
-      if (c?.lines.find((l) => l.id === id)) {
+    setActiveOrder((currentOrder) => {
+      if (currentOrder?.lines.find((line) => line.id === id)) {
+        const previousLine = currentOrder.lines.find((line) => line.id === id)
+        const previousQuantity = previousLine?.quantity ?? 0
+
         return {
-          ...c,
-          lines: c.lines.map((l) => (l.id === id ? { ...l, quantity: q } : l)),
+          ...currentOrder,
+          totalQuantity:
+            currentOrder.totalQuantity - previousQuantity + q,
+          lines: currentOrder.lines.map((line) =>
+            line.id === id ? { ...line, quantity: q } : line
+          ),
         }
       }
-      return c
+      return currentOrder
     })
     try {
       const { data } = await vendureFetch({

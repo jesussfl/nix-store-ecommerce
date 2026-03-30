@@ -12,7 +12,7 @@ export default async function CheckoutPage() {
   const bcvPrice = await GetBCVPrice()
 
   return (
-    <div className="-mt-8 space-y-4 sm:-mt-16 md:mx-24">
+    <div className="mt-4 space-y-4 sm:mt-6 md:mx-24">
       <div className="grid items-start gap-6 md:grid-cols-2">
         <Card className="shadow-none">
           <CardHeader>
