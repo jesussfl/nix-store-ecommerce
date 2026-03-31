@@ -2,6 +2,31 @@ const createNextIntlPlugin = require('next-intl/plugin')
 
 const withNextIntl = createNextIntlPlugin()
 
+const imageHostCandidates = [
+  process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN,
+  process.env.VENDURE_ADMIN_DOMAIN,
+  'https://nix-store-admin-production.up.railway.app',
+  'http://localhost:3000',
+]
+
+const vendureImagePatterns = imageHostCandidates
+  .filter(Boolean)
+  .map((value) => {
+    try {
+      const url = new URL(value)
+
+      return {
+        protocol: url.protocol.replace(':', ''),
+        hostname: url.hostname,
+        port: url.port,
+        pathname: '/assets/**',
+      }
+    } catch {
+      return null
+    }
+  })
+  .filter(Boolean)
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   logging: {
@@ -17,16 +42,7 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
         port: '',
       },
-      {
-        protocol: 'https',
-        hostname: 'nix-store-admin-production.up.railway.app',
-        port: '',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
-      },
+      ...vendureImagePatterns,
     ],
   },
   typescript: {
