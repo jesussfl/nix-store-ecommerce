@@ -38,7 +38,7 @@ export async function vendureFetchSSR<TResult, TVariables>({
   error?: string
 }> {
   try {
-    const endpointWithLanguage = `${endpoint}?languageCode=en`
+    const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
 
     // Get all cookies
     const cookieStore = cookies()

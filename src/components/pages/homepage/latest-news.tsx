@@ -72,6 +72,18 @@ type LatestNewsProps = {
   items?: GetStorefrontNewsQuery['storefrontNews']
 }
 
+const vendureAssetBaseUrl =
+  process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
+  'http://localhost:3000'
+
+const resolveNewsImage = (image?: string | null) => {
+  if (!image) return '/assets/slideshow/slideshow1.png'
+  if (image.startsWith('http://') || image.startsWith('https://')) return image
+  if (image.startsWith('/')) return `${vendureAssetBaseUrl}${image}`
+
+  return `${vendureAssetBaseUrl}/${image}`
+}
+
 export const LatestNews = ({ items = [] }: LatestNewsProps) => {
   const t = useTranslations('homepage.latest-news-section')
   const [openDialog, setOpenDialog] = useState<number | null>(null)
@@ -80,7 +92,7 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
       ? items.map((item) => ({
           id: item.id,
           title: item.title,
-          image: item.imageAsset?.preview || '/assets/slideshow/slideshow1.png',
+          image: resolveNewsImage(item.imageAsset?.preview),
           summary: item.summary,
           ctaText: item.ctaText,
           ctaLink: item.ctaLink,
@@ -102,7 +114,9 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                 <CardHeader className="p-0">
                   <AlertDialog
                     open={openDialog === index}
-                    onOpenChange={() => setOpenDialog(null)}
+                    onOpenChange={(open) =>
+                      setOpenDialog(open ? index : null)
+                    }
                   >
                     <AlertDialogTrigger asChild>
                       <AspectRatio

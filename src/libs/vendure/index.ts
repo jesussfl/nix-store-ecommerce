@@ -36,7 +36,7 @@ export async function vendureFetch<TResult, TVariables>({
   error?: string
 }> {
   try {
-    const endpointWithLanguage = `${endpoint}?languageCode=en`
+    const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
     const response = await fetch(endpointWithLanguage, {
       method: 'POST',
       credentials: 'include',
