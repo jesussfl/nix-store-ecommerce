@@ -40,6 +40,29 @@
         "nested": "Nested page",
         "newsArticle": "News #{articleId}"
     },
+    "catalog": {
+        "filters": {
+            "title": "Filters",
+            "active": "Active filters:",
+            "clearAll": "Clear all filters",
+            "sort": {
+                "placeholder": "Sort by",
+                "relevance": "Relevance",
+                "priceLowToHigh": "Price: Low to High",
+                "priceHighToLow": "Price: High to Low",
+                "nameAToZ": "Name: A to Z",
+                "nameZToA": "Name: Z to A"
+            },
+            "facetLabels": {
+                "disponibilidad-inmediata": "Immediate availability"
+            },
+            "facetValueLabels": {
+                "disponibilidad-inmediata": "Immediate availability",
+                "por-encargo": "Made to order",
+                "personalizado": "Personalized"
+            }
+        }
+    },
 
     "NotFound": {
         "title": "This page was not found (404)"

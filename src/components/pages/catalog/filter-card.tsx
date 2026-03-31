@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Card,
@@ -29,6 +30,7 @@ export const Filters = ({
   children?: React.ReactNode
   results: SearchProductsQuery['search']['facetValues']
 }) => {
+  const t = useTranslations('catalog.filters')
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -99,13 +101,31 @@ export const Filters = ({
     router.push(`${pathname}?page=1`)
   }
 
+  const getFacetLabel = (name: string, code?: string) => {
+    if (code && t.has(`facetLabels.${code}`)) {
+      return t(`facetLabels.${code}`)
+    }
+
+    return name
+  }
+
+  const getFacetValueLabel = (name: string, code?: string) => {
+    if (code && t.has(`facetValueLabels.${code}`)) {
+      return t(`facetValueLabels.${code}`)
+    }
+
+    return name
+  }
+
   const groupedFilters = results.reduce(
     (acc, f) => {
-      const facetName = f.facetValue.facet.name
-      if (!acc[facetName]) {
-        acc[facetName] = []
+      const facetKey = f.facetValue.facet.name
+
+      if (!acc[facetKey]) {
+        acc[facetKey] = []
       }
-      acc[facetName].push(f)
+
+      acc[facetKey].push(f)
       return acc
     },
     {} as Record<string, typeof results>
@@ -115,7 +135,7 @@ export const Filters = ({
     <>
       {Object.keys(activeFilters).length > 0 && (
         <div className="mb-4">
-          <h3 className="mb-2 text-sm font-semibold">Filtros activos:</h3>
+          <h3 className="mb-2 text-sm font-semibold">{t('active')}</h3>
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters).map(([key, values]) =>
               values.map(({ id, name }) => (
@@ -138,17 +158,20 @@ export const Filters = ({
             onClick={clearAllFilters}
             className="mt-2"
           >
-            Limpiar todos los filtros
+            {t('clearAll')}
           </Button>
         </div>
       )}
 
       <FilterCard>
         <Accordion type="multiple" className="w-full">
-          {Object.entries(groupedFilters).map(([facetName, facetValues]) => (
-            <AccordionItem value={facetName} key={facetName}>
+          {Object.entries(groupedFilters).map(([facetKey, facetValues]) => (
+            <AccordionItem value={facetKey} key={facetKey}>
               <AccordionTrigger className="text-sm font-medium">
-                {facetName}
+                {getFacetLabel(
+                  facetValues[0].facetValue.facet.name,
+                  facetValues[0].facetValue.facet.code
+                )}
               </AccordionTrigger>
               <AccordionContent>
                 {facetValues.map((f) => (
@@ -157,19 +180,23 @@ export const Filters = ({
                     className="flex items-center gap-2 py-1"
                   >
                     <Checkbox
-                      checked={activeFilters[f.facetValue.facet.name]?.some(
+                      checked={activeFilters[facetKey]?.some(
                         (filter) => filter.id === f.facetValue.id
                       )}
                       onClick={() =>
                         updateUrlParams(
-                          f.facetValue.facet.name,
+                          facetKey,
                           f.facetValue.id,
                           f.facetValue.name
                         )
                       }
                     />
                     <p className="text-xs font-medium">
-                      {f.facetValue.name} ({f.count})
+                      {getFacetValueLabel(
+                        f.facetValue.name,
+                        f.facetValue.code
+                      )}{' '}
+                      ({f.count})
                     </p>
                   </div>
                 ))}
@@ -195,7 +222,7 @@ export const Filters = ({
           <SheetTrigger asChild>
             <Button variant="outline" size="lg" className="mb-4 ml-4">
               <FilterIcon className="mr-2 h-4 w-4" />
-              Filtros
+              {t('title')}
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] sm:w-[400px]">
@@ -214,10 +241,12 @@ export const FilterCard = ({
   children?: React.ReactNode
   className?: string
 }) => {
+  const t = useTranslations('catalog.filters')
+
   return (
     <Card className={cn(`p-0 shadow-none`, className)}>
       <CardHeader>
-        <CardTitle className="text-base text-foreground">Filtros</CardTitle>
+        <CardTitle className="text-base text-foreground">{t('title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">{children}</CardContent>
     </Card>

@@ -8,19 +8,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shared/dropdown-menu/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export const sortOptions = [
-  { label: 'Relevance', value: '' },
-  { label: 'Price: Low to High', value: 'price-asc' },
-  { label: 'Price: High to Low', value: 'price-desc' },
-  { label: 'Name: A to Z', value: 'name-asc' },
-  { label: 'Name: Z to A', value: 'name-desc' },
-]
-
 export default function SortBy() {
+  const t = useTranslations('catalog.filters.sort')
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  const sortOptions = [
+    { label: t('relevance'), value: '' },
+    { label: t('priceLowToHigh'), value: 'price-asc' },
+    { label: t('priceHighToLow'), value: 'price-desc' },
+    { label: t('nameAToZ'), value: 'name-asc' },
+    { label: t('nameZToA'), value: 'name-desc' },
+  ]
 
   const currentSort = searchParams.get('sort') || ''
 
@@ -39,7 +41,7 @@ export default function SortBy() {
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === currentSort)?.label ||
-    'Sort By'
+    t('placeholder')
 
   return (
     <DropdownMenu>
