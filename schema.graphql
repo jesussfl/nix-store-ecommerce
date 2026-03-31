@@ -2848,6 +2848,7 @@ type Query {
   products(options: ProductListOptions): ProductList!
   """Search Products based on the criteria set by the `SearchInput`"""
   search(input: SearchInput!): SearchResponse!
+  storefrontNews: [StorefrontNews!]!
 }
 
 union RefreshCustomerVerificationResult = NativeAuthStrategyError | Success
@@ -3088,6 +3089,19 @@ type SinglePrice {
 enum SortOrder {
   ASC
   DESC
+}
+
+type StorefrontNews implements Node {
+  createdAt: DateTime!
+  ctaLink: String
+  ctaText: String
+  id: ID!
+  imageAsset: Asset
+  isPublished: Boolean!
+  sortOrder: Int!
+  summary: String!
+  title: String!
+  updatedAt: DateTime!
 }
 
 type StringCustomFieldConfig implements CustomField {

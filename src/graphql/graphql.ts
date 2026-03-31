@@ -3058,6 +3058,7 @@ export type Query = {
   products: ProductList;
   /** Search Products based on the criteria set by the `SearchInput` */
   search: SearchResponse;
+  storefrontNews: Array<StorefrontNews>;
 };
 
 
@@ -3362,6 +3363,20 @@ export enum SortOrder {
   ASC = 'ASC',
   DESC = 'DESC'
 }
+
+export type StorefrontNews = Node & {
+  __typename?: 'StorefrontNews';
+  createdAt: Scalars['DateTime']['output'];
+  ctaLink?: Maybe<Scalars['String']['output']>;
+  ctaText?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  imageAsset?: Maybe<Asset>;
+  isPublished: Scalars['Boolean']['output'];
+  sortOrder: Scalars['Int']['output'];
+  summary: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
 
 export type StringCustomFieldConfig = CustomField & {
   __typename?: 'StringCustomFieldConfig';
@@ -3765,6 +3780,11 @@ export type GetCollectionQueryVariables = Exact<{
 
 
 export type GetCollectionQuery = { __typename?: 'Query', collection?: { __typename?: 'Collection', id: string, name: string, slug: string, parentId: string, children?: Array<{ __typename?: 'Collection', id: string, slug: string, name: string, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null }> | null, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null } | null };
+
+export type GetStorefrontNewsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetStorefrontNewsQuery = { __typename?: 'Query', storefrontNews: Array<{ __typename?: 'StorefrontNews', id: string, title: string, summary: string, ctaText?: string | null, ctaLink?: string | null, sortOrder: number, isPublished: boolean, imageAsset?: { __typename?: 'Asset', id: string, preview: string, source: string, name: string } | null }> };
 
 export type ActiveOrderFragment = { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, totalQuantity: number, couponCodes: Array<string>, code: string, shipping: number, shippingWithTax: number, totalWithTax: number, subTotalWithTax: number, state: string, active: boolean, currencyCode: CurrencyCode, customer?: { __typename?: 'Customer', id: string, emailAddress: string, firstName: string, lastName: string, phoneNumber?: string | null } | null, payments?: Array<{ __typename?: 'Payment', id: string, method: string, amount: number, state: string, errorMessage?: string | null }> | null, discounts: Array<{ __typename?: 'Discount', type: AdjustmentType, description: string, amountWithTax: number, adjustmentSource: string }>, shippingLines: Array<{ __typename?: 'ShippingLine', priceWithTax: number, shippingMethod: { __typename?: 'ShippingMethod', id: string, name: string, description: string } }>, lines: Array<{ __typename?: 'OrderLine', id: string, quantity: number, linePriceWithTax: number, unitPriceWithTax: number, discountedLinePriceWithTax: number, featuredAsset?: { __typename?: 'Asset', id: string, preview: string } | null, productVariant: { __typename?: 'ProductVariant', name: string, id: string, sku: string, price: number, stockLevel: string, featuredAsset?: { __typename?: 'Asset', id: string, source: string } | null, product: { __typename?: 'Product', name: string, slug: string, facetValues: Array<{ __typename?: 'FacetValue', id: string, name: string, code: string }> } } }> } & { ' $fragmentName'?: 'ActiveOrderFragment' };
 
@@ -4735,6 +4755,25 @@ export const GetCollectionDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetCollectionQuery, GetCollectionQueryVariables>;
+export const GetStorefrontNewsDocument = new TypedDocumentString(`
+    query GetStorefrontNews {
+  storefrontNews {
+    id
+    title
+    summary
+    ctaText
+    ctaLink
+    sortOrder
+    isPublished
+    imageAsset {
+      id
+      preview
+      source
+      name
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetStorefrontNewsQuery, GetStorefrontNewsQueryVariables>;
 export const GetActiveOrderDocument = new TypedDocumentString(`
     query GetActiveOrder {
   activeOrder {

@@ -13,15 +13,23 @@ import { CollectionsSection } from '@/components/pages/homepage/collections'
 import CoolSection from '@/components/pages/homepage/cool-section'
 import { MetricsSection } from '@/components/pages/homepage/metrics'
 import StepsCtaSection from '@/components/pages/homepage/steps-cta'
-//test
-const Home = () => {
+import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
+import { GET_STOREFRONT_NEWS } from '@/libs/queries/homepage'
+
+const Home = async () => {
+  const { data } = await vendureFetchSSR({
+    query: GET_STOREFRONT_NEWS,
+    tags: ['storefront-news'],
+    revalidate: 60,
+  })
+
   return (
     <div className="w-full">
       <Header />
       <main className="space-y-16 sm:space-y-24">
         <WeOfferSection />
         <CategoriesSection />
-        <LatestNews />
+        <LatestNews items={data?.storefrontNews ?? []} />
         <CoolSection />
         <ImmediatelyAvailableProductsSection />
         <CustomMadeProductsSection />

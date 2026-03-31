@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Section } from '@/components/shared/carousel/section'
+import Link from 'next/link'
 import {
   Carousel,
   CarouselContent,
@@ -29,28 +30,62 @@ import {
   CardTitle,
 } from '@/components/shared/card/card'
 import { Button } from '@/components/shared/button'
+import type { GetStorefrontNewsQuery } from '@/graphql/graphql'
 
-const slideshow = [
+const fallbackSlides = [
   {
-    name: 'Collares',
+    id: 'fallback-collares',
+    title: 'Collares',
     image: '/assets/slideshow/slideshow1.png',
-    description: 'Nuevos diseños de collares elegantes y modernos.',
+    summary: 'Nuevos diseños de collares elegantes y modernos.',
+    ctaText: 'Ver más',
+    ctaLink: null,
   },
   {
-    name: 'Pulseras',
+    id: 'fallback-pulseras',
+    title: 'Pulseras',
     image: '/assets/slideshow/slideshow2.png',
-    description: 'Pulseras artesanales con materiales sostenibles.',
+    summary: 'Pulseras artesanales con materiales sostenibles.',
+    ctaText: 'Ver más',
+    ctaLink: null,
   },
   {
-    name: 'Franelas',
+    id: 'fallback-franelas',
+    title: 'Franelas',
     image: '/assets/slideshow/slideshow3.jpg',
-    description: 'Colección de franelas con estampados únicos y coloridos.',
+    summary: 'Colección de franelas con estampados únicos y coloridos.',
+    ctaText: 'Ver más',
+    ctaLink: null,
   },
 ]
 
-export const LatestNews = () => {
+type LatestNewsItem = {
+  id: string
+  title: string
+  image: string
+  summary: string
+  ctaText?: string | null
+  ctaLink?: string | null
+}
+
+type LatestNewsProps = {
+  items?: GetStorefrontNewsQuery['storefrontNews']
+}
+
+export const LatestNews = ({ items = [] }: LatestNewsProps) => {
   const t = useTranslations('homepage.latest-news-section')
   const [openDialog, setOpenDialog] = useState<number | null>(null)
+  const slides: LatestNewsItem[] =
+    items.length > 0
+      ? items.map((item) => ({
+          id: item.id,
+          title: item.title,
+          image: item.imageAsset?.preview || '/assets/slideshow/slideshow1.png',
+          summary: item.summary,
+          ctaText: item.ctaText,
+          ctaLink: item.ctaLink,
+        }))
+      : fallbackSlides
 
   return (
     <Section title={t('title')}>
@@ -61,8 +96,8 @@ export const LatestNews = () => {
         className="w-full"
       >
         <CarouselContent>
-          {slideshow.map((slide, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+          {slides.map((slide, index) => (
+            <CarouselItem key={slide.id} className="md:basis-1/2 lg:basis-1/3">
               <Card className="overflow-hidden">
                 <CardHeader className="p-0">
                   <AlertDialog
@@ -76,7 +111,7 @@ export const LatestNews = () => {
                       >
                         <Image
                           src={slide.image}
-                          alt={slide.name}
+                          alt={slide.title}
                           fill
                           className="object-cover transition-transform duration-300 hover:scale-105"
                         />
@@ -84,7 +119,7 @@ export const LatestNews = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent className="max-h-[90vh] max-w-4xl">
                       <AlertDialogHeader>
-                        <AlertDialogTitle>{slide.name}</AlertDialogTitle>
+                        <AlertDialogTitle>{slide.title}</AlertDialogTitle>
                       </AlertDialogHeader>
                       <AspectRatio
                         ratio={16 / 9}
@@ -92,11 +127,14 @@ export const LatestNews = () => {
                       >
                         <Image
                           src={slide.image}
-                          alt={slide.name}
+                          alt={slide.title}
                           fill
                           className="object-cover"
                         />
                       </AspectRatio>
+                      <p className="text-sm text-muted-foreground">
+                        {slide.summary}
+                      </p>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cerrar</AlertDialogCancel>
                       </AlertDialogFooter>
@@ -104,19 +142,25 @@ export const LatestNews = () => {
                   </AlertDialog>
                 </CardHeader>
                 <CardContent className="p-4">
-                  <CardTitle className="mb-2 text-lg">{slide.name}</CardTitle>
+                  <CardTitle className="mb-2 text-lg">{slide.title}</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    {slide.description}
+                    {slide.summary}
                   </p>
                 </CardContent>
                 <CardFooter>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setOpenDialog(index)}
-                  >
-                    Ver más
-                  </Button>
+                  {slide.ctaLink ? (
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={slide.ctaLink}>{slide.ctaText || 'Ver más'}</Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setOpenDialog(index)}
+                    >
+                      {slide.ctaText || 'Ver más'}
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             </CarouselItem>
