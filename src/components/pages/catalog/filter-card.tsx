@@ -101,17 +101,25 @@ export const Filters = ({
     router.push(`${pathname}?page=1`)
   }
 
+  const tryTranslate = (key: string, fallback: string) => {
+    try {
+      return t(key as never)
+    } catch {
+      return fallback
+    }
+  }
+
   const getFacetLabel = (name: string, code?: string) => {
-    if (code && t.has(`facetLabels.${code}`)) {
-      return t(`facetLabels.${code}`)
+    if (code) {
+      return tryTranslate(`facetLabels.${code}`, name)
     }
 
     return name
   }
 
   const getFacetValueLabel = (name: string, code?: string) => {
-    if (code && t.has(`facetValueLabels.${code}`)) {
-      return t(`facetValueLabels.${code}`)
+    if (code) {
+      return tryTranslate(`facetValueLabels.${code}`, name)
     }
 
     return name
