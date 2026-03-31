@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Section } from '@/components/shared/carousel/section'
-import Link from 'next/link'
 import {
   Carousel,
   CarouselContent,
@@ -65,7 +64,6 @@ type LatestNewsItem = {
   image: string
   summary: string
   ctaText?: string | null
-  ctaLink?: string | null
 }
 
 type LatestNewsProps = {
@@ -89,14 +87,13 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
   const [openDialog, setOpenDialog] = useState<number | null>(null)
   const slides: LatestNewsItem[] =
     items.length > 0
-      ? items.map((item) => ({
-          id: item.id,
-          title: item.title,
-          image: resolveNewsImage(item.imageAsset?.preview),
-          summary: item.summary,
-          ctaText: item.ctaText,
-          ctaLink: item.ctaLink,
-        }))
+        ? items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            image: resolveNewsImage(item.imageAsset?.preview),
+            summary: item.summary,
+            ctaText: item.ctaText,
+          }))
       : fallbackSlides
 
   return (
@@ -162,19 +159,13 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                   </p>
                 </CardContent>
                 <CardFooter>
-                  {slide.ctaLink ? (
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={slide.ctaLink}>{slide.ctaText || 'Ver más'}</Link>
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setOpenDialog(index)}
-                    >
-                      {slide.ctaText || 'Ver más'}
-                    </Button>
-                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setOpenDialog(index)}
+                  >
+                    {slide.ctaText || 'Ver más'}
+                  </Button>
                 </CardFooter>
               </Card>
             </CarouselItem>
