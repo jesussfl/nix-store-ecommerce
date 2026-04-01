@@ -17,7 +17,10 @@ export const SpecialOrderMessage = ({
   }
 
   return (
-    <Alert>
+    <Alert
+      variant="primary"
+      className="rounded-2xl border-primary/15 bg-primary/5"
+    >
       <InfoIcon className="h-4 w-4" />
       <AlertTitle>{t('special_order_title')}</AlertTitle>
       <AlertDescription>{t('special_order_description')}</AlertDescription>

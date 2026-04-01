@@ -26,7 +26,7 @@ const Home = async () => {
   return (
     <div className="w-full">
       <Header />
-      <main className="space-y-16 sm:space-y-24">
+      <main className="space-y-20 sm:space-y-32">
         <WeOfferSection />
         <CategoriesSection />
         <LatestNews items={data?.storefrontNews ?? []} />

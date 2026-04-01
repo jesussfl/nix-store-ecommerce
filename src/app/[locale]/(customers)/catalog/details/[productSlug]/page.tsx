@@ -30,24 +30,30 @@ export default async function ProductInfoPage({
   )
 
   return (
-    <div className="space-y-8 px-4 py-8">
-      <div className="flex flex-col gap-12 md:px-8 lg:flex-row lg:gap-8 lg:px-16 2xl:px-56">
-        <div className="flex flex-1 flex-col gap-4">
-          <Gallery
-            images={currentVariant?.assets.map((asset) => asset.preview) || []}
-          />
-          <div className="hidden lg:block">
-            <Description content={data.product.description || ''} />
+    <div className="px-3 py-4 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-4 sm:gap-6 lg:gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(340px,420px)] xl:items-start">
+          <div className="min-w-0 space-y-4 sm:space-y-6">
+            <Gallery
+              images={
+                currentVariant?.assets.map((asset) => asset.preview) || []
+              }
+            />
+            <div className="hidden xl:block">
+              <Description content={data.product.description || ''} />
+            </div>
           </div>
-        </div>
-        <ProductDetails
-          bcvPrice={bcvPrice}
-          product={data.product}
-          initialVariantId={initialVariantId}
-        />
+          <div className="min-w-0 space-y-4 sm:space-y-6">
+            <ProductDetails
+              bcvPrice={bcvPrice}
+              product={data.product}
+              initialVariantId={initialVariantId}
+            />
 
-        <div className="block lg:hidden">
-          <Description content={data.product.description || ''} />
+            <div className="xl:hidden">
+              <Description content={data.product.description || ''} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -104,10 +104,10 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
         }}
         className="w-full"
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-3 sm:-ml-4 md:-ml-6">
           {slides.map((slide, index) => (
-            <CarouselItem key={slide.id} className="md:basis-1/2 lg:basis-1/3">
-              <Card className="overflow-hidden">
+            <CarouselItem key={slide.id} className="basis-[85%] sm:basis-1/2 lg:basis-1/3 pl-3 sm:pl-4 md:pl-6">
+              <Card className="flex h-full flex-col overflow-hidden rounded-xl border border-border/40 shadow-sm transition-all duration-300 hover:shadow-md md:rounded-2xl">
                 <CardHeader className="p-0">
                   <AlertDialog
                     open={openDialog === index}
@@ -152,16 +152,16 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                     </AlertDialogContent>
                   </AlertDialog>
                 </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="mb-2 text-lg">{slide.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                <CardContent className="flex flex-1 flex-col justify-start p-4 md:p-5">
+                  <CardTitle className="mb-2 text-lg font-bold leading-tight text-gray-800 md:mb-3 md:text-xl">{slide.title}</CardTitle>
+                  <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
                     {slide.summary}
                   </p>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="px-4 pb-4 pt-0 md:px-5 md:pb-5">
                   <Button
                     variant="outline"
-                    size="sm"
+                    className="rounded-full px-5 font-semibold md:px-6"
                     onClick={() => setOpenDialog(index)}
                   >
                     {slide.ctaText || 'Ver más'}

@@ -30,10 +30,10 @@ export const WeOfferSection = async () => {
   ]
   return (
     <section className="mx-auto my-12 flex flex-col items-center gap-4 md:my-24 md:px-8">
-      <div className="flex w-[150px] flex-col items-center justify-center rounded-full border border-border bg-gray-50 py-2">
-        <p>{t('title')}</p>
+      <div className="mb-4 inline-flex items-center justify-center rounded-full border border-primary/20 bg-primary/5 px-6 py-2">
+        <p className="text-sm font-semibold uppercase tracking-wider text-primary">{t('title')}</p>
       </div>
-      <div className="grid grid-cols-3 items-stretch gap-x-1 px-1 md:gap-x-4">
+      <div className="mt-8 grid w-full max-w-6xl grid-cols-1 gap-6 px-4 md:grid-cols-3 md:gap-8 md:px-0">
         {features.map((feature, index) => (
           <FeatureCard {...feature} key={index} />
         ))}
@@ -64,23 +64,23 @@ type FeatureCardProps = {
 
 const FeatureChip = ({ title, icon }: { title: string; icon: JSX.Element }) => {
   return (
-    <div className="flex flex-row items-center justify-center gap-2 rounded-full border border-border bg-gray-50 px-4 py-2">
-      {icon}
-      <p className="text-xs md:text-lg">{title}</p>
+    <div className="flex flex-row items-center justify-center gap-2 rounded-full border border-border/40 bg-white px-5 py-2.5 shadow-sm transition-all hover:border-primary/50 hover:shadow-md">
+      <div className="text-primary">{icon}</div>
+      <p className="text-sm font-medium text-gray-700 md:text-base">{title}</p>
     </div>
   )
 }
 const FeatureCard = ({ title, description, icon }: FeatureCardProps) => {
   return (
-    <div className="flex flex-1 flex-col items-center justify-start gap-4 rounded-md border-2 border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-1 md:p-4">
-      <div className="flex h-12 w-12 scale-75 items-center justify-center rounded-md border border-primary text-primary md:scale-100">
-        {icon}
+    <div className="group flex flex-1 flex-col items-center justify-start gap-5 rounded-2xl border border-border/40 bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-6 shadow-sm transition-all duration-300 hover:border-primary hover:shadow-md md:p-8">
+      <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 text-primary transition-transform duration-300 group-hover:scale-110 md:h-20 md:w-20">
+        <div className="scale-[1.2] md:scale-[1.5]">{icon}</div>
       </div>
-      <div className="space-y-2">
-        <p className="text-center text-xs font-semibold md:text-base lg:text-lg">
+      <div className="space-y-3">
+        <p className="text-center text-base font-bold text-gray-800 md:text-lg">
           {title}
         </p>
-        <p className="hidden text-center text-xs md:block md:text-sm">
+        <p className="hidden text-center text-sm leading-relaxed text-gray-600 md:block md:text-base">
           {description}
         </p>
       </div>

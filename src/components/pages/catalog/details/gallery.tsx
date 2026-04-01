@@ -1,16 +1,14 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { ImageOff, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react'
-import { ImageWithFallback } from '@/components/shared/image-with-fallback/image-with-fallback'
+import { useEffect, useState } from 'react'
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/shared/carousel/carousel-native'
-import { Card, CardContent } from '@/components/shared/card/card'
+  ChevronLeft,
+  ChevronRight,
+  ImageOff,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react'
+import { ImageWithFallback } from '@/components/shared/image-with-fallback/image-with-fallback'
 import { Button } from '@/components/shared/button'
 import { cn } from '@/libs/utils'
 
@@ -18,53 +16,61 @@ interface GalleryProps {
   images: string[]
 }
 
+const DEFAULT_ZOOM_POSITION = { x: 50, y: 50 }
+
 export function Gallery({ images }: GalleryProps) {
-  const [selectedImage, setSelectedImage] = useState(images[0] || '')
   const [zoomLevel, setZoomLevel] = useState(1)
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 })
+  const [zoomPosition, setZoomPosition] = useState(DEFAULT_ZOOM_POSITION)
   const [activeIndex, setActiveIndex] = useState(0)
+  const selectedImage = images[activeIndex] ?? ''
 
   useEffect(() => {
-    setSelectedImage(images[0] || '')
     setActiveIndex(0)
+    setZoomLevel(1)
+    setZoomPosition(DEFAULT_ZOOM_POSITION)
   }, [images])
 
-  const handleImageSelect = useCallback((image: string, index: number) => {
-    setSelectedImage(image)
-    setActiveIndex(index)
-  }, [])
+  const selectImage = (index: number) => {
+    if (images.length === 0) return
 
-  const handleZoom = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const normalizedIndex = (index + images.length) % images.length
+    setActiveIndex(normalizedIndex)
+    setZoomLevel(1)
+    setZoomPosition(DEFAULT_ZOOM_POSITION)
+  }
+
+  const handleZoom = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (zoomLevel === 1) return
+
     const rect = e.currentTarget.getBoundingClientRect()
     const x = ((e.clientX - rect.left) / rect.width) * 100
     const y = ((e.clientY - rect.top) / rect.height) * 100
     setZoomPosition({ x, y })
-  }, [])
+  }
 
-  const toggleZoom = useCallback(() => {
+  const toggleZoom = () => {
+    if (zoomLevel > 1) {
+      setZoomPosition(DEFAULT_ZOOM_POSITION)
+    }
     setZoomLevel((prev) => (prev === 1 ? 2 : 1))
-  }, [])
+  }
 
-  const handlePrevious = useCallback(() => {
-    setActiveIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
-    setSelectedImage(
-      images[activeIndex > 0 ? activeIndex - 1 : images.length - 1]
-    )
-  }, [activeIndex, images])
+  const handlePrevious = () => {
+    selectImage(activeIndex - 1)
+  }
 
-  const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
-    setSelectedImage(
-      images[activeIndex < images.length - 1 ? activeIndex + 1 : 0]
-    )
-  }, [activeIndex, images])
+  const handleNext = () => {
+    selectImage(activeIndex + 1)
+  }
 
   if (images.length === 0) {
     return (
-      <div className="h-[500px] w-full rounded-lg border p-4">
-        <div className="flex h-full flex-col items-center justify-center rounded-lg bg-slate-100">
-          <ImageOff className="mb-4 h-16 w-16" />
-          <p className="text-center text-lg font-medium">
+      <div className="rounded-[1.5rem] border border-slate-200 bg-white p-2.5 shadow-sm sm:rounded-[1.75rem] sm:p-4">
+        <div className="flex aspect-square min-h-[220px] flex-col items-center justify-center gap-3 rounded-[1.25rem] bg-slate-100 px-4 text-center sm:aspect-[4/3] sm:min-h-[420px] sm:gap-4 sm:rounded-[1.5rem] sm:px-6">
+          <div className="rounded-full bg-white p-3 text-slate-500 shadow-sm sm:p-4">
+            <ImageOff className="h-8 w-8 sm:h-12 sm:w-12" />
+          </div>
+          <p className="max-w-[15rem] text-sm font-medium text-slate-600 sm:max-w-sm sm:text-base">
             Este producto no tiene imágenes disponibles
           </p>
         </div>
@@ -73,125 +79,105 @@ export function Gallery({ images }: GalleryProps) {
   }
 
   return (
-    <div className="flex h-[500px] w-full flex-col-reverse items-center justify-center gap-4 rounded-lg border p-2 sm:h-[700px] md:p-6 xl:flex-row">
-      <Carousel
-        orientation="vertical"
-        opts={{
-          align: 'start',
-        }}
-        className="hidden xl:block"
+    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-2.5 shadow-sm sm:rounded-[1.75rem] sm:p-4">
+      <div
+        className={cn(
+          'grid gap-3 sm:gap-4',
+          images.length > 1 && 'xl:grid-cols-[88px_minmax(0,1fr)]'
+        )}
       >
-        <CarouselContent className="-mt-1 h-[500px]">
-          {images.map((image, index) => (
-            <CarouselItem key={index} className="basis-1/5 pt-1">
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-2">
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        'h-full w-full p-0',
-                        activeIndex === index && 'ring-2 ring-primary'
-                      )}
-                      onMouseEnter={() => handleImageSelect(image, index)}
-                      onClick={() => handleImageSelect(image, index)}
-                    >
-                      <ImageWithFallback
-                        src={image}
-                        alt={`Product thumbnail ${index + 1}`}
-                        width={60}
-                        height={60}
-                        className="h-full w-full rounded-sm object-cover"
-                        fallbackClassName="h-full w-full rounded-sm"
-                      />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-      <Carousel className="w-[70%] xl:hidden">
-        <CarouselContent className="">
-          {images.map((image, index) => (
-            <CarouselItem
-              key={index}
-              className="basis-1/3 sm:basis-1/5 lg:basis-1/4"
-            >
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-2">
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        'h-full w-full p-0',
-                        activeIndex === index && 'ring-2 ring-primary'
-                      )}
-                      onMouseEnter={() => handleImageSelect(image, index)}
-                      onClick={() => handleImageSelect(image, index)}
-                    >
-                      <ImageWithFallback
-                        src={image}
-                        alt={`Product thumbnail ${index + 1}`}
-                        width={60}
-                        height={60}
-                        className="h-full w-full rounded-sm object-cover"
-                        fallbackClassName="h-full w-full rounded-sm"
-                      />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-      <div className="relative h-full w-full flex-1 overflow-hidden rounded-md bg-slate-100">
-        <div
-          className="relative h-full w-full cursor-zoom-in"
-          onClick={toggleZoom}
-          onMouseMove={handleZoom}
-        >
-          <ImageWithFallback
-            src={selectedImage}
-            alt="Selected product image"
-            fill
-            className="object-contain transition-transform duration-300 ease-in-out"
-            fallbackClassName="h-full w-full rounded-md"
-            style={{
-              transform: `scale(${zoomLevel})`,
-              transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-            }}
-          />
-          {zoomLevel === 1 && (
-            <div className="absolute bottom-4 right-4 rounded-full bg-white p-2">
-              <ZoomIn className="h-6 w-6" />
-            </div>
+        {images.length > 1 && (
+          <div className="order-2 flex gap-2 overflow-x-auto pb-1 xl:order-1 xl:max-h-[36rem] xl:flex-col xl:gap-3 xl:overflow-y-auto xl:pb-0 xl:pr-1">
+            {images.map((image, index) => (
+              <button
+                key={`${image}-${index}`}
+                type="button"
+                className={cn(
+                  'relative h-16 w-16 flex-none overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:h-20 sm:w-20 sm:rounded-2xl',
+                  activeIndex === index
+                    ? 'border-primary shadow-sm ring-2 ring-primary/15'
+                    : 'hover:border-slate-300 hover:bg-slate-100'
+                )}
+                onMouseEnter={() => selectImage(index)}
+                onFocus={() => selectImage(index)}
+                onClick={() => selectImage(index)}
+                aria-pressed={activeIndex === index}
+                aria-label={`Mostrar imagen ${index + 1}`}
+              >
+                <div className="relative h-full w-full overflow-hidden rounded-[0.85rem] bg-white">
+                  <ImageWithFallback
+                    src={image}
+                    alt={`Miniatura del producto ${index + 1}`}
+                    fill
+                    sizes="88px"
+                    className="object-cover"
+                    fallbackClassName="h-full w-full rounded-[0.85rem]"
+                    showRetry={false}
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="relative order-1 overflow-hidden rounded-[1.5rem] border border-slate-100 bg-slate-50 xl:order-2">
+          <div
+            className="relative aspect-square min-h-[240px] w-full sm:aspect-[4/3] sm:min-h-[420px]"
+            onMouseMove={handleZoom}
+          >
+            <ImageWithFallback
+              src={selectedImage}
+              alt={`Imagen del producto ${activeIndex + 1}`}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 85vw, 900px"
+              className="object-contain transition-transform duration-300 ease-out"
+              fallbackClassName="h-full w-full rounded-[1.5rem]"
+              style={{
+                transform: `scale(${zoomLevel})`,
+                transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+              }}
+            />
+          </div>
+          {images.length > 1 && (
+            <>
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                className="absolute left-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-white/95 shadow-sm sm:left-3 sm:h-10 sm:w-10"
+                onClick={handlePrevious}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Imagen anterior</span>
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-white/95 shadow-sm sm:right-3 sm:h-10 sm:w-10"
+                onClick={handleNext}
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Siguiente imagen</span>
+              </Button>
+            </>
           )}
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon"
+            className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-white/95 shadow-sm sm:bottom-3 sm:right-3 sm:h-10 sm:w-10"
+            onClick={toggleZoom}
+          >
+            {zoomLevel === 1 ? (
+              <ZoomIn className="h-4 w-4" />
+            ) : (
+              <ZoomOut className="h-4 w-4" />
+            )}
+            <span className="sr-only">
+              {zoomLevel === 1 ? 'Acercar imagen' : 'Restablecer zoom'}
+            </span>
+          </Button>
         </div>
-        <Button
-          variant="secondary"
-          size="icon"
-          className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full"
-          onClick={handlePrevious}
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Previous image</span>
-        </Button>
-        <Button
-          variant="secondary"
-          size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
-          onClick={handleNext}
-        >
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Next image</span>
-        </Button>
       </div>
     </div>
   )

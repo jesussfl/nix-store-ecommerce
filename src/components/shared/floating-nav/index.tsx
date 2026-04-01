@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import React, { Suspense } from 'react'
+import React from 'react'
 import MobileMenu from './mobile-menu'
 import Image from 'next/image'
 import CartModal from '../cart/modal'
-import { Button, buttonVariants } from '../button'
+import { buttonVariants } from '../button'
 import { RiUser3Line } from '@remixicon/react'
 import clsx from 'clsx'
 import Search from '../search'
@@ -22,7 +22,7 @@ export type Menu = {
 
 function NavbarRoot({ children }: { children: React.ReactNode }) {
   return (
-    <nav className="fixed left-1/2 z-30 flex w-full -translate-x-1/2 flex-col items-center justify-between gap-2 rounded-sm border border-border bg-background pt-2 md:top-2 md:flex-col md:gap-0 md:py-0 lg:max-w-[95vw]">
+    <nav className="fixed left-1/2 z-30 flex w-full -translate-x-1/2 flex-col items-center justify-between gap-2 overflow-hidden rounded-sm border border-border bg-background pt-2 md:top-2 md:flex-col md:gap-0 md:py-0 lg:max-w-[95vw]">
       {children}
     </nav>
   )
@@ -30,8 +30,10 @@ function NavbarRoot({ children }: { children: React.ReactNode }) {
 
 function NavbarContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex w-full px-4 md:px-6">
-      <div className="flex w-full items-center justify-between">{children}</div>
+    <div className="flex w-full px-3 sm:px-4 md:px-6">
+      <div className="flex w-full items-center justify-between gap-2 sm:gap-3">
+        {children}
+      </div>
     </div>
   )
 }
@@ -79,7 +81,7 @@ function NavbarMenu() {
 async function NavbarActions() {
   const bcvPrice = await GetBCVPrice()
   return (
-    <div className="flex w-full justify-end gap-2">
+    <div className="flex shrink-0 items-center justify-end gap-2">
       <Search className="hidden md:inline" />
       <CartModal bcvPrice={bcvPrice} />
       <Link
@@ -110,7 +112,7 @@ async function NavbarContent() {
     <NavbarProvider value={{ collections, error }}>
       <NavbarRoot>
         <NavbarContainer>
-          <div className="flex w-full items-center">
+          <div className="flex min-w-0 flex-1 items-center">
             <NavbarLogo />
             <NavbarMenu />
           </div>

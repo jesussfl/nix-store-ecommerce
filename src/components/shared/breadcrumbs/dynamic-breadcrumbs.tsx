@@ -23,8 +23,8 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
     pathSegments[0] === locale ? pathSegments.slice(1) : pathSegments
 
   return (
-    <Breadcrumb className="mt-6 flex justify-center px-4">
-      <BreadcrumbList>
+    <Breadcrumb className="mt-4 w-full overflow-x-auto px-3 sm:mt-6 sm:px-4">
+      <BreadcrumbList className="mx-auto flex-nowrap justify-start whitespace-nowrap sm:flex-wrap sm:justify-center sm:whitespace-normal">
         {/* Home Breadcrumb */}
         <BreadcrumbItem>
           <BreadcrumbLink
@@ -50,7 +50,7 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
 
                 {index === segmentsWithoutLocale.length - 1 ? (
                   // If it's the last segment, show it as the current page
-                  <BreadcrumbPage className="font-semibold text-primary">
+                  <BreadcrumbPage className="max-w-[12rem] truncate font-semibold text-primary sm:max-w-none">
                     {segment}
                   </BreadcrumbPage>
                 ) : (
@@ -58,7 +58,7 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
                   <BreadcrumbLink
                     className={cn(
                       buttonVariants({ variant: 'link' }),
-                      'font-regular px-0 text-foreground'
+                      'font-regular max-w-[9rem] truncate px-0 text-foreground sm:max-w-none'
                     )}
                     href={href}
                   >

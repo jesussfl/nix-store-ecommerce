@@ -14,7 +14,7 @@ export const HoverImage = ({
 }) => {
   return (
     <AspectRatio
-      className="group relative overflow-hidden rounded-sm"
+      className="group relative w-full overflow-hidden rounded-lg md:rounded-xl"
       ratio={4 / 5}
     >
       {imageUrl ? (
@@ -23,13 +23,13 @@ export const HoverImage = ({
           alt={`Product image of ${productName}`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-75"
-          fallbackClassName="h-full w-full rounded-sm"
+          className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-110 group-hover:brightness-90"
+          fallbackClassName="h-full w-full rounded-lg md:rounded-xl"
           loading="lazy"
           showRetry={false}
         />
       ) : (
-        <div className="flex h-full w-full flex-col items-center justify-center rounded-sm border border-border bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-4 text-center">
+        <div className="flex h-full w-full flex-col items-center justify-center rounded-lg md:rounded-xl border border-border/40 bg-gray-50 bg-feature-texture bg-cover bg-no-repeat p-4 text-center shadow-sm">
           <ImageOff
             className="mb-2 h-12 w-12 text-gray-400"
             aria-hidden="true"

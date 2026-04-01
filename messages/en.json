@@ -27,8 +27,8 @@
         "hello": "Hello {name}!"
     },
     "LocaleLayout": {
-        "description": "Accessory store",
-        "title": "Nix Store"
+        "title": "Nix Store | Online Shopping & Custom Orders in Venezuela",
+        "description": "Your trusted online store in Venezuela. Shop available products or place custom international orders with ease and security."
     },
     "LocaleSwitcher": {
         "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"

@@ -105,11 +105,11 @@ const ProductCarousel = ({
 }) => (
   <Section title={title} variant={variant}>
     <Carousel opts={{ align: 'start' }} className="w-full">
-      <CarouselContent className="-ml-2 md:-ml-0">
+      <CarouselContent className="-ml-3 sm:-ml-4 md:-ml-6 lg:-ml-8">
         {products.map((product, index) => (
           <CarouselItem
             key={index}
-            className="basis-1/2 pl-2 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-9"
+            className="basis-[65%] pl-3 sm:basis-1/2 sm:pl-4 md:basis-1/3 md:pl-6 lg:basis-1/4 lg:pl-8 xl:basis-1/5"
           >
             <SingleProduct product={product} />
           </CarouselItem>
@@ -125,7 +125,7 @@ const ProductCarousel = ({
 export const ImmediatelyAvailableProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-disponibilidad-inmediata')
   const bcvPrice = await GetBCVPrice()
-  if (!productsData) return null
+  if (!productsData || productsData.items.length === 0) return null
 
   const t = await getTranslations('homepage')
   const products = productsData.items.map((product) =>
@@ -141,7 +141,7 @@ export const ImmediatelyAvailableProductsSection = async () => {
 
 export const CustomMadeProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-por-encargo')
-  if (!productsData) return null
+  if (!productsData || productsData.items.length === 0) return null
   const bcvPrice = await GetBCVPrice()
 
   const t = await getTranslations('homepage')
@@ -158,7 +158,7 @@ export const CustomMadeProductsSection = async () => {
 
 export const CustomizedProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-personalizados')
-  if (!productsData) return null
+  if (!productsData || productsData.items.length === 0) return null
   const bcvPrice = await GetBCVPrice()
   const t = await getTranslations('homepage')
   const products = productsData.items.map((product) =>

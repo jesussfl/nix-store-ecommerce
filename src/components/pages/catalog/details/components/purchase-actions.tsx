@@ -44,11 +44,12 @@ export const PurchaseActions = ({
 
   const handleCheckout = async () => {
     if (!isLogged && !isLoading) {
-      router.push(
-        '/account/login?callback=/checkout&variant=' +
-          currentVariant.id +
-          `&quantity=${quantity}`
-      )
+      const params = new URLSearchParams({
+        callback: '/checkout',
+        variant: currentVariant.id,
+        quantity: quantity.toString(),
+      })
+      router.push(`/account/login?${params.toString()}`)
       return
     }
 
@@ -76,7 +77,7 @@ export const PurchaseActions = ({
       }
 
       router.push(`/checkout`)
-    } catch (err) {
+    } catch {
       setError({
         message: 'Ocurrió un error inesperado',
         code: 'UNEXPECTED_ERROR',
@@ -88,12 +89,10 @@ export const PurchaseActions = ({
 
   const handleAddToCart = async () => {
     if (!isLogged && !isLoading) {
-      router.push(
-        '/account/login?callback=/catalog/details/' +
-          productSlug +
-          '?variant=' +
-          currentVariant.id
-      )
+      const params = new URLSearchParams({
+        callback: `/catalog/details/${productSlug}?variant=${currentVariant.id}`,
+      })
+      router.push(`/account/login?${params.toString()}`)
       return
     }
 
@@ -118,7 +117,7 @@ export const PurchaseActions = ({
           quantityAvailable: result.quantityAvailable,
         })
       }
-    } catch (err) {
+    } catch {
       setError({
         message: 'Ocurrió un error inesperado',
         code: 'UNEXPECTED_ERROR',
@@ -138,11 +137,13 @@ export const PurchaseActions = ({
     error?.code === 'INSUFFICIENT_STOCK_ERROR' &&
     error.quantityAvailable !== undefined &&
     error.quantityAvailable > 0
+  const isDisabled =
+    isLoading || addingToCart || isOutOfStock || quantity > availableStock
 
   return (
     <div className="space-y-4">
       {error && (
-        <Alert variant="destructive" className="mb-4">
+        <Alert variant="destructive" className="mb-4 rounded-2xl">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             {error.code === 'INSUFFICIENT_STOCK_ERROR'
@@ -155,12 +156,11 @@ export const PurchaseActions = ({
       )}
 
       <Button
+        type="button"
         variant="default"
-        disabled={
-          isLoading || addingToCart || isOutOfStock || quantity > availableStock
-        }
+        disabled={isDisabled}
         onClick={handleCheckout}
-        className="w-full"
+        className="h-12 w-full rounded-xl"
         size={'lg'}
       >
         {isLoading || addingToCart ? (
@@ -170,19 +170,20 @@ export const PurchaseActions = ({
         )}
       </Button>
       <Button
+        type="button"
         variant={'outline'}
         onClick={handleAddToCart}
-        className="w-full"
+        className="h-12 w-full rounded-xl border-slate-200"
         size={'lg'}
-        disabled={
-          isLoading || addingToCart || isOutOfStock || quantity > availableStock
-        }
+        disabled={isDisabled}
       >
-        <ShoppingCart className="mr-2 h-4 w-4" />
         {isLoading || addingToCart ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          t(`add_to_cart`)
+          <>
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            {t(`add_to_cart`)}
+          </>
         )}
       </Button>
       {isOutOfStock && (
