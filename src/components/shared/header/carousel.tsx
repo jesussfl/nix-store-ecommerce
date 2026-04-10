@@ -11,9 +11,9 @@ import {
 } from '@/components/shared/carousel'
 
 const slideshow = [
-  { name: 'Collares', image: '/assets/slideshow/slideshow1.png' },
-  { name: 'Pulseras', image: '/assets/slideshow/slideshow2.png' },
-  { name: 'Franelas', image: '/assets/slideshow/slideshow3.jpg' },
+  { name: 'Internet a tus manos', image: '/assets/slideshow/header-slide-1.png' },
+  { name: 'Compra en SHEIN', image: '/assets/slideshow/header-slide-2.png' },
+  { name: 'Visita nuestro catalogo', image: '/assets/slideshow/header-slide-3.png' },
 ]
 
 export function CarouselPlugin() {
