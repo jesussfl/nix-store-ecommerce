@@ -20,7 +20,7 @@ async function fetchCollections() {
     variables: {
       options: {
         topLevelOnly: true,
-        take: 10,
+        take: 20,
       },
     },
   })
@@ -45,20 +45,20 @@ export const CategoriesSection = async () => {
         }}
         className="w-full"
       >
-        <CarouselContent className="-ml-2 md:-ml-0">
+        <CarouselContent className="-ml-3 sm:-ml-4 md:-ml-6 lg:-ml-8">
           {collections.map((collection, index) => (
             <CarouselItem
               key={index}
-              className="basis-1/4 pl-2 md:basis-1/6 md:pl-6 lg:basis-1/6 lg:pl-9"
+              className="basis-1/3 pl-3 sm:basis-[28%] md:basis-1/5 md:pl-6 lg:basis-1/6 lg:pl-8"
             >
-              <Link href={`/catalog/${collection.slug}`}>
-                <Card className="flex cursor-pointer flex-col gap-2 rounded-sm border-0 p-1 shadow-none hover:border hover:border-primary md:rounded-md md:p-2">
-                  <CardContent className="relative flex flex-col items-start gap-2 p-0 md:gap-4">
+              <Link href={`/catalog/${collection.slug}`} className="block h-full">
+                <Card className="flex h-full cursor-pointer flex-col gap-3 rounded-xl border border-border/40 p-2 shadow-sm transition-all duration-300 hover:border-primary hover:shadow-md md:rounded-2xl md:p-3">
+                  <CardContent className="relative flex flex-1 flex-col items-start gap-3 p-0 md:gap-4">
                     <HoverImage
                       imageUrl={collection.featuredAsset?.preview || ''}
                     />
 
-                    <CardTitle className="line-clamp-2 text-sm font-medium text-gray-600 md:text-base md:font-semibold">
+                    <CardTitle className="px-1 text-sm font-semibold leading-tight text-gray-800 md:text-base break-words text-center w-full">
                       {collection.name}
                     </CardTitle>
                   </CardContent>
@@ -77,14 +77,14 @@ export const CategoriesSection = async () => {
 const HoverImage = async ({ imageUrl }: { imageUrl: string }) => {
   return (
     <AspectRatio
-      className="group relative overflow-hidden rounded-sm"
+      className="group relative w-full overflow-hidden rounded-lg md:rounded-xl"
       ratio={1 / 1}
     >
       <Image
         src={imageUrl}
         alt="Your image"
         fill
-        className="h-full w-full rounded-sm border border-border object-cover transition duration-300 md:group-hover:scale-125"
+        className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-110"
       />
     </AspectRatio>
   )

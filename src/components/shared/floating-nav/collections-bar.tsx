@@ -25,10 +25,10 @@ export const NavbarCollections = () => {
   }
 
   return (
-    <div className="relative flex w-full items-center">
+    <div className="relative flex w-full items-center overflow-hidden">
       <div
         ref={scrollRef}
-        className="scrollbar-thin flex w-full overflow-x-auto pb-2 md:pb-0"
+        className="scrollbar-thin flex w-full gap-1 overflow-x-auto px-2 pb-2 md:gap-0 md:px-0 md:pb-0"
       >
         {collections.map((collection) => {
           return (
@@ -37,7 +37,7 @@ export const NavbarCollections = () => {
               href={`/catalog/${collection.slug}`}
               className={cn(
                 buttonVariants({ variant: 'ghost', size: 'sm' }),
-                'whitespace-nowrap'
+                'flex-none whitespace-nowrap'
               )}
             >
               {collection.name}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useMessages, useTranslations } from 'next-intl'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Card,
@@ -31,6 +31,7 @@ export const Filters = ({
   results: SearchProductsQuery['search']['facetValues']
 }) => {
   const t = useTranslations('catalog.filters')
+  const messages = useMessages()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -51,11 +52,7 @@ export const Filters = ({
     setActiveFilters(newActiveFilters)
   }, [searchParams, results])
 
-  const updateUrlParams = (
-    facetKey: string,
-    facetId: string,
-    facetName: string
-  ) => {
+  const updateUrlParams = (facetKey: string, facetId: string) => {
     const currentParams = new URLSearchParams(searchParams.toString())
     const existingFacet = currentParams.get(facetKey)
 
@@ -101,25 +98,36 @@ export const Filters = ({
     router.push(`${pathname}?page=1`)
   }
 
-  const tryTranslate = (key: string, fallback: string) => {
-    try {
-      return t(key as never)
-    } catch {
-      return fallback
-    }
+  const getTranslationMap = (key: 'facetLabels' | 'facetValueLabels') => {
+    const catalog = (messages as Record<string, unknown>).catalog
+    const filters =
+      catalog && typeof catalog === 'object'
+        ? (catalog as Record<string, unknown>).filters
+        : undefined
+    const translations =
+      filters && typeof filters === 'object'
+        ? (filters as Record<string, unknown>)[key]
+        : undefined
+
+    return translations && typeof translations === 'object'
+      ? (translations as Record<string, string>)
+      : {}
   }
 
+  const facetLabels = getTranslationMap('facetLabels')
+  const facetValueLabels = getTranslationMap('facetValueLabels')
+
   const getFacetLabel = (name: string, code?: string) => {
-    if (code) {
-      return tryTranslate(`facetLabels.${code}`, name)
+    if (code && facetLabels[code]) {
+      return t(`facetLabels.${code}` as never)
     }
 
     return name
   }
 
   const getFacetValueLabel = (name: string, code?: string) => {
-    if (code) {
-      return tryTranslate(`facetValueLabels.${code}`, name)
+    if (code && facetValueLabels[code]) {
+      return t(`facetValueLabels.${code}` as never)
     }
 
     return name
@@ -194,8 +202,7 @@ export const Filters = ({
                       onClick={() =>
                         updateUrlParams(
                           facetKey,
-                          f.facetValue.id,
-                          f.facetValue.name
+                          f.facetValue.id
                         )
                       }
                     />

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CurrencyCode, GetProductDataQuery } from '@/graphql/graphql'
+import { GetProductDataQuery } from '@/graphql/graphql'
 import { useCart } from '@/components/cart/cart-context'
 import { fetchCurrentStockLevel } from '@/libs/queries/product'
 
@@ -148,9 +148,10 @@ export function useProductDetails({
 
       setSelectedOptions(newOptions)
       setTotalPrice(updatedVariant.priceWithTax * quantity)
-      router.replace(`?variant=${updatedVariant.id}`, { scroll: false })
+      startTransition(() => {
+        router.replace(`?variant=${updatedVariant.id}`, { scroll: false })
+      })
 
-      // Resetear la cantidad a 1 al cambiar de variante
       setQuantity(1)
     } else if (isFirstGroup) {
       setSelectedOptions({ [groupId]: optionId })

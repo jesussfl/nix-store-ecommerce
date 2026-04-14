@@ -8,7 +8,6 @@ import { ProductQuantity } from './components/product-quantity'
 import { TotalPrice } from './components/total-price'
 import { SpecialOrderMessage } from './components/special-order-message'
 import { PurchaseActions } from './components/purchase-actions'
-import { PaymentMethods } from './components/payment-methods'
 import { GetProductDataQuery } from '@/graphql/graphql'
 import { useCart } from '@/components/cart/cart-context'
 import { useCallback } from 'react'
@@ -24,13 +23,10 @@ export default function ProductDetails({
 }) {
   const { addToCart: originalAddToCart } = useCart()
 
-  // Envolver addToCart para asegurar que devuelve la estructura esperada
   const addToCart = useCallback(
     async (productVariantId: string, quantity: number) => {
       try {
         const result = await originalAddToCart(productVariantId, quantity)
-        // Si la función original no devuelve un objeto con la estructura esperada,
-        // creamos uno con la estructura correcta
         if (typeof result === 'undefined') {
           return {
             success: true,
@@ -69,10 +65,10 @@ export default function ProductDetails({
     bcvPrice,
   })
 
-  if (!currentVariant || !product) return null
+  if (!product || !currentVariant) return null
 
   return (
-    <div className="space-y-10 rounded-lg md:border md:p-6 lg:sticky lg:top-32 lg:w-[450px] lg:self-start">
+    <div className="space-y-6 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:space-y-8 sm:rounded-[1.75rem] sm:p-6 xl:sticky xl:top-28">
       <ProductBadges facets={facets.map((f) => f.name)} />
       <ProductHeading
         productName={product.name}
@@ -112,8 +108,6 @@ export default function ProductDetails({
         addToCart={addToCart}
         availableStock={availableStock}
       />
-
-      <PaymentMethods />
     </div>
   )
 }

@@ -162,9 +162,7 @@ export const InfiniteMovingCards = ({
 const Li = ({ children }: { children: React.ReactNode }) => {
   return (
     <li
-      //   change md:w-[450px] to md:w-[60vw] , px-8 py-6 to p-16, border-slate-700 to border-slate-800
-      className="relative flex h-[72px] w-[200px] scale-75 items-center justify-center rounded-md border p-5 md:scale-100"
-      // change to idx cuz we have the same name
+      className="relative flex h-[72px] w-[200px] scale-75 items-center justify-center rounded-2xl border border-border/40 bg-white p-5 shadow-sm transition-shadow hover:shadow-md md:scale-100"
     >
       {children}
     </li>

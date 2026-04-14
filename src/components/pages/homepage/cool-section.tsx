@@ -8,13 +8,13 @@ const CoolSection = async () => {
       <NixAnimation
         direction="left"
         speed="slow"
-        className="top-8 rotate-[16deg] border-dark bg-white md:top-12 md:rotate-12"
+        className="top-4 rotate-6 border-dark bg-white md:top-12 md:rotate-[8deg] scale-110"
         isDark
       />
       <NixAnimation
         direction="right"
         speed="slow"
-        className="bottom-16 -rotate-[16deg] md:bottom-12 md:-rotate-12"
+        className="bottom-4 -rotate-6 md:bottom-12 md:-rotate-[8deg] scale-110"
       />
     </div>
   )

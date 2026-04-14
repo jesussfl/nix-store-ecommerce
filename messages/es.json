@@ -89,8 +89,8 @@
     "description": "Descripción"
   },
   "LocaleLayout": {
-    "description": "Tienda de accesorios",
-    "title": "Nix Store"
+    "title": "Nix Store | Compras online y encargos en Venezuela",
+    "description": "Tu tienda online de confianza en Venezuela. Compra productos disponibles o realiza encargos internacionales personalizados con facilidad y seguridad."
   },
   "LocaleSwitcher": {
     "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"

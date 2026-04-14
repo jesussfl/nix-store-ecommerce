@@ -12,8 +12,8 @@ export const MetricsSection = async () => {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <Card>
-        <CardContent className="p-6 sm:p-10">
+      <Card className="rounded-2xl border border-border/40 shadow-sm md:rounded-3xl">
+        <CardContent className="p-8 sm:p-12">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {metrics.map((metric, index) => (
               <div
@@ -37,9 +37,9 @@ type MetricProps = {
 
 const Metric = ({ title, number }: MetricProps) => {
   return (
-    <div className="space-y-2">
-      <p className="text-4xl font-bold text-primary">{number}</p>
-      <p className="text-sm text-muted-foreground sm:text-base">{title}</p>
+    <div className="space-y-3">
+      <p className="text-4xl font-extrabold tracking-tight text-primary md:text-5xl">{number}</p>
+      <p className="text-sm font-medium text-gray-600 sm:text-base uppercase tracking-wider">{title}</p>
     </div>
   )
 }

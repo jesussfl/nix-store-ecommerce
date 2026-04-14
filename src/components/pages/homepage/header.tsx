@@ -4,8 +4,8 @@ import { CarouselPlugin } from '../../shared/header/carousel'
 
 const Header = () => {
   return (
-    <header className="mx-auto my-20 max-w-[110rem] px-4 sm:px-6 md:my-8 lg:px-8">
-      <div className="overflow-hidden rounded-lg bg-dark bg-hero-texture bg-cover bg-no-repeat shadow-xl lg:rounded-2xl">
+    <header className="mx-auto my-12 max-w-[110rem] px-4 sm:px-6 md:my-16 lg:px-8">
+      <div className="overflow-hidden rounded-2xl bg-dark bg-hero-texture bg-cover bg-no-repeat shadow-2xl lg:rounded-[2rem]">
         <div className="flex flex-col lg:flex-row lg:items-center">
           <div className="flex-1 px-6 py-8 sm:px-10 sm:py-12 lg:py-16">
             <Suspense fallback={<HeroSkeleton />}>

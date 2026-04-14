@@ -70,8 +70,7 @@ export const NixAnimation = ({
     <div
       ref={containerRef}
       className={cn(
-        // max-w-7xl to w-screen
-        'scroller relative z-20 w-screen overflow-hidden border-2 border-border bg-dark [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]',
+        'scroller relative z-20 w-[110vw] overflow-hidden border-y border-border/40 bg-dark [mask-image:linear-gradient(to_right,transparent,white_2%,white_98%,transparent)] md:w-screen md:[mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]',
         className
       )}
     >

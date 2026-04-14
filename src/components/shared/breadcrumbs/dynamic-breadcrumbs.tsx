@@ -37,8 +37,8 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
   )
 
   return (
-    <Breadcrumb className="mt-6 flex justify-start overflow-hidden px-4 md:justify-center">
-      <BreadcrumbList className="flex-nowrap overflow-hidden">
+    <Breadcrumb className="mt-4 w-full overflow-x-auto px-3 sm:mt-6 sm:px-4">
+      <BreadcrumbList className="mx-auto flex-nowrap justify-start whitespace-nowrap sm:flex-wrap sm:justify-center sm:whitespace-normal">
         {/* Home Breadcrumb */}
         <BreadcrumbItem className="shrink-0">
           <BreadcrumbLink
@@ -64,7 +64,9 @@ export default function DynamicBreadcrumbs({ locale }: { locale: string }) {
               <BreadcrumbItem
                 className={cn(
                   'min-w-0',
-                  isLast ? 'max-w-[140px] sm:max-w-[220px] md:max-w-[320px]' : 'max-w-[80px] sm:max-w-[120px]'
+                  isLast
+                    ? 'max-w-[12rem] sm:max-w-none'
+                    : 'max-w-[9rem] sm:max-w-none'
                 )}
               >
                 {isLast ? (
