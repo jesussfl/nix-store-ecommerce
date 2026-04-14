@@ -1,16 +1,30 @@
 import { TypedDocumentString } from '@/graphql/graphql'
-import { VENDURE_GRAPHQL_API_ENDPOINT } from '../constants'
+
 export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
   stringToCheck.startsWith(startsWith)
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
-const domain = process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || 
-  (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.VERCEL_ENV === 'production'
-    ? 'https://nix-store-admin-production.up.railway.app' 
-    : 'http://localhost:3000')
-
-const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
+/**
+ * Determine the GraphQL endpoint.
+ * - In the browser: use /api/vendure (same-origin proxy) to avoid CORS.
+ * - On the server: call the Vendure backend directly (no CORS restriction).
+ */
+const getEndpoint = () => {
+  if (typeof window !== 'undefined') {
+    // Browser — route through the Next.js proxy to avoid CORS
+    return '/api/vendure'
+  }
+  // Server-side fallback (prefer vendureFetchSSR for server components)
+  const domain =
+    process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
+    (process.env.NODE_ENV === 'production' ||
+    process.env.RAILWAY_ENVIRONMENT === 'production' ||
+    process.env.VERCEL_ENV === 'production'
+      ? 'https://p01--nix-store--9c67vmxtxbrm.code.run'
+      : 'http://localhost:3000')
+  return `${domain}/shop-api`
+}
 
 type VendureFetchProps<TResult, TVariables> = {
   url?: string
@@ -36,6 +50,7 @@ export async function vendureFetch<TResult, TVariables>({
   error?: string
 }> {
   try {
+    const endpoint = getEndpoint()
     const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
     const response = await fetch(endpointWithLanguage, {
       method: 'POST',

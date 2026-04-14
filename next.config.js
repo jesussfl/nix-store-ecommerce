@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin()
 const imageHostCandidates = [
   process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN,
   process.env.VENDURE_ADMIN_DOMAIN,
+  'https://p01--nix-store--9c67vmxtxbrm.code.run',
   'https://nix-store-admin-production.up.railway.app',
   'http://localhost:3000',
 ]

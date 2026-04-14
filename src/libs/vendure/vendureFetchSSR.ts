@@ -10,7 +10,7 @@ export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
 
 const domain = process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || 
   (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.VERCEL_ENV === 'production'
-    ? 'https://nix-store-admin-production.up.railway.app' 
+    ? 'https://p01--nix-store--9c67vmxtxbrm.code.run' 
     : 'http://localhost:3000')
 
 const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`

@@ -31,24 +31,29 @@ export default async function ProductInfoPage({
 
   return (
     <div className="space-y-8 px-4 py-8">
-      <div className="flex flex-col gap-12 md:px-8 lg:flex-row lg:gap-8 lg:px-16 2xl:px-56">
+      <div className="flex flex-col gap-8 md:px-8 lg:flex-row lg:gap-8 lg:px-16 2xl:px-56">
+        {/* Left column: Gallery + Description (desktop only) */}
         <div className="flex flex-1 flex-col gap-4">
           <Gallery
             images={currentVariant?.assets.map((asset) => asset.preview) || []}
           />
+          {/* Description under gallery — desktop only */}
           <div className="hidden lg:block">
             <Description content={data.product.description || ''} />
           </div>
         </div>
+
+        {/* Mobile: Description between gallery and product card */}
+        <div className="block lg:hidden">
+          <Description content={data.product.description || ''} />
+        </div>
+
+        {/* Product details card */}
         <ProductDetails
           bcvPrice={bcvPrice}
           product={data.product}
           initialVariantId={initialVariantId}
         />
-
-        <div className="block lg:hidden">
-          <Description content={data.product.description || ''} />
-        </div>
       </div>
     </div>
   )
