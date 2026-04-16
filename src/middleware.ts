@@ -5,5 +5,5 @@ export default createMiddleware(routing)
 
 export const config = {
   // Skip all paths that should not be internationalized
-  matcher: ['/((?!_next|.*\\..*).*)'],
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 }
