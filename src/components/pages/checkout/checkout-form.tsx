@@ -57,7 +57,6 @@ type EligibleShippingMethod = {
   code: string
   name: string
   description?: string | null
-  isEligible: boolean
 }
 
 const normalizeShippingText = (value?: string | null) =>
@@ -81,7 +80,7 @@ const findMatchingShippingMethod = (
   shippingType: ShippingType,
   methods: EligibleShippingMethod[]
 ) => {
-  const eligibleMethods = methods.filter((method) => method.isEligible)
+  const eligibleMethods = methods
 
   if (eligibleMethods.length === 1) {
     return eligibleMethods[0]

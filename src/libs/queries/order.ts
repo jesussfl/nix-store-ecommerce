@@ -115,7 +115,6 @@ type GetEligibleShippingMethodsQuery = {
     description?: string | null
     price: number
     priceWithTax: number
-    isEligible: boolean
   }>
 }
 
@@ -130,7 +129,6 @@ export const GET_ELIGIBLE_SHIPPING_METHODS =
           description
           price
           priceWithTax
-          isEligible
         }
       }
     `
