@@ -1,18 +1,10 @@
 import { TypedDocumentString } from '@/graphql/graphql'
+import { getVendureDomain } from './config'
 
 export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
   stringToCheck.startsWith(startsWith)
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
-
-const getVendureDomain = () =>
-  process.env.VENDURE_ADMIN_DOMAIN ||
-  process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
-  (process.env.NODE_ENV === 'production' ||
-  process.env.RAILWAY_ENVIRONMENT === 'production' ||
-  process.env.VERCEL_ENV === 'production'
-    ? 'https://p01--nix-store--9c67vmxtxbrm.code.run'
-    : 'http://localhost:3000')
 
 const getErrorMessage = async (response: Response) => {
   const responseText = await response.text()

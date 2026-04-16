@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getVendureEndpoint } from '@/libs/vendure/config'
 
-const VENDURE_ENDPOINT =
-  (process.env.VENDURE_ADMIN_DOMAIN ||
-    process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
-    (process.env.NODE_ENV === 'production'
-      ? 'https://p01--nix-store--9c67vmxtxbrm.code.run'
-      : 'http://localhost:3000')) + '/shop-api'
+const VENDURE_ENDPOINT = getVendureEndpoint()
 
 export async function POST(request: NextRequest) {
   try {

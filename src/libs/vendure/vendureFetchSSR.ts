@@ -2,16 +2,14 @@
 import { TypedDocumentString } from '@/graphql/graphql'
 import { VENDURE_GRAPHQL_API_ENDPOINT } from '../constants'
 import { cookies } from 'next/headers'
+import { getVendureDomain } from './config'
 
 export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
   stringToCheck.startsWith(startsWith)
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
-const domain = process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || 
-  (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.VERCEL_ENV === 'production'
-    ? 'https://p01--nix-store--9c67vmxtxbrm.code.run' 
-    : 'http://localhost:3000')
+const domain = getVendureDomain()
 
 const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
 type VendureFetchProps<TResult, TVariables> = {
