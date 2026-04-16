@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const VENDURE_ENDPOINT =
-  (process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
+  (process.env.VENDURE_ADMIN_DOMAIN ||
+    process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
     (process.env.NODE_ENV === 'production'
       ? 'https://p01--nix-store--9c67vmxtxbrm.code.run'
       : 'http://localhost:3000')) + '/shop-api'
@@ -40,16 +41,30 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    const setCookie = vendureResponse.headers.get('set-cookie')
-    if (setCookie) {
-      response.headers.set('set-cookie', setCookie)
+    const setCookies = vendureResponse.headers.getSetCookie?.() || []
+
+    if (setCookies.length > 0) {
+      setCookies.forEach((cookie) => {
+        response.headers.append('set-cookie', cookie)
+      })
+    } else {
+      const setCookie = vendureResponse.headers.get('set-cookie')
+      if (setCookie) {
+        response.headers.set('set-cookie', setCookie)
+      }
     }
 
     return response
   } catch (error) {
     console.error('[Vendure Proxy] Error:', error)
     return NextResponse.json(
-      { errors: [{ message: 'Proxy error: could not reach Vendure backend' }] },
+      {
+        errors: [
+          {
+            message: `Proxy error: could not reach Vendure backend at ${VENDURE_ENDPOINT}`,
+          },
+        ],
+      },
       { status: 502 }
     )
   }

@@ -5,6 +5,38 @@ export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
+const getVendureDomain = () =>
+  process.env.VENDURE_ADMIN_DOMAIN ||
+  process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
+  (process.env.NODE_ENV === 'production' ||
+  process.env.RAILWAY_ENVIRONMENT === 'production' ||
+  process.env.VERCEL_ENV === 'production'
+    ? 'https://p01--nix-store--9c67vmxtxbrm.code.run'
+    : 'http://localhost:3000')
+
+const getErrorMessage = async (response: Response) => {
+  const responseText = await response.text()
+
+  if (!responseText) {
+    return `Vendure request failed with ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`
+  }
+
+  try {
+    const body = JSON.parse(responseText) as {
+      errors?: Array<{ message?: string }>
+      message?: string
+    }
+
+    return (
+      body.errors?.[0]?.message ||
+      body.message ||
+      `Vendure request failed with ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`
+    )
+  } catch {
+    return responseText
+  }
+}
+
 /**
  * Determine the GraphQL endpoint.
  * - In the browser: use /api/vendure (same-origin proxy) to avoid CORS.
@@ -16,14 +48,7 @@ const getEndpoint = () => {
     return '/api/vendure'
   }
   // Server-side fallback (prefer vendureFetchSSR for server components)
-  const domain =
-    process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
-    (process.env.NODE_ENV === 'production' ||
-    process.env.RAILWAY_ENVIRONMENT === 'production' ||
-    process.env.VERCEL_ENV === 'production'
-      ? 'https://p01--nix-store--9c67vmxtxbrm.code.run'
-      : 'http://localhost:3000')
-  return `${domain}/shop-api`
+  return `${getVendureDomain()}/shop-api`
 }
 
 type VendureFetchProps<TResult, TVariables> = {
@@ -73,7 +98,7 @@ export async function vendureFetch<TResult, TVariables>({
     if (!response.ok) {
       return {
         data: null,
-        error: `Network response was not ok: ${response.statusText}`,
+        error: await getErrorMessage(response),
       }
     }
 
