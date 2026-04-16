@@ -48,7 +48,13 @@ const getResultMessage = (result: unknown, fallback: string) => {
 }
 
 export default function ShippingForm() {
-  const { isLogged, isLoading, activeOrder, isOrderLoading } = useCart()
+  const {
+    isLogged,
+    isLoading,
+    activeOrder,
+    isOrderLoading,
+    setShippingMethod,
+  } = useCart()
   const router = useRouter()
 
   const { toast } = useToast()
@@ -78,6 +84,27 @@ export default function ShippingForm() {
   })
 
   const onSubmit = async (values: FormSchema) => {
+    const shippingMethodByType = {
+      national: '1',
+      delivery: '3',
+      personal: '4',
+    } as const
+
+    const shippingMethodResult = await setShippingMethod(
+      shippingMethodByType[values.shippingDetails.shippingType]
+    )
+
+    if (!shippingMethodResult?.success) {
+      toast({
+        title: 'Error',
+        description:
+          shippingMethodResult?.message ||
+          'No pudimos configurar el método de envío.',
+        variant: 'destructive',
+      })
+      return
+    }
+
     const { data: addressData, error: addressError } = await vendureFetch({
       query: SET_ORDER_SHIPPING_ADDRESS_MUTATION,
       variables: {

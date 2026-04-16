@@ -252,19 +252,43 @@ const useCartContainer = createContainer(() => {
 
   const setShippingMethod = async (id: string) => {
     try {
-      // setIsLoading(true)
-      const { data } = await vendureFetch({
+      const { data, error } = await vendureFetch({
         query: SET_SHIPPING_METHOD_MUTATION,
         variables: {
           id,
         },
       })
+
+      if (error) {
+        return {
+          success: false,
+          message: error,
+        }
+      }
+
       if (data?.setOrderShippingMethod.__typename === 'Order') {
         setActiveOrder(data?.setOrderShippingMethod)
+        return {
+          success: true,
+          order: data.setOrderShippingMethod,
+        }
       }
-      return data?.setOrderShippingMethod
+
+      return {
+        success: false,
+        message:
+          data?.setOrderShippingMethod?.message ||
+          'No pudimos configurar el método de envío.',
+      }
     } catch (e) {
       console.error(e)
+      return {
+        success: false,
+        message:
+          e instanceof Error
+            ? e.message
+            : 'No pudimos configurar el método de envío.',
+      }
     }
   }
 
