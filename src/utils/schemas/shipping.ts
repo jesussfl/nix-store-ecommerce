@@ -1,60 +1,59 @@
 import { z } from 'zod'
 
-const sharedFields = z.object({
-  fullName: z
-    .string({ required_error: 'El nombre es requerido' })
-    .min(3, 'El nombre debe tener al menos 3 caracteres'),
-  streetLine1: z
-    .string({ required_error: 'La dirección es requerida' })
-    .min(5, 'La dirección debe tener al menos 5 caracteres'),
-  streetLine2: z
-    .string({ required_error: 'El punto de referencia es requerido' })
-    .min(5),
-  city: z.string({
-    required_error: 'La ciudad es requerida',
-  }),
-  state: z.string({
-    required_error: 'El estado es requerido',
-  }),
-  dni: z.string({ required_error: 'La cédula es requerida' }),
+const requiredText = (message: string) =>
+  z.string({ required_error: message }).trim().min(1, message)
 
-  dniType: z.string({
-    required_error: 'El tipo de documento es requerido',
-  }),
-  phoneNumber: z.string({
-    required_error: 'El número de contacto es requerido',
-  }),
+const sharedFields = z.object({
+  fullName: requiredText('El nombre es requerido').min(
+    3,
+    'El nombre debe tener al menos 3 caracteres'
+  ),
+  streetLine1: requiredText('La dirección es requerida').min(
+    5,
+    'La dirección debe tener al menos 5 caracteres'
+  ),
+  streetLine2: requiredText('El punto de referencia es requerido').min(
+    5,
+    'El punto de referencia debe tener al menos 5 caracteres'
+  ),
+  city: requiredText('La ciudad es requerida'),
+  state: requiredText('El estado es requerido'),
+  dni: requiredText('La cédula es requerida'),
+
+  dniType: requiredText('El tipo de documento es requerido'),
+  phoneNumber: requiredText('El número de contacto es requerido').refine(
+    (value) => value.replace(/\D/g, '').length >= 10,
+    'Ingresa un número de contacto válido'
+  ),
 })
 
 const personalDeliveriesSchema = sharedFields.merge(
   z.object({
     shippingType: z.literal('personal'),
-    location: z.string({
-      required_error: 'La ubicación es requerida para entregas personales',
-    }),
+    location: requiredText(
+      'La ubicación es requerida para entregas personales'
+    ),
   })
 )
 const nationalShippingSchema = sharedFields.merge(
   z.object({
     shippingType: z.literal('national'),
-    officeCode: z.string({
-      required_error:
-        'El código de oficina es requerido para envíos nacionales',
-    }),
+    officeCode: requiredText(
+      'El código de oficina es requerido para envíos nacionales'
+    ),
 
-    shippingCompany: z.string({
-      required_error:
-        'La compañía de envío es requerida para envíos nacionales',
-    }),
+    shippingCompany: requiredText(
+      'La compañía de envío es requerida para envíos nacionales'
+    ),
   })
 )
 
 const deliveryShippingSchema = sharedFields.merge(
   z.object({
     shippingType: z.literal('delivery'),
-    location: z.string({
-      required_error: 'La ubicación es requerida para entregas a domicilio',
-    }),
+    location: requiredText(
+      'La ubicación es requerida para entregas a domicilio'
+    ),
   })
 )
 

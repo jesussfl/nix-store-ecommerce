@@ -23,6 +23,32 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>
 
+const isOrderResult = (
+  result: unknown
+): result is { code: string; state: string; lines: Array<unknown> } => {
+  return (
+    typeof result === 'object' &&
+    result !== null &&
+    'code' in result &&
+    'state' in result &&
+    'lines' in result &&
+    Array.isArray(result.lines)
+  )
+}
+
+const getResultMessage = (result: unknown, fallback: string) => {
+  if (
+    typeof result === 'object' &&
+    result !== null &&
+    'message' in result &&
+    typeof result.message === 'string'
+  ) {
+    return result.message
+  }
+
+  return fallback
+}
+
 export default function PaymentForm() {
   const { isLogged, isLoading, activeOrder } = useCart()
   const router = useRouter()
@@ -55,17 +81,22 @@ export default function PaymentForm() {
       },
     })
 
-    if (!error) {
-      router.push('/checkout')
-    }
-    if (error) {
+    const transitionResult = data?.transitionOrderToState
+
+    if (error || !transitionResult || !isOrderResult(transitionResult)) {
       console.error(error)
       toast({
         title: 'Error',
-        description: error,
+        description: getResultMessage(
+          transitionResult,
+          error || 'No pudimos volver al paso de envío.'
+        ),
         variant: 'destructive',
       })
+      return
     }
+
+    router.push('/checkout')
   }
   const cancelOrder = async () => {
     const { data, error } = await vendureFetch({
@@ -74,17 +105,22 @@ export default function PaymentForm() {
         state: 'Cancelled',
       },
     })
-    if (!error) {
-      window.location.href = '/'
-    }
-    if (error || !data) {
+    const transitionResult = data?.transitionOrderToState
+
+    if (error || !transitionResult || !isOrderResult(transitionResult)) {
       console.error(error)
       toast({
         title: 'Error',
-        description: error || 'Error al cancelar el pedido',
+        description: getResultMessage(
+          transitionResult,
+          error || 'Error al cancelar el pedido'
+        ),
         variant: 'destructive',
       })
+      return
     }
+
+    window.location.href = '/'
   }
   const onSubmit = async (values: FormSchema) => {
     const bcvDolar = await GetBCVPrice()
@@ -95,7 +131,15 @@ export default function PaymentForm() {
       ? Math.round(Number(values.paymentDetails.totalPaid) / bcvDolar)
       : Number(values.paymentDetails.totalPaid)
 
-    console.log('amount', amount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast({
+        title: 'Monto inválido',
+        description: 'Revisa el total pagado antes de finalizar el pedido.',
+        variant: 'destructive',
+      })
+      return
+    }
+
     const { data, error } = await vendureFetch({
       query: ADD_PAYMENT_TO_ORDER,
       variables: {
@@ -120,29 +164,49 @@ export default function PaymentForm() {
         },
       },
     })
-    console.log(data, error, 'payment')
-    if (data?.addPaymentToOrder) {
-      const { data, error } = await vendureFetch({
-        query: TRANSITION_ORDER_STATE,
-        variables: {
-          state: 'ValidatingPayment',
-        },
-      })
+    const paymentResult = data?.addPaymentToOrder
 
-      console.log(data, error, 'transition')
-      window.location.href = '/checkout/confirmation/' + activeOrder?.code
-    }
-
-    if (error) {
+    if (error || !paymentResult || !isOrderResult(paymentResult)) {
       console.error(error)
       toast({
         title: 'Error',
-        description: error,
+        description: getResultMessage(
+          paymentResult,
+          error || 'No pudimos registrar el pago. Inténtalo de nuevo.'
+        ),
         variant: 'destructive',
       })
       return
     }
-    console.log('Payment details:', values.paymentDetails)
+
+    const { data: transitionData, error: transitionError } = await vendureFetch({
+      query: TRANSITION_ORDER_STATE,
+      variables: {
+        state: 'ValidatingPayment',
+      },
+    })
+
+    const transitionResult = transitionData?.transitionOrderToState
+
+    if (
+      transitionError ||
+      !transitionResult ||
+      !isOrderResult(transitionResult)
+    ) {
+      console.error(transitionError)
+      toast({
+        title: 'Pago registrado, pero falta confirmar el pedido',
+        description: getResultMessage(
+          transitionResult,
+          transitionError ||
+            'El pedido no pudo avanzar al estado de validación. Inténtalo nuevamente o contacta soporte.'
+        ),
+        variant: 'destructive',
+      })
+      return
+    }
+
+    router.replace(`/checkout/confirmation/${transitionResult.code}`)
   }
 
   return (
@@ -169,7 +233,12 @@ export default function PaymentForm() {
             </Button>
           </div>
 
-          <Button type="submit" disabled={form.formState.isSubmitting}>
+          <Button
+            type="submit"
+            disabled={
+              form.formState.isSubmitting || !form.formState.isValid
+            }
+          >
             Finalizar Pedido
           </Button>
         </div>

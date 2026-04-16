@@ -22,6 +22,31 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>
 
+const isOrderResult = (
+  result: unknown
+): result is { code: string; lines: Array<unknown> } => {
+  return (
+    typeof result === 'object' &&
+    result !== null &&
+    'code' in result &&
+    'lines' in result &&
+    Array.isArray(result.lines)
+  )
+}
+
+const getResultMessage = (result: unknown, fallback: string) => {
+  if (
+    typeof result === 'object' &&
+    result !== null &&
+    'message' in result &&
+    typeof result.message === 'string'
+  ) {
+    return result.message
+  }
+
+  return fallback
+}
+
 export default function ShippingForm() {
   const { isLogged, isLoading, activeOrder, isOrderLoading } = useCart()
   const router = useRouter()
@@ -82,13 +107,17 @@ export default function ShippingForm() {
       },
     })
 
-    if (addressError || !addressData?.setOrderShippingAddress) {
+    const addressResult = addressData?.setOrderShippingAddress
+
+    if (addressError || !addressResult || !isOrderResult(addressResult)) {
       console.error('Error setting shipping address:', addressError)
       toast({
         title: 'Error',
-        description:
-          addressError +
-          ' Parece que hubo un error en la dirección de envío. Inténtalo de nuevo.',
+        description: getResultMessage(
+          addressResult,
+          addressError ||
+            'Parece que hubo un error en la dirección de envío. Inténtalo de nuevo.'
+        ),
         variant: 'destructive',
       })
       return
@@ -100,18 +129,22 @@ export default function ShippingForm() {
         state: 'ArrangingPayment',
       },
     })
-    if (data?.transitionOrderToState && !error) {
-      router.push('/checkout/payment')
-    }
+    const transitionResult = data?.transitionOrderToState
 
-    if (error) {
+    if (error || !transitionResult || !isOrderResult(transitionResult)) {
       console.error(error)
       toast({
         title: 'Error',
-        description: error,
+        description: getResultMessage(
+          transitionResult,
+          error || 'No pudimos avanzar al paso de pago. Inténtalo de nuevo.'
+        ),
         variant: 'destructive',
       })
+      return
     }
+
+    router.push('/checkout/payment')
   }
 
   return (
@@ -121,7 +154,11 @@ export default function ShippingForm() {
         <Button
           type="submit"
           className="ml-auto"
-          disabled={form.formState.isSubmitting || isOrderLoading}
+          disabled={
+            form.formState.isSubmitting ||
+            isOrderLoading ||
+            !form.formState.isValid
+          }
         >
           Continuar al Pago
         </Button>
@@ -129,7 +166,11 @@ export default function ShippingForm() {
           <Button
             type="submit"
             className="ml-auto"
-            disabled={form.formState.isSubmitting || isOrderLoading}
+            disabled={
+              form.formState.isSubmitting ||
+              isOrderLoading ||
+              !form.formState.isValid
+            }
           >
             Continuar al Pago
           </Button>

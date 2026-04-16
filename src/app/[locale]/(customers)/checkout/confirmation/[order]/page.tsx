@@ -8,7 +8,7 @@ import {
 import { Separator } from '@/components/shared/separator/separator'
 import { CheckCircle2, Package, Truck, User, MapPin } from 'lucide-react'
 import Image from 'next/image'
-import { vendureFetch } from '@/libs/vendure'
+import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
 import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
 import DownloadReceipt from './download-button'
 import { priceFormatter } from '@/utils/price-formatter'
@@ -19,7 +19,7 @@ export default async function ConfirmationPage({
   params: { order: string }
 }) {
   // Fetch order from Vendure
-  const { data, error } = await vendureFetch({
+  const { data, error } = await vendureFetchSSR({
     query: GET_ORDER_BY_CODE,
     variables: {
       code: params.order,
@@ -48,8 +48,16 @@ export default async function ConfirmationPage({
   }
 
   // Extract "lote" info for "Plazo de llegada"
-  const loteName = order.customFields?.lote?.name ?? ''
-  const loteDescription = order.customFields?.lote?.description ?? ''
+  const orderCustomFields = (order as {
+    customFields?: {
+      lote?: {
+        name?: string
+        description?: string
+      }
+    }
+  }).customFields
+  const loteName = orderCustomFields?.lote?.name ?? ''
+  const loteDescription = orderCustomFields?.lote?.description ?? ''
 
   // Calculate paid vs. remaining
   const partialPaid =
