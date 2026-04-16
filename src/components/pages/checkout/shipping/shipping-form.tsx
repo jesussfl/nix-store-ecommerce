@@ -21,36 +21,14 @@ import DeliveryFields from './delivery-fields'
 import NationalShippingFields from './national-shipping-fields'
 import PersonalDeliveries from './personal-deliveries'
 import CommonFields from './common-fields'
-import { useToast } from '@/components/shared/toast/use-toast'
-
-const SHIPPING_METHODS = {
-  national: '1',
-  delivery: '3',
-  personal: '4',
-} as const
 
 export default function ShippingFields() {
   const { control, watch, setValue, unregister } = useFormContext()
   const shippingType = watch('shippingDetails.shippingType')
-  const { setShippingMethod } = useCart()
-  const { toast } = useToast()
 
   const handleDeliveryOptionChange = async (
     option: 'national' | 'delivery' | 'personal'
   ) => {
-    const shippingMethodResult = await setShippingMethod(SHIPPING_METHODS[option])
-
-    if (!shippingMethodResult?.success) {
-      toast({
-        title: 'Error',
-        description:
-          shippingMethodResult?.message ||
-          'No pudimos configurar el método de envío.',
-        variant: 'destructive',
-      })
-      return
-    }
-
     if (option === 'delivery') {
       setValue('shippingDetails.state', 'Aragua')
     } else {

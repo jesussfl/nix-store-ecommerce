@@ -12,7 +12,10 @@ import { vendureFetch } from '@/libs/vendure'
 import { SET_ORDER_SHIPPING_ADDRESS_MUTATION } from '@/libs/mutations/order'
 import { shippingDetailsSchema } from '@/utils/schemas/shipping'
 import ShippingFields from './shipping/shipping-form'
-import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
+import {
+  GET_ELIGIBLE_SHIPPING_METHODS,
+  TRANSITION_ORDER_STATE,
+} from '@/libs/queries/order'
 import { MobileBottomBar } from '@/app/[locale]/(customers)/checkout/mobile-bottom-bar'
 import { useToast } from '@/components/shared/toast/use-toast'
 
@@ -47,14 +50,57 @@ const getResultMessage = (result: unknown, fallback: string) => {
   return fallback
 }
 
+type ShippingType = FormSchema['shippingDetails']['shippingType']
+
+type EligibleShippingMethod = {
+  id: string
+  code: string
+  name: string
+  description?: string | null
+  isEligible: boolean
+}
+
+const normalizeShippingText = (value?: string | null) =>
+  (value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+
+const getShippingSearchTerms = (shippingType: ShippingType) => {
+  switch (shippingType) {
+    case 'delivery':
+      return ['delivery', 'domicilio', 'local', 'maracay']
+    case 'personal':
+      return ['personal', 'retiro', 'pickup', 'recoger', 'tienda']
+    case 'national':
+      return ['nacional', 'envio', 'cobro destino', 'mrw', 'zoom', 'tealca']
+  }
+}
+
+const findMatchingShippingMethod = (
+  shippingType: ShippingType,
+  methods: EligibleShippingMethod[]
+) => {
+  const eligibleMethods = methods.filter((method) => method.isEligible)
+
+  if (eligibleMethods.length === 1) {
+    return eligibleMethods[0]
+  }
+
+  const searchTerms = getShippingSearchTerms(shippingType)
+
+  return eligibleMethods.find((method) => {
+    const haystack = normalizeShippingText(
+      `${method.code} ${method.name} ${method.description || ''}`
+    )
+
+    return searchTerms.some((term) => haystack.includes(term))
+  })
+}
+
 export default function ShippingForm() {
-  const {
-    isLogged,
-    isLoading,
-    activeOrder,
-    isOrderLoading,
-    setShippingMethod,
-  } = useCart()
+  const { isLogged, isLoading, activeOrder, isOrderLoading, setShippingMethod } =
+    useCart()
   const router = useRouter()
 
   const { toast } = useToast()
@@ -84,27 +130,6 @@ export default function ShippingForm() {
   })
 
   const onSubmit = async (values: FormSchema) => {
-    const shippingMethodByType = {
-      national: '1',
-      delivery: '3',
-      personal: '4',
-    } as const
-
-    const shippingMethodResult = await setShippingMethod(
-      shippingMethodByType[values.shippingDetails.shippingType]
-    )
-
-    if (!shippingMethodResult?.success) {
-      toast({
-        title: 'Error',
-        description:
-          shippingMethodResult?.message ||
-          'No pudimos configurar el método de envío.',
-        variant: 'destructive',
-      })
-      return
-    }
-
     const { data: addressData, error: addressError } = await vendureFetch({
       query: SET_ORDER_SHIPPING_ADDRESS_MUTATION,
       variables: {
@@ -145,6 +170,41 @@ export default function ShippingForm() {
           addressError ||
             'Parece que hubo un error en la dirección de envío. Inténtalo de nuevo.'
         ),
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const { data: shippingMethodsData, error: shippingMethodsError } =
+      await vendureFetch({
+        query: GET_ELIGIBLE_SHIPPING_METHODS,
+      })
+
+    const shippingMethods = shippingMethodsData?.eligibleShippingMethods || []
+    const selectedShippingMethod = findMatchingShippingMethod(
+      values.shippingDetails.shippingType,
+      shippingMethods
+    )
+
+    if (shippingMethodsError || !selectedShippingMethod) {
+      toast({
+        title: 'Error',
+        description:
+          shippingMethodsError ||
+          'No encontramos un método de envío válido para esta dirección. Revisa los datos e inténtalo de nuevo.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const shippingMethodResult = await setShippingMethod(selectedShippingMethod.id)
+
+    if (!shippingMethodResult?.success) {
+      toast({
+        title: 'Error',
+        description:
+          shippingMethodResult?.message ||
+          'No pudimos configurar el método de envío.',
         variant: 'destructive',
       })
       return
