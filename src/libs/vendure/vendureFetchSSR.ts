@@ -9,6 +9,20 @@ export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
     ? stringToCheck
     : `${startsWith}${stringToCheck}`
 
+const serializeQuery = <TResult, TVariables>(
+  query: TypedDocumentString<TResult, TVariables> | string
+) => {
+  if (typeof query === 'string') {
+    return query
+  }
+
+  if (typeof query.toString === 'function') {
+    return query.toString()
+  }
+
+  return String(query)
+}
+
 const domain = getVendureDomain()
 
 const endpoint = `${domain}${VENDURE_GRAPHQL_API_ENDPOINT}`
@@ -16,7 +30,7 @@ type VendureFetchProps<TResult, TVariables> = {
   url?: string
   cache?: RequestCache
   headers?: HeadersInit
-  query: TypedDocumentString<TResult, TVariables>
+  query: TypedDocumentString<TResult, TVariables> | string
   tags?: string[]
   variables?: TVariables
   languageCode?: string
@@ -37,6 +51,7 @@ export async function vendureFetchSSR<TResult, TVariables>({
 }> {
   try {
     const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
+    const serializedQuery = serializeQuery(query)
 
     // Get all cookies
     const cookieStore = cookies()
@@ -56,7 +71,7 @@ export async function vendureFetchSSR<TResult, TVariables>({
         ...headers,
       },
       body: JSON.stringify({
-        query,
+        query: serializedQuery,
         variables,
       }),
       cache: !revalidate ? cache : undefined,

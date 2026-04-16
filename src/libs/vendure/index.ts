@@ -29,6 +29,20 @@ const getErrorMessage = async (response: Response) => {
   }
 }
 
+const serializeQuery = <TResult, TVariables>(
+  query: TypedDocumentString<TResult, TVariables> | string
+) => {
+  if (typeof query === 'string') {
+    return query
+  }
+
+  if (typeof query.toString === 'function') {
+    return query.toString()
+  }
+
+  return String(query)
+}
+
 /**
  * Determine the GraphQL endpoint.
  * - In the browser: use /api/vendure (same-origin proxy) to avoid CORS.
@@ -47,7 +61,7 @@ type VendureFetchProps<TResult, TVariables> = {
   url?: string
   cache?: RequestCache
   headers?: HeadersInit
-  query: TypedDocumentString<TResult, TVariables>
+  query: TypedDocumentString<TResult, TVariables> | string
   tags?: string[]
   variables?: TVariables
   languageCode?: string
@@ -69,6 +83,7 @@ export async function vendureFetch<TResult, TVariables>({
   try {
     const endpoint = getEndpoint()
     const endpointWithLanguage = `${endpoint}?languageCode=${languageCode}`
+    const serializedQuery = serializeQuery(query)
     const response = await fetch(endpointWithLanguage, {
       method: 'POST',
       credentials: 'include',
@@ -79,7 +94,7 @@ export async function vendureFetch<TResult, TVariables>({
         ...headers,
       },
       body: JSON.stringify({
-        query,
+        query: serializedQuery,
         variables,
       }),
       cache: !revalidate ? cache : undefined,

@@ -1,7 +1,6 @@
 'use client'
 
 import { useFormContext } from 'react-hook-form'
-import { useCart } from '@/components/cart/cart-context'
 
 import {
   FormField,

@@ -1,4 +1,5 @@
 import { graphql } from '@/graphql'
+import { TypedDocumentString } from '@/graphql/graphql'
 export const ACTIVE_ORDER_FRAGMENT = graphql(`
   fragment ActiveOrder on Order {
     id
@@ -106,19 +107,34 @@ export const GET_ACTIVE_ORDER = graphql(`
   }
 `)
 
-export const GET_ELIGIBLE_SHIPPING_METHODS = graphql(`
-  query GetEligibleShippingMethods {
-    eligibleShippingMethods {
-      id
-      code
-      name
-      description
-      price
-      priceWithTax
-      isEligible
-    }
-  }
-`)
+type GetEligibleShippingMethodsQuery = {
+  eligibleShippingMethods: Array<{
+    id: string
+    code: string
+    name: string
+    description?: string | null
+    price: number
+    priceWithTax: number
+    isEligible: boolean
+  }>
+}
+
+export const GET_ELIGIBLE_SHIPPING_METHODS =
+  new TypedDocumentString<GetEligibleShippingMethodsQuery, Record<string, never>>(
+    `
+      query GetEligibleShippingMethods {
+        eligibleShippingMethods {
+          id
+          code
+          name
+          description
+          price
+          priceWithTax
+          isEligible
+        }
+      }
+    `
+  )
 
 export const TRANSITION_ORDER_STATE = graphql(`
   mutation TransitionToState($state: String!) {
