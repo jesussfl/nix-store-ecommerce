@@ -1,13 +1,7 @@
-'use server'
 import { TypedDocumentString } from '@/graphql/graphql'
 import { VENDURE_GRAPHQL_API_ENDPOINT } from '../constants'
 import { cookies } from 'next/headers'
 import { getVendureDomain } from './config'
-
-export const ensureStartsWith = (stringToCheck: string, startsWith: string) =>
-  stringToCheck.startsWith(startsWith)
-    ? stringToCheck
-    : `${startsWith}${stringToCheck}`
 
 const serializeQuery = <TResult, TVariables>(
   query: TypedDocumentString<TResult, TVariables> | string
@@ -54,7 +48,7 @@ export async function vendureFetchSSR<TResult, TVariables>({
     const serializedQuery = serializeQuery(query)
 
     // Get all cookies
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const allCookies = cookieStore.getAll()
     const cookieHeader = allCookies
       .map((cookie) => `${cookie.name}=${cookie.value}`)

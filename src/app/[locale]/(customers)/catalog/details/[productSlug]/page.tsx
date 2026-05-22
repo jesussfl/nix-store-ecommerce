@@ -6,12 +6,14 @@ import { GET_PRODUCT_INFO } from '@/libs/queries/products'
 import { GetBCVPrice } from '@/utils/get-bcv-price'
 
 export default async function ProductInfoPage({
-  params: { productSlug },
+  params,
   searchParams,
 }: {
-  params: { productSlug: string }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  params: Promise<{ productSlug: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const { productSlug } = await params
+  const resolvedSearchParams = await searchParams
   const { data } = await vendureFetch({
     query: GET_PRODUCT_INFO,
     variables: {
@@ -24,7 +26,7 @@ export default async function ProductInfoPage({
     return <div>Product not found</div>
   }
   const initialVariantId =
-    (searchParams?.variant as string) || data.product.variants[0]?.id
+    (resolvedSearchParams?.variant as string) || data.product.variants[0]?.id
   const currentVariant = data.product.variants.find(
     (variant) => variant.id === initialVariantId
   )

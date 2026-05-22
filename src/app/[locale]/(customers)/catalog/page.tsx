@@ -14,21 +14,22 @@ import { getSortOption } from '@/utils/get-sort-option'
 const ITEMS_PER_PAGE = Number(process.env.NEXT_PUBLIC_ITEMS_PER_PAGE) || 20
 
 export default async function CatalogPage({
-  searchParams = {},
+  searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const locale = await getLocale()
   const t = await getTranslations(`Errors`)
 
+  const resolvedSearchParams = (await searchParams) ?? {}
   const {
     sort,
     q: searchValue,
     page = '1',
-  } = searchParams as { [key: string]: string }
+  } = resolvedSearchParams as { [key: string]: string }
 
   const currentPage = parseInt(page, 10)
-  const dynamicFacets = Object.entries(searchParams).filter(
+  const dynamicFacets = Object.entries(resolvedSearchParams).filter(
     ([key]) => key !== 'sort' && key !== 'q' && key !== 'page'
   )
   const facetValueFilters = dynamicFacets.flatMap(([facetKey, facetValues]) => {

@@ -36,6 +36,7 @@ export function CarouselPlugin() {
                 src={slide.image}
                 alt={slide.name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                 className="object-cover transition-transform duration-300 ease-in-out hover:scale-105"
               />
             </AspectRatio>

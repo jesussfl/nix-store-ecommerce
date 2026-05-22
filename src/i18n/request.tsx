@@ -4,16 +4,21 @@ import { getRequestConfig } from 'next-intl/server'
 import defaultMessages from '../../messages/es.json'
 import { routing } from './routing'
 
-export default getRequestConfig(async ({ locale }) => {
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale;
+  const locale = requested || routing.defaultLocale;
+
   // Validate that the incoming `locale` parameter is valid
   if (!routing.locales.includes(locale as any)) notFound()
 
-  const now = headers().get('x-now')
-  const timeZone = headers().get('x-time-zone') ?? 'America/Caracas'
+  const requestHeaders = await headers()
+  const now = requestHeaders.get('x-now')
+  const timeZone = requestHeaders.get('x-time-zone') ?? 'America/Caracas'
   const localeMessages = (await import(`../../messages/${locale}.json`)).default
   const messages = { ...defaultMessages, ...localeMessages }
 
   return {
+    locale,
     now: now ? new Date(now) : undefined,
     timeZone,
     messages,

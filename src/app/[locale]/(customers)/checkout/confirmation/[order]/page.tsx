@@ -16,13 +16,14 @@ import { priceFormatter } from '@/utils/price-formatter'
 export default async function ConfirmationPage({
   params,
 }: {
-  params: { order: string }
+  params: Promise<{ order: string }>
 }) {
+  const resolvedParams = await params
   // Fetch order from Vendure
   const { data, error } = await vendureFetchSSR({
     query: GET_ORDER_BY_CODE,
     variables: {
-      code: params.order,
+      code: resolvedParams.order,
     },
   })
 

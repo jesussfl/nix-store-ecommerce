@@ -9,20 +9,21 @@ import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
 export default async function AuthPage({
   searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     callback?: string
-  }
+  }>
 }) {
+  const resolvedSearchParams = await searchParams
   const { data } = await vendureFetchSSR({
     query: GET_ACTIVE_CUSTOMER,
   })
 
   if (data?.activeCustomer) {
-    if (searchParams.callback) {
-      redirect(searchParams.callback)
+    if (resolvedSearchParams.callback) {
+      redirect(resolvedSearchParams.callback)
     }
 
-    if (!searchParams.callback) {
+    if (!resolvedSearchParams.callback) {
       redirect('/')
     }
   }

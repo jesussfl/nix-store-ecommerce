@@ -19,12 +19,13 @@ import { NavbarScrollWrapper } from './navbar-wrapper'
 
 type Props = {
   children: ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: Omit<Props, 'children'>): Promise<Metadata> {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'LocaleLayout' })
   const formatter = await getFormatter({ locale })
   const now = await getNow({ locale })
@@ -68,11 +69,12 @@ const montserrat = Montserrat({
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
+  const { locale } = await params
   const messages = await getMessages()
 
   return (

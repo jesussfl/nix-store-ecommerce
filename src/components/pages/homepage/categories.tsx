@@ -25,8 +25,13 @@ async function fetchCollections() {
     },
   })
 
-  if (error || !data?.collections.items) {
-    console.error('Error fetching collections:', error)
+  if (error) {
+    console.error('Error fetching categories:', error)
+    return null
+  }
+
+  if (!data?.collections.items) {
+    console.warn('No collections returned from Vendure.')
     return null
   }
 
@@ -84,6 +89,7 @@ const HoverImage = async ({ imageUrl }: { imageUrl: string }) => {
         src={imageUrl}
         alt="Your image"
         fill
+        sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 16vw"
         className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-110"
       />
     </AspectRatio>

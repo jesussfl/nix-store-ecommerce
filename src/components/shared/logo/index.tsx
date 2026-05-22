@@ -11,7 +11,7 @@ const logoMap = {
   black: NixBlack,
 }
 
-const Logo = async ({
+const Logo = ({
   classname,
   variant,
   height = 56,

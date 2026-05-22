@@ -88,6 +88,7 @@ export const InfiniteMovingCards = ({
             height={80}
             src={`/assets/brands/Amazon-logo.png`}
             alt="Amazon"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>
@@ -97,6 +98,7 @@ export const InfiniteMovingCards = ({
             height={80}
             src={`/assets/brands/Shein.png`}
             alt="Shein"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>
@@ -106,6 +108,7 @@ export const InfiniteMovingCards = ({
             height={80}
             src={`/assets/brands/Ebay.png`}
             alt="Ebay"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>
@@ -115,6 +118,7 @@ export const InfiniteMovingCards = ({
             height={120}
             src={`/assets/brands/Aliexpress.png`}
             alt="Aliexpress"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>
@@ -123,7 +127,8 @@ export const InfiniteMovingCards = ({
             width={80}
             height={80}
             src={`/assets/brands/Nike.png`}
-            alt="Aliexpress"
+            alt="Nike"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>
@@ -132,7 +137,8 @@ export const InfiniteMovingCards = ({
             width={100}
             height={100}
             src={`/assets/brands/Temu.png`}
-            alt="Aliexpress"
+            alt="Temu"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>
@@ -142,6 +148,7 @@ export const InfiniteMovingCards = ({
             height={150}
             src={`/assets/brands/Walmart.png`}
             alt="Walmart"
+            style={{ width: 'auto' }}
             className="object-contain object-center"
           />
         </Li>

@@ -15,22 +15,24 @@ const ITEMS_PER_PAGE = Number(process.env.NEXT_PUBLIC_ITEMS_PER_PAGE) || 20
 
 export default async function CollectionsPage({
   params,
-  searchParams = {},
+  searchParams,
 }: {
-  params: { collection: string }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  params: Promise<{ collection: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const locale = await getLocale()
   const t = await getTranslations(`Errors`)
 
+  const resolvedParams = await params
+  const resolvedSearchParams = (await searchParams) ?? {}
   const {
     sort,
     q: searchValue,
     page = '1',
-  } = searchParams as { [key: string]: string }
+  } = resolvedSearchParams as { [key: string]: string }
 
   const currentPage = parseInt(page, 10)
-  const dynamicFacets = Object.entries(searchParams).filter(
+  const dynamicFacets = Object.entries(resolvedSearchParams).filter(
     ([key]) => key !== 'sort' && key !== 'q' && key !== 'page'
   )
   const facetValueFilters = dynamicFacets.flatMap(([facetKey, facetValues]) => {
@@ -52,7 +54,7 @@ export default async function CollectionsPage({
       input: {
         term: searchValue,
         groupByProduct: true,
-        collectionSlug: params.collection,
+        collectionSlug: resolvedParams.collection,
         facetValueFilters: facetValueFilters,
         sort: sortOption,
         take: ITEMS_PER_PAGE,
