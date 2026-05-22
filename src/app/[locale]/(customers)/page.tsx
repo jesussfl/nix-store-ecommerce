@@ -35,7 +35,6 @@ const Home = async () => {
         <CustomMadeProductsSection />
         <StepsCtaSection />
         <BrandsSection />
-        <MetricsSection />
         <CustomizedProductsSection />
         <CollectionsSection />
         <FaqsSection />

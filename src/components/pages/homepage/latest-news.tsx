@@ -28,8 +28,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/shared/card/card'
-import { Button } from '@/components/shared/button'
+import { Button, buttonVariants } from '@/components/shared/button'
 import type { GetStorefrontNewsQuery } from '@/graphql/graphql'
+import Link from 'next/link'
+import { cn } from '@/libs/utils'
 
 const fallbackSlides = [
   {
@@ -64,6 +66,7 @@ type LatestNewsItem = {
   image: string
   summary: string
   ctaText?: string | null
+  ctaLink?: string | null
 }
 
 type LatestNewsProps = {
@@ -87,13 +90,14 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
   const [openDialog, setOpenDialog] = useState<number | null>(null)
   const slides: LatestNewsItem[] =
     items.length > 0
-        ? items.map((item) => ({
-            id: item.id,
-            title: item.title,
-            image: resolveNewsImage(item.imageAsset?.preview),
-            summary: item.summary,
-            ctaText: item.ctaText,
-          }))
+      ? items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        image: resolveNewsImage(item.imageAsset?.preview),
+        summary: item.summary,
+        ctaText: item.ctaText,
+        ctaLink: item.ctaLink,
+      }))
       : fallbackSlides
 
   return (
@@ -159,13 +163,11 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                   </p>
                 </CardContent>
                 <CardFooter className="px-4 pb-4 pt-0 md:px-5 md:pb-5">
-                  <Button
-                    variant="outline"
-                    className="rounded-full px-5 font-semibold md:px-6"
-                    onClick={() => setOpenDialog(index)}
-                  >
-                    {slide.ctaText || 'Ver más'}
-                  </Button>
+                  {slide.ctaLink ? (
+                    <Link href={slide.ctaLink} className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'w-full')} >
+                      {slide.ctaText}
+                    </Link>
+                  ) : null}
                 </CardFooter>
               </Card>
             </CarouselItem>

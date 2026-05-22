@@ -84,15 +84,6 @@ export const InfiniteMovingCards = ({
       >
         <Li>
           <Image
-            width={56}
-            height={56}
-            src={`/assets/brands/adidas-logo.png`}
-            alt="Adidas"
-            className="object-contain object-center"
-          />
-        </Li>
-        <Li>
-          <Image
             width={80}
             height={80}
             src={`/assets/brands/Amazon-logo.png`}
