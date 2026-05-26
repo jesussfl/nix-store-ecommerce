@@ -66,5 +66,11 @@
 
     "NotFound": {
         "title": "This page was not found (404)"
+    },
+    "Errors": {
+        "something-went-wrong": "Something went wrong",
+        "INVALID_CREDENTIALS_ERROR": "The provided credentials are invalid",
+        "EMAIL_ADDRESS_CONFLICT_ERROR": "An account already exists with this email address",
+        "PASSWORD_VALIDATION_ERROR": "The password does not meet the security requirements"
     }
 }

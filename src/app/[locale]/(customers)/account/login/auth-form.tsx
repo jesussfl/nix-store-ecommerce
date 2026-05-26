@@ -27,8 +27,9 @@ import {
   ResetPasswordInputs,
   resetPasswordSchema,
 } from '@/utils/schemas/account'
-import { Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useCart } from '@/components/cart/cart-context'
+import { useTranslations } from 'next-intl'
 
 export default function AuthForm() {
   const searchParams = useSearchParams()
@@ -37,7 +38,24 @@ export default function AuthForm() {
   )
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
   const { isLoading, isLogged, fetchActiveOrder, addToCart } = useCart()
+  const t = useTranslations('Errors')
+
+  const getErrorMessage = (errorCode?: string, defaultMessage?: string) => {
+    if (!errorCode) return defaultMessage || t('something-went-wrong')
+    const translationKeys: Record<string, string> = {
+      INVALID_CREDENTIALS_ERROR: 'INVALID_CREDENTIALS_ERROR',
+      EMAIL_ADDRESS_CONFLICT_ERROR: 'EMAIL_ADDRESS_CONFLICT_ERROR',
+      PASSWORD_VALIDATION_ERROR: 'PASSWORD_VALIDATION_ERROR',
+    }
+    const key = translationKeys[errorCode]
+    if (key) {
+      return t(key as any)
+    }
+    return defaultMessage || t('something-went-wrong')
+  }
 
   const loginForm = useForm<LoginInputs>({
     resolver: zodResolver(loginSchema),
@@ -85,7 +103,7 @@ export default function AuthForm() {
 
           handleRedirect()
         } else if ('errorCode' in result.data.login) {
-          setError(result.data.login.message)
+          setError(getErrorMessage(result.data.login.errorCode, result.data.login.message))
         }
       }
     } catch (err) {
@@ -115,7 +133,7 @@ export default function AuthForm() {
           setSuccess('Registro exitoso. Ahora puedes iniciar sesión.')
           setActiveTab('login')
         } else if ('errorCode' in result.data.registerCustomerAccount) {
-          setError(result.data.registerCustomerAccount.message)
+          setError(getErrorMessage(result.data.registerCustomerAccount.errorCode, result.data.registerCustomerAccount.message))
         }
       }
     } catch (err) {
@@ -143,7 +161,7 @@ export default function AuthForm() {
             'Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña.'
           )
         } else if ('errorCode' in result.data.requestPasswordReset) {
-          setError(result.data.requestPasswordReset.message)
+          setError(getErrorMessage(result.data.requestPasswordReset.errorCode, result.data.requestPasswordReset.message))
         }
       }
     } catch (err) {
@@ -210,12 +228,26 @@ export default function AuthForm() {
           </div>
           <div>
             <Label htmlFor="login-password">Contraseña</Label>
-            <Input
-              id="login-password"
-              type="password"
-              {...loginForm.register('password')}
-              className="mt-1"
-            />
+            <div className="relative mt-1">
+              <Input
+                id="login-password"
+                type={showLoginPassword ? 'text' : 'password'}
+                {...loginForm.register('password')}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowLoginPassword((v) => !v)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 focus:outline-none"
+                aria-label={showLoginPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              >
+                {showLoginPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {loginForm.formState.errors.password && (
               <p className="mt-1 text-sm text-red-600">
                 {loginForm.formState.errors.password.message}
@@ -295,12 +327,26 @@ export default function AuthForm() {
           </div>
           <div>
             <Label htmlFor="signup-password">Contraseña</Label>
-            <Input
-              id="signup-password"
-              type="password"
-              {...signupForm.register('password')}
-              className="mt-1"
-            />
+            <div className="relative mt-1">
+              <Input
+                id="signup-password"
+                type={showSignupPassword ? 'text' : 'password'}
+                {...signupForm.register('password')}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSignupPassword((v) => !v)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 focus:outline-none"
+                aria-label={showSignupPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              >
+                {showSignupPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {signupForm.formState.errors.password && (
               <p className="mt-1 text-sm text-red-600">
                 {signupForm.formState.errors.password.message}

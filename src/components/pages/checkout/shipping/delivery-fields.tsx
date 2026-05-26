@@ -31,16 +31,17 @@ export default function DeliveryFields() {
   const handleLocationChange = async (value: string) => {
     const location = LOCATIONS.find((loc) => loc.name === value)
     if (location) {
-      const shippingAddressResult = await setShippingOrderAddress({
-        city: location.name,
-        countryCode: 'VE',
-        province: 'Aragua',
-        streetLine1: location.name,
-      })
-
-      if (shippingAddressResult) {
-        setValue('shippingDetails.location', `${location.name}`)
-        setValue('shippingDetails.locationObject', location)
+      setValue('shippingDetails.location', location.name, { shouldValidate: true })
+      setValue('shippingDetails.locationObject', location, { shouldValidate: true })
+      try {
+        await setShippingOrderAddress({
+          city: location.name,
+          countryCode: 'VE',
+          province: 'Aragua',
+          streetLine1: location.name,
+        })
+      } catch (e) {
+        console.error(e)
       }
     }
   }

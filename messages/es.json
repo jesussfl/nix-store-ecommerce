@@ -106,7 +106,10 @@
     "something-went-wrong": "Algo ha salido mal",
     "catalog-troubles": "Estamos teniendo problemas para cargar el catálogo. Por favor intenta más tarde",
     "no-results": "No se encontraron resultados",
-    "no-results-description": "No pudimos encontrar ningún producto que cumpla con tu búsqueda"
+    "no-results-description": "No pudimos encontrar ningún producto que cumpla con tu búsqueda",
+    "INVALID_CREDENTIALS_ERROR": "Las credenciales proporcionadas no son válidas",
+    "EMAIL_ADDRESS_CONFLICT_ERROR": "Ya existe una cuenta con este correo electrónico",
+    "PASSWORD_VALIDATION_ERROR": "La contraseña no cumple con los requisitos de seguridad"
   },
   "catalog": {
     "filters": {

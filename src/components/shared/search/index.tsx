@@ -19,6 +19,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverAnchor,
 } from '@/components/shared/popover/popover'
 import debounce from 'lodash.debounce'
 
@@ -116,20 +117,18 @@ export default function Search({ className, onSearchSubmit }: SearchProps) {
       <div className="flex flex-col gap-2">
         <div className="flex">
           <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <div className="flex-1">
-                <Input
-                  type="text"
-                  placeholder="Buscar productos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-[52px] rounded-r-none md:h-auto"
-                  // ref={inputRef}
-                  onFocus={() => setOpen(true)}
-                  // onBlur={onInputBlur}
-                />
-              </div>
-            </PopoverTrigger>
+            <PopoverAnchor className="flex-1">
+              <Input
+                type="text"
+                placeholder="Buscar productos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-[52px] rounded-r-none md:h-auto"
+                // ref={inputRef}
+                onFocus={() => setOpen(true)}
+                // onBlur={onInputBlur}
+              />
+            </PopoverAnchor>
             <PopoverContent
               onOpenAutoFocus={(e) => e.preventDefault()}
               className="PopoverContent p-0"

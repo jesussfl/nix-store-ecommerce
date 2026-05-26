@@ -11,6 +11,6 @@ export const getSortOption = (sortValue: string): SearchResultSortParameter => {
     case 'name-desc':
       return { name: SortOrder.DESC }
     default:
-      return {}
+      return { name: SortOrder.DESC }
   }
 }

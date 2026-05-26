@@ -36,26 +36,29 @@ export default function PersonalDeliveries() {
       (loc) => loc.name === value
     )
 
-    setIsLoadingLocation(true)
     if (location) {
       setSelectedLocation(location)
-      const shippingAddressResult = await setShippingOrderAddress({
-        city: 'Maracay',
-        countryCode: 'VE',
-        province: 'Aragua',
-        streetLine1: location.name,
-      })
+      setValue('shippingDetails.location', location.name, { shouldValidate: true })
+      setValue('shippingDetails.state', 'Aragua', { shouldValidate: true })
+      setValue('shippingDetails.city', 'Maracay', { shouldValidate: true })
+      setValue('shippingDetails.streetLine1', location.name, { shouldValidate: true })
+      setValue('shippingDetails.streetLine2', location.exact_address, { shouldValidate: true })
+      setValue('shippingDetails.locationObject', location, { shouldValidate: true })
 
-      if (shippingAddressResult) {
-        setValue('shippingDetails.location', `Maracay`)
-        setValue('shippingDetails.state', 'Aragua')
-        setValue('shippingDetails.city', 'Maracay')
-        setValue('shippingDetails.streetLine1', location.name)
-        setValue('shippingDetails.streetLine2', location.exact_address)
-        setValue('shippingDetails.locationObject', location)
+      setIsLoadingLocation(true)
+      try {
+        await setShippingOrderAddress({
+          city: 'Maracay',
+          countryCode: 'VE',
+          province: 'Aragua',
+          streetLine1: location.name,
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setIsLoadingLocation(false)
       }
     }
-    setIsLoadingLocation(false)
   }
 
   return (
