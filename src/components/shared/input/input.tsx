@@ -31,6 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
           ref={ref}
           {...props}
+          value={'value' in props ? (props.value ?? '') : undefined}
         />
         {EndIcon && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 transform">
