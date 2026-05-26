@@ -3279,6 +3279,7 @@ export type SearchResultAsset = {
 export type SearchResultPrice = PriceRange | SinglePrice;
 
 export type SearchResultSortParameter = {
+  createdAt?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   price?: InputMaybe<SortOrder>;
 };

@@ -17,7 +17,8 @@ export default function SortBy() {
   const searchParams = useSearchParams()
 
   const sortOptions = [
-    { label: t('relevance'), value: '' },
+    { label: t('newest'), value: '' },
+    { label: t('oldest'), value: 'created-asc' },
     { label: t('priceLowToHigh'), value: 'price-asc' },
     { label: t('priceHighToLow'), value: 'price-desc' },
     { label: t('nameAToZ'), value: 'name-asc' },

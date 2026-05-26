@@ -3011,6 +3011,7 @@ The price of a search result product, either as a range or as a single price
 union SearchResultPrice = PriceRange | SinglePrice
 
 input SearchResultSortParameter {
+  createdAt: SortOrder
   name: SortOrder
   price: SortOrder
 }

@@ -2,6 +2,10 @@ import { SearchResultSortParameter, SortOrder } from '@/graphql/graphql'
 
 export const getSortOption = (sortValue: string): SearchResultSortParameter => {
   switch (sortValue) {
+    case 'created-asc':
+      return { createdAt: SortOrder.ASC }
+    case 'created-desc':
+      return { createdAt: SortOrder.DESC }
     case 'price-asc':
       return { price: SortOrder.ASC }
     case 'price-desc':
@@ -11,6 +15,6 @@ export const getSortOption = (sortValue: string): SearchResultSortParameter => {
     case 'name-desc':
       return { name: SortOrder.DESC }
     default:
-      return { name: SortOrder.DESC }
+      return { createdAt: SortOrder.DESC }
   }
 }

@@ -118,7 +118,8 @@
       "clearAll": "Limpiar todos los filtros",
       "sort": {
         "placeholder": "Ordenar por",
-        "relevance": "Relevancia",
+        "newest": "Más recientes",
+        "oldest": "Más antiguos",
         "priceLowToHigh": "Precio: de menor a mayor",
         "priceHighToLow": "Precio: de mayor a menor",
         "nameAToZ": "Nombre: A a Z",

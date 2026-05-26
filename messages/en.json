@@ -47,7 +47,8 @@
             "clearAll": "Clear all filters",
             "sort": {
                 "placeholder": "Sort by",
-                "relevance": "Relevance",
+                "newest": "Newest",
+                "oldest": "Oldest",
                 "priceLowToHigh": "Price: Low to High",
                 "priceHighToLow": "Price: High to Low",
                 "nameAToZ": "Name: A to Z",
