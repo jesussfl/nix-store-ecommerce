@@ -122,7 +122,7 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                     <AlertDialogTrigger asChild>
                       <AspectRatio
                         ratio={16 / 9}
-                        className="cursor-pointer overflow-hidden"
+                        className="relative cursor-pointer overflow-hidden"
                       >
                         <Image
                           src={slide.image}
@@ -138,7 +138,7 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                       </AlertDialogHeader>
                       <AspectRatio
                         ratio={16 / 9}
-                        className="overflow-hidden rounded-md"
+                        className="relative overflow-hidden rounded-md"
                       >
                         <Image
                           src={slide.image}

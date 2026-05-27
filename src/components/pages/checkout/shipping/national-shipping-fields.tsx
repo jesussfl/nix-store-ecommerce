@@ -113,11 +113,9 @@ export default function NationalShippingFields() {
                 <SelectContent>
                   <SelectItem value="MRW">MRW</SelectItem>
                   <SelectItem value="ZOOM">ZOOM</SelectItem>
-                  <SelectItem value="DHL">DHL</SelectItem>
                   <SelectItem value="Liberty Express">
                     Liberty Express
                   </SelectItem>
-                  <SelectItem value="Domesa">Domesa</SelectItem>
                   <SelectItem value="Tealca">Tealca</SelectItem>
                 </SelectContent>
               </Select>

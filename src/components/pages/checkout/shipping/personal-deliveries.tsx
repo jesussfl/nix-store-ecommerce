@@ -103,10 +103,7 @@ export default function PersonalDeliveries() {
               ) : (
                 <>
                   <p>Nombre: {selectedLocation?.name || ''}</p>
-                  <p>
-                    Punto de referencia: {selectedLocation?.exact_address || ''}
-                  </p>
-                  <p>Horario: {selectedLocation?.schedule || ''}</p>
+                  <p>Horarios: Confirmar vía Whatsapp</p>
                 </>
               )}
             </div>
