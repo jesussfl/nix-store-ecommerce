@@ -8,6 +8,9 @@ import {
 import { Separator } from '@/components/shared/separator/separator'
 import { CheckCircle2, Package, Truck, User, MapPin } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { buttonVariants } from '@/components/shared/button'
+import { cn } from '@/libs/utils'
 import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
 import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
 import DownloadReceipt from './download-button'
@@ -78,6 +81,14 @@ export default async function ConfirmationPage({
         <p className="mt-2 text-muted-foreground">
           Número de pedido: <span className="font-medium">{order.code}</span>
         </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+          <Link href="/" className={cn(buttonVariants({ variant: 'default', size: 'lg' }))}>
+            Ir al Inicio
+          </Link>
+          <Link href="/catalog" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>
+            Seguir Comprando
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -374,19 +374,7 @@ export default function OrderSummary({
               </span>
             )}
           </div>
-          <div className="flex justify-between">
-            <span>Envío</span>
-            {pricingLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <span>
-                {priceFormatter(
-                  activeOrder.shippingWithTax,
-                  activeOrder.currencyCode
-                )}
-              </span>
-            )}
-          </div>
+     
           <div className="flex justify-between font-semibold">
             <span>Total</span>
             {pricingLoading || isLoading ? (
