@@ -107,6 +107,38 @@ export const SET_SHIPPING_METHOD_MUTATION = graphql(`
   }
 `)
 
+export const APPLY_COUPON_CODE_MUTATION = graphql(`
+  mutation ApplyCouponCode($couponCode: String!) {
+    applyCouponCode(couponCode: $couponCode) {
+      __typename
+      ...ActiveOrder
+      ... on ErrorResult {
+        errorCode
+        message
+      }
+      ... on CouponCodeInvalidError {
+        couponCode
+      }
+      ... on CouponCodeExpiredError {
+        couponCode
+      }
+      ... on CouponCodeLimitError {
+        couponCode
+        limit
+      }
+    }
+  }
+`)
+
+export const REMOVE_COUPON_CODE_MUTATION = graphql(`
+  mutation RemoveCouponCode($couponCode: String!) {
+    removeCouponCode(couponCode: $couponCode) {
+      __typename
+      ...ActiveOrder
+    }
+  }
+`)
+
 export const ADJUST_ORDER_LINE = graphql(`
   mutation AdjustOrderLine($lineId: ID!, $quantity: Int!) {
     adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {

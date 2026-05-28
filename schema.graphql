@@ -2455,6 +2455,8 @@ enum Permission {
   ReadCustomer
   """Grants permission to read CustomerGroup"""
   ReadCustomerGroup
+  """Grants permission to read DashboardGlobalViews"""
+  ReadDashboardGlobalViews
   """Grants permission to read Facet"""
   ReadFacet
   """Grants permission to read Order"""
@@ -2537,6 +2539,8 @@ enum Permission {
   UpdateTaxRate
   """Grants permission to update Zone"""
   UpdateZone
+  """Grants permission to write DashboardGlobalViews"""
+  WriteDashboardGlobalViews
 }
 
 """The price range where the result has more than one price"""

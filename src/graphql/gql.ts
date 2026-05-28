@@ -19,6 +19,8 @@ const documents = {
     "\n  mutation AdjustItemQuantityInOrder($lineId: ID!, $quantity: Int!) {\n    adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {\n      __typename\n      ...ActiveOrder\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n      ... on OrderLimitError {\n        errorCode\n        message\n      }\n      ... on InsufficientStockError {\n        quantityAvailable\n        order {\n          ...ActiveOrder\n        }\n      }\n      ... on NegativeQuantityError {\n        errorCode\n        message\n      }\n      ... on OrderModificationError {\n        errorCode\n        message\n      }\n    }\n  }\n": types.AdjustItemQuantityInOrderDocument,
     "\n  mutation SetOrderShippingAddress($input: CreateAddressInput!) {\n    setOrderShippingAddress(input: $input) {\n      __typename\n      ...ActiveOrder\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n    }\n  }\n": types.SetOrderShippingAddressDocument,
     "\n  mutation SetShippingMethod($id: [ID!]!) {\n    setOrderShippingMethod(shippingMethodId: $id) {\n      __typename\n      ...ActiveOrder\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n    }\n  }\n": types.SetShippingMethodDocument,
+    "\n  mutation ApplyCouponCode($couponCode: String!) {\n    applyCouponCode(couponCode: $couponCode) {\n      __typename\n      ...ActiveOrder\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n      ... on CouponCodeInvalidError {\n        couponCode\n      }\n      ... on CouponCodeExpiredError {\n        couponCode\n      }\n      ... on CouponCodeLimitError {\n        couponCode\n        limit\n      }\n    }\n  }\n": types.ApplyCouponCodeDocument,
+    "\n  mutation RemoveCouponCode($couponCode: String!) {\n    removeCouponCode(couponCode: $couponCode) {\n      __typename\n      ...ActiveOrder\n    }\n  }\n": types.RemoveCouponCodeDocument,
     "\n  mutation AdjustOrderLine($lineId: ID!, $quantity: Int!) {\n    adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {\n      ...ActiveOrder\n    }\n  }\n": types.AdjustOrderLineDocument,
     "\n  mutation Login($email: String!, $password: String!, $rememberMe: Boolean!) {\n    login(username: $email, password: $password, rememberMe: $rememberMe) {\n      ... on CurrentUser {\n        id\n        identifier\n      }\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n    }\n  }\n": types.LoginDocument,
     "\n  mutation Register($input: RegisterCustomerInput!) {\n    registerCustomerAccount(input: $input) {\n      ... on Success {\n        success\n      }\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n    }\n  }\n": types.RegisterDocument,
@@ -65,6 +67,14 @@ export function graphql(source: "\n  mutation SetOrderShippingAddress($input: Cr
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation SetShippingMethod($id: [ID!]!) {\n    setOrderShippingMethod(shippingMethodId: $id) {\n      __typename\n      ...ActiveOrder\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n    }\n  }\n"): typeof import('./graphql').SetShippingMethodDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation ApplyCouponCode($couponCode: String!) {\n    applyCouponCode(couponCode: $couponCode) {\n      __typename\n      ...ActiveOrder\n      ... on ErrorResult {\n        errorCode\n        message\n      }\n      ... on CouponCodeInvalidError {\n        couponCode\n      }\n      ... on CouponCodeExpiredError {\n        couponCode\n      }\n      ... on CouponCodeLimitError {\n        couponCode\n        limit\n      }\n    }\n  }\n"): typeof import('./graphql').ApplyCouponCodeDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation RemoveCouponCode($couponCode: String!) {\n    removeCouponCode(couponCode: $couponCode) {\n      __typename\n      ...ActiveOrder\n    }\n  }\n"): typeof import('./graphql').RemoveCouponCodeDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

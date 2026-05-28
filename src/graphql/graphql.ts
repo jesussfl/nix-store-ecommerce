@@ -2665,6 +2665,8 @@ export enum Permission {
   ReadCustomer = 'ReadCustomer',
   /** Grants permission to read CustomerGroup */
   ReadCustomerGroup = 'ReadCustomerGroup',
+  /** Grants permission to read DashboardGlobalViews */
+  ReadDashboardGlobalViews = 'ReadDashboardGlobalViews',
   /** Grants permission to read Facet */
   ReadFacet = 'ReadFacet',
   /** Grants permission to read Order */
@@ -2742,7 +2744,9 @@ export enum Permission {
   /** Grants permission to update TaxRate */
   UpdateTaxRate = 'UpdateTaxRate',
   /** Grants permission to update Zone */
-  UpdateZone = 'UpdateZone'
+  UpdateZone = 'UpdateZone',
+  /** Grants permission to write DashboardGlobalViews */
+  WriteDashboardGlobalViews = 'WriteDashboardGlobalViews'
 }
 
 /** The price range where the result has more than one price */
@@ -3760,6 +3764,26 @@ export type SetShippingMethodMutation = { __typename?: 'Mutation', setOrderShipp
     & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
   ) | { __typename: 'OrderModificationError', errorCode: ErrorCode, message: string } };
 
+export type ApplyCouponCodeMutationVariables = Exact<{
+  couponCode: Scalars['String']['input'];
+}>;
+
+
+export type ApplyCouponCodeMutation = { __typename?: 'Mutation', applyCouponCode: { __typename: 'CouponCodeExpiredError', errorCode: ErrorCode, message: string, couponCode: string } | { __typename: 'CouponCodeInvalidError', errorCode: ErrorCode, message: string, couponCode: string } | { __typename: 'CouponCodeLimitError', errorCode: ErrorCode, message: string, couponCode: string, limit: number } | (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) };
+
+export type RemoveCouponCodeMutationVariables = Exact<{
+  couponCode: Scalars['String']['input'];
+}>;
+
+
+export type RemoveCouponCodeMutation = { __typename?: 'Mutation', removeCouponCode?: (
+    { __typename: 'Order' }
+    & { ' $fragmentRefs'?: { 'ActiveOrderFragment': ActiveOrderFragment } }
+  ) | null };
+
 export type AdjustOrderLineMutationVariables = Exact<{
   lineId: Scalars['ID']['input'];
   quantity: Scalars['Int']['input'];
@@ -4576,6 +4600,182 @@ export const SetShippingMethodDocument = new TypedDocumentString(`
     }
   }
 }`) as unknown as TypedDocumentString<SetShippingMethodMutation, SetShippingMethodMutationVariables>;
+export const ApplyCouponCodeDocument = new TypedDocumentString(`
+    mutation ApplyCouponCode($couponCode: String!) {
+  applyCouponCode(couponCode: $couponCode) {
+    __typename
+    ...ActiveOrder
+    ... on ErrorResult {
+      errorCode
+      message
+    }
+    ... on CouponCodeInvalidError {
+      couponCode
+    }
+    ... on CouponCodeExpiredError {
+      couponCode
+    }
+    ... on CouponCodeLimitError {
+      couponCode
+      limit
+    }
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<ApplyCouponCodeMutation, ApplyCouponCodeMutationVariables>;
+export const RemoveCouponCodeDocument = new TypedDocumentString(`
+    mutation RemoveCouponCode($couponCode: String!) {
+  removeCouponCode(couponCode: $couponCode) {
+    __typename
+    ...ActiveOrder
+  }
+}
+    fragment ActiveOrder on Order {
+  id
+  createdAt
+  updatedAt
+  totalQuantity
+  couponCodes
+  code
+  customer {
+    id
+    emailAddress
+    firstName
+    lastName
+    phoneNumber
+  }
+  payments {
+    id
+    method
+    amount
+    state
+    errorMessage
+  }
+  discounts {
+    type
+    description
+    amountWithTax
+    adjustmentSource
+  }
+  shipping
+  shippingWithTax
+  totalWithTax
+  subTotalWithTax
+  state
+  active
+  currencyCode
+  shippingLines {
+    shippingMethod {
+      id
+      name
+      description
+    }
+    priceWithTax
+  }
+  lines {
+    id
+    quantity
+    linePriceWithTax
+    unitPriceWithTax
+    discountedLinePriceWithTax
+    featuredAsset {
+      id
+      preview
+    }
+    productVariant {
+      name
+      id
+      sku
+      price
+      featuredAsset {
+        id
+        source
+      }
+      stockLevel
+      product {
+        facetValues {
+          id
+          name
+          code
+        }
+        name
+        slug
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<RemoveCouponCodeMutation, RemoveCouponCodeMutationVariables>;
 export const AdjustOrderLineDocument = new TypedDocumentString(`
     mutation AdjustOrderLine($lineId: ID!, $quantity: Int!) {
   adjustOrderLine(orderLineId: $lineId, quantity: $quantity) {

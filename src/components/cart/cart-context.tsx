@@ -8,7 +8,9 @@ import {
 } from '@/graphql/graphql'
 import {
   ADD_TO_CART_MUTATION,
+  APPLY_COUPON_CODE_MUTATION,
   REMOVE_FROM_CART_MUTATION,
+  REMOVE_COUPON_CODE_MUTATION,
   SET_ITEM_QUANTITY_IN_CART_MUTATION,
   SET_ORDER_SHIPPING_ADDRESS_MUTATION,
   SET_SHIPPING_METHOD_MUTATION,
@@ -22,6 +24,46 @@ import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
 import { vendureFetch } from '@/libs/vendure'
 import { useState } from 'react'
 import { createContainer } from 'unstated-next'
+
+const asActiveOrder = (order: unknown) => order as ActiveOrderFragment
+
+const translateCouponMessage = (message: string) => {
+  const invalidCode = message.match(/Coupon code "(.+)" is not valid/i)?.[1]
+  if (invalidCode) return `El cupón "${invalidCode}" no es válido.`
+
+  const expiredCode = message.match(/Coupon code "(.+)" has expired/i)?.[1]
+  if (expiredCode) return `El cupón "${expiredCode}" expiró.`
+
+  return message
+}
+
+const getCouponErrorMessage = (
+  result:
+    | {
+        __typename?: string
+        message?: string
+        couponCode?: string
+        limit?: number
+      }
+    | null
+    | undefined,
+  fallback: string
+) => {
+  const couponCode = result?.couponCode ? ` "${result.couponCode}"` : ''
+
+  switch (result?.__typename) {
+    case 'CouponCodeInvalidError':
+      return `El cupón${couponCode} no es válido.`
+    case 'CouponCodeExpiredError':
+      return `El cupón${couponCode} expiró.`
+    case 'CouponCodeLimitError':
+      return result?.limit
+        ? `El cupón${couponCode} ya alcanzó su límite de ${result.limit} usos.`
+        : `El cupón${couponCode} ya alcanzó su límite de uso.`
+    default:
+      return result?.message ? translateCouponMessage(result.message) : fallback
+  }
+}
 
 const useCartContainer = createContainer(() => {
   const [activeOrder, setActiveOrder] = useState<ActiveOrderFragment | null>()
@@ -53,13 +95,13 @@ const useCartContainer = createContainer(() => {
       ])
 
       if (order?.activeOrder) {
-        setActiveOrder(order.activeOrder)
+        setActiveOrder(asActiveOrder(order.activeOrder))
       }
 
       setCurrentCustomer(customer?.activeCustomer)
       setIsLogged(!!customer?.activeCustomer?.id)
 
-      return order?.activeOrder
+      return order?.activeOrder ? asActiveOrder(order.activeOrder) : null
     } catch (e) {
       console.error(e)
     } finally {
@@ -82,7 +124,7 @@ const useCartContainer = createContainer(() => {
 
       if (data?.addItemToOrder.__typename === 'Order') {
         if (data?.addItemToOrder) {
-          setActiveOrder(data?.addItemToOrder)
+          setActiveOrder(asActiveOrder(data?.addItemToOrder))
         }
 
         if (o) open()
@@ -150,7 +192,7 @@ const useCartContainer = createContainer(() => {
       })
       if (data?.removeOrderLine.__typename === 'Order') {
         if (data.removeOrderLine) {
-          setActiveOrder(data.removeOrderLine)
+          setActiveOrder(asActiveOrder(data.removeOrderLine))
         }
       }
     } catch (e) {
@@ -185,7 +227,7 @@ const useCartContainer = createContainer(() => {
       })
 
       if (data?.adjustOrderLine.__typename === 'Order') {
-        setActiveOrder(data?.adjustOrderLine)
+        setActiveOrder(asActiveOrder(data?.adjustOrderLine))
         return {
           success: true,
         }
@@ -240,7 +282,7 @@ const useCartContainer = createContainer(() => {
         },
       })
       if (data?.setOrderShippingAddress.__typename === 'Order') {
-        setActiveOrder(data?.setOrderShippingAddress)
+        setActiveOrder(asActiveOrder(data?.setOrderShippingAddress))
       }
       return data?.setOrderShippingAddress
     } catch (e) {
@@ -262,15 +304,15 @@ const useCartContainer = createContainer(() => {
       if (error) {
         return {
           success: false,
-          message: error,
+          message: translateCouponMessage(error),
         }
       }
 
       if (data?.setOrderShippingMethod.__typename === 'Order') {
-        setActiveOrder(data?.setOrderShippingMethod)
+        setActiveOrder(asActiveOrder(data?.setOrderShippingMethod))
         return {
           success: true,
-          order: data.setOrderShippingMethod,
+          order: asActiveOrder(data.setOrderShippingMethod),
         }
       }
 
@@ -289,6 +331,94 @@ const useCartContainer = createContainer(() => {
             ? e.message
             : 'No pudimos configurar el método de envío.',
       }
+    }
+  }
+
+  const applyCouponCode = async (couponCode: string) => {
+    try {
+      setIsOrderLoading(true)
+      const { data, error } = await vendureFetch({
+        query: APPLY_COUPON_CODE_MUTATION,
+        variables: {
+          couponCode,
+        },
+      })
+
+      if (error) {
+        return {
+          success: false,
+          message: error,
+        }
+      }
+
+      if (data?.applyCouponCode.__typename === 'Order') {
+        const order = asActiveOrder(data.applyCouponCode)
+        setActiveOrder(order)
+        return {
+          success: true,
+          order,
+        }
+      }
+
+      return {
+        success: false,
+        errorCode: data?.applyCouponCode?.errorCode,
+        message: getCouponErrorMessage(
+          data?.applyCouponCode,
+          'No pudimos aplicar este cupón.'
+        ),
+      }
+    } catch (e) {
+      console.error(e)
+      return {
+        success: false,
+        message:
+          e instanceof Error ? e.message : 'No pudimos aplicar este cupón.',
+      }
+    } finally {
+      setIsOrderLoading(false)
+    }
+  }
+
+  const removeCouponCode = async (couponCode: string) => {
+    try {
+      setIsOrderLoading(true)
+      const { data, error } = await vendureFetch({
+        query: REMOVE_COUPON_CODE_MUTATION,
+        variables: {
+          couponCode,
+        },
+      })
+
+      if (error) {
+        return {
+          success: false,
+          message: error,
+        }
+      }
+
+      if (data?.removeCouponCode) {
+        const order = asActiveOrder(data.removeCouponCode)
+        setActiveOrder(order)
+        return {
+          success: true,
+          order,
+        }
+      }
+
+      return {
+        success: false,
+        message: 'No pudimos quitar este cupón.',
+      }
+    } catch (e) {
+      console.error(e)
+      return {
+        success: false,
+        message:
+          e instanceof Error ? e.message : 'No pudimos quitar este cupón.',
+      }
+    } finally {
+      setIsOrderLoading(false)
     }
   }
 
@@ -329,7 +459,7 @@ const useCartContainer = createContainer(() => {
       })
 
       if (data?.adjustOrderLine.__typename === 'Order') {
-        setActiveOrder(data?.adjustOrderLine)
+        setActiveOrder(asActiveOrder(data?.adjustOrderLine))
       }
     } catch (e) {
       console.error(e)
@@ -346,6 +476,8 @@ const useCartContainer = createContainer(() => {
     setItemQuantityInCart,
     setShippingOrderAddress,
     setShippingMethod,
+    applyCouponCode,
+    removeCouponCode,
     removeFromCart,
     fetchActiveOrder,
     adjustOrderLine,

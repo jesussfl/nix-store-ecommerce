@@ -1,10 +1,10 @@
-/* eslint-disable */
 'use client'
 
+import type { FormEvent } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/shared/button'
 import { useCart } from '@/components/cart/cart-context'
-import { AlertCircle, Loader2, Minus, Plus, Trash2 } from 'lucide-react'
+import { AlertCircle, Loader2, Minus, Plus, Tag, Trash2, X } from 'lucide-react'
 import Image from 'next/image'
 import { Separator } from '@/components/shared/separator/separator'
 import { debounce } from 'lodash'
@@ -15,6 +15,7 @@ import { CurrencyCode } from '@/graphql/graphql'
 import { SpecialOrderMessage } from '../catalog/details/components/special-order-message'
 import { Alert, AlertDescription } from '@/components/shared/alert'
 import { fetchCurrentStockLevel } from '@/libs/queries/product'
+import { Input } from '@/components/shared/input/input'
 
 interface OrderSummaryProps {
   isPaymentStep: boolean
@@ -36,6 +37,14 @@ interface StockLevelState {
 interface UpdateErrors {
   [key: string]: string | null
 }
+
+const getDiscountTotal = (
+  order: { discounts: Array<{ amountWithTax: number }> } | null | undefined
+) =>
+  order?.discounts.reduce(
+    (acc, discount) => acc + discount.amountWithTax,
+    0
+  ) ?? 0
 
 // interface OrderLine {
 //   id: string
@@ -70,13 +79,23 @@ export default function OrderSummary({
   isPaymentStep,
   bcvPrice,
 }: OrderSummaryProps) {
-  const { activeOrder, removeFromCart, setItemQuantityInCart, isLoading } =
-    useCart()
+  const {
+    activeOrder,
+    applyCouponCode,
+    removeCouponCode,
+    removeFromCart,
+    setItemQuantityInCart,
+    isLoading,
+    isOrderLoading,
+  } = useCart()
 
   const [localQuantities, setLocalQuantities] = useState<LocalQuantities>({})
   const [pricingLoading, setPricingLoading] = useState(false)
   const [stockLevels, setStockLevels] = useState<StockLevelState>({})
   const [updateErrors, setUpdateErrors] = useState<UpdateErrors>({})
+  const [couponCode, setCouponCode] = useState('')
+  const [couponError, setCouponError] = useState<string | null>(null)
+  const [couponMessage, setCouponMessage] = useState<string | null>(null)
 
   useEffect(() => {
     if (!activeOrder || !activeOrder.lines || isPaymentStep) return
@@ -239,6 +258,64 @@ export default function OrderSummary({
     [isPaymentStep, removeFromCart]
   )
 
+  const handleApplyCoupon = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+
+      const normalizedCouponCode = couponCode.trim()
+      if (!normalizedCouponCode) {
+        setCouponError('Ingresa un cupón para aplicarlo.')
+        setCouponMessage(null)
+        return
+      }
+
+      setCouponError(null)
+      setCouponMessage(null)
+
+      const discountTotalBeforeCoupon = getDiscountTotal(activeOrder)
+      const result = await applyCouponCode(normalizedCouponCode)
+
+      if (result?.success) {
+        setCouponCode('')
+        const nextOrder = result.order
+        const discountTotalAfterCoupon = getDiscountTotal(nextOrder)
+        const couponWasAccepted = nextOrder?.couponCodes.some(
+          (code) => code.toLowerCase() === normalizedCouponCode.toLowerCase()
+        )
+
+        setCouponMessage(
+          couponWasAccepted &&
+            discountTotalAfterCoupon <= discountTotalBeforeCoupon
+            ? 'Cupón agregado. Se aplicará automáticamente cuando tu carrito cumpla sus condiciones.'
+            : 'Cupón aplicado.'
+        )
+        return
+      }
+
+      setCouponError(result?.message || 'No pudimos aplicar este cupón.')
+    },
+    [activeOrder, applyCouponCode, couponCode]
+  )
+
+  const handleRemoveCoupon = useCallback(
+    async (code: string) => {
+      setCouponError(null)
+      setCouponMessage(null)
+
+      const result = await removeCouponCode(code)
+
+      if (result?.success) {
+        setCouponMessage('Cupón eliminado.')
+        return
+      }
+
+      setCouponError(result?.message || 'No pudimos quitar este cupón.')
+    },
+    [removeCouponCode]
+  )
+
+  const discountTotal = getDiscountTotal(activeOrder)
+
   if (!activeOrder || !activeOrder.lines || activeOrder.lines.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -374,10 +451,112 @@ export default function OrderSummary({
               </span>
             )}
           </div>
-     
+          {!isPaymentStep && (
+            <div className="space-y-3 rounded-md border border-dashed border-slate-300 bg-slate-50 p-3">
+              <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                <Input
+                  value={couponCode}
+                  onChange={(event) => {
+                    setCouponCode(event.target.value.toUpperCase())
+                    setCouponError(null)
+                    setCouponMessage(null)
+                  }}
+                  placeholder="Cupón"
+                  startIcon={Tag}
+                  className="h-10 bg-white uppercase"
+                  disabled={isOrderLoading}
+                />
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={isOrderLoading || !couponCode.trim()}
+                >
+                  {isOrderLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Aplicar'
+                  )}
+                </Button>
+              </form>
+
+              {activeOrder.couponCodes.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {activeOrder.couponCodes.map((code) => (
+                    <Badge
+                      key={code}
+                      className="flex items-center gap-1 rounded-full bg-emerald-700 px-2 py-1 text-white"
+                    >
+                      {code}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCoupon(code)}
+                        disabled={isOrderLoading}
+                        aria-label={`Quitar cupón ${code}`}
+                        className="rounded-full p-0.5 hover:bg-white/20 disabled:opacity-50"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {couponError && (
+                <p className="text-xs font-medium text-destructive">
+                  {couponError}
+                </p>
+              )}
+              {couponMessage && (
+                <p className="text-xs font-medium text-emerald-700">
+                  {couponMessage}
+                </p>
+              )}
+              {activeOrder.couponCodes.length > 0 &&
+                activeOrder.discounts.length === 0 && (
+                  <p className="text-xs text-slate-600">
+                    Algunos cupones requieren monto mínimo, productos,
+                    cantidades, facetas o grupo de cliente. Vendure recalculará
+                    el descuento al actualizar el carrito.
+                  </p>
+                )}
+            </div>
+          )}
+
+          {activeOrder.discounts.length > 0 && (
+            <div className="space-y-1">
+              {activeOrder.discounts.map((discount) => (
+                <div
+                  key={`${discount.adjustmentSource}-${discount.description}`}
+                  className="flex justify-between gap-3 text-sm text-emerald-700"
+                >
+                  <span className="line-clamp-2">{discount.description}</span>
+                  <span className="whitespace-nowrap">
+                    -
+                    {priceFormatter(
+                      Math.abs(discount.amountWithTax),
+                      activeOrder.currencyCode
+                    )}
+                  </span>
+                </div>
+              ))}
+              {activeOrder.discounts.length > 1 && discountTotal ? (
+                <div className="flex justify-between text-sm font-semibold text-emerald-800">
+                  <span>Descuento total</span>
+                  <span>
+                    -
+                    {priceFormatter(
+                      Math.abs(discountTotal),
+                      activeOrder.currencyCode
+                    )}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          )}
+
           <div className="flex justify-between font-semibold">
             <span>Total</span>
-            {pricingLoading || isLoading ? (
+            {pricingLoading || isLoading || isOrderLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <span>
