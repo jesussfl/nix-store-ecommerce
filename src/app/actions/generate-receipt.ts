@@ -1,35 +1,53 @@
 'use server'
 
 import { jsPDF } from 'jspdf'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
 import { vendureFetch } from '@/libs/vendure'
 import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
 import { priceFormatter } from '@/utils/price-formatter'
 
-const getAbsoluteUrl = (path) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'
-  return new URL(path, baseUrl).toString()
+type ReceiptResult = {
+  pdfBuffer: number[]
+  fileName: string
 }
 
-const logoUrl = getAbsoluteUrl('/assets/logo/nix-logo.png')
+const getMimeType = (filePath: string) => {
+  const extension = path.extname(filePath).toLowerCase()
 
-// Helper function to fetch the image and convert it to Base64
-async function getImageAsBase64(relativePath) {
-  const absoluteUrl = getAbsoluteUrl(relativePath)
-  const response = await fetch(absoluteUrl)
-  if (!response.ok) {
-    throw new Error(`Failed to fetch image: ${response.statusText}`)
+  switch (extension) {
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg'
+    case '.webp':
+      return 'image/webp'
+    default:
+      return 'image/png'
   }
-  const buffer = await response.arrayBuffer()
-  return `data:image/png;base64,${Buffer.from(buffer).toString('base64')}`
+}
+
+async function getPublicImageAsBase64(publicPath: string) {
+  const normalizedPath = publicPath.replace(/^\/+/, '')
+  const imagePath = path.join(process.cwd(), 'public', normalizedPath)
+  const buffer = await readFile(imagePath)
+
+  return `data:${getMimeType(imagePath)};base64,${buffer.toString('base64')}`
 }
 
 /**
  * Helper: Draws multiple lines of text at (x, y), returning
  * the updated y position after printing all lines.
  */
-function drawMultiLineText(doc, text, x, startY, maxWidth, lineHeight = 5) {
+function drawMultiLineText(
+  doc: jsPDF,
+  text: string,
+  x: number,
+  startY: number,
+  maxWidth: number,
+  lineHeight = 5
+) {
   // splitTextToSize returns an array of lines that fit within maxWidth
-  const lines = doc.splitTextToSize(text, maxWidth)
+  const lines = doc.splitTextToSize(text, maxWidth) as string[]
   let currentY = startY
   lines.forEach((line) => {
     doc.text(line, x, currentY)
@@ -38,7 +56,9 @@ function drawMultiLineText(doc, text, x, startY, maxWidth, lineHeight = 5) {
   return currentY
 }
 
-export async function generateReceipt(orderCode) {
+export async function generateReceipt(
+  orderCode: string
+): Promise<ReceiptResult> {
   const { data, error } = await vendureFetch({
     query: GET_ORDER_BY_CODE,
     variables: { code: orderCode },
@@ -64,13 +84,19 @@ export async function generateReceipt(orderCode) {
   doc.setLineHeightFactor(1.2)
 
   // Utility to draw a filled rectangle
-  function drawRect(x, y, width, height, color) {
+  function drawRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string
+  ) {
     doc.setFillColor(color)
     doc.rect(x, y, width, height, 'F')
   }
 
   // Utility to draw a thin horizontal line in light gray
-  function drawHorizontalLine(x1, y, x2) {
+  function drawHorizontalLine(x1: number, y: number, x2: number) {
     doc.setDrawColor(220, 220, 220)
     doc.setLineWidth(0.3)
     doc.line(x1, y, x2, y)
@@ -82,7 +108,7 @@ export async function generateReceipt(orderCode) {
   drawRect(0, 0, 210, 35, blackColor)
 
   // Logo on the left
-  const logoBase64 = await getImageAsBase64(logoUrl)
+  const logoBase64 = await getPublicImageAsBase64('/assets/logo/nix-logo.png')
   doc.addImage(logoBase64, 'PNG', 20, 5, 35, 25)
 
   // “NOTA DE ENTREGA” on the right
@@ -170,18 +196,24 @@ export async function generateReceipt(orderCode) {
   doc.setFontSize(10)
   doc.setTextColor(0, 0, 0)
 
-  // Lote name + description, each wrapped
-  const loteName = `Lote: ${order.customFields?.lote?.name ?? ''}`
-  rightColumnY = drawMultiLineText(doc, loteName, 130, rightColumnY, 60)
+  const shippingDetails = order.shippingLines
+    .map((line) => line.shippingMethod.description || line.shippingMethod.name)
+    .filter(Boolean)
+    .join(' ')
 
-  const loteDesc = order.customFields?.lote?.description ?? ''
-  rightColumnY = drawMultiLineText(doc, loteDesc, 130, rightColumnY, 60)
+  rightColumnY = drawMultiLineText(
+    doc,
+    shippingDetails || 'Según el método de envío seleccionado.',
+    130,
+    rightColumnY,
+    60
+  )
 
   // Final Y after columns
   let currentY = Math.max(leftColumnY, rightColumnY) + 5
 
   // ------------------------------------------------
-  // TABLE HEADERS: Descripción | Uds. | Proveedor...
+  // TABLE HEADERS: Descripción | Uds. | SKU...
   // ------------------------------------------------
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
@@ -191,7 +223,7 @@ export async function generateReceipt(orderCode) {
   const tableHeaderY = currentY + 5
   doc.text('Descripción', 22, tableHeaderY)
   doc.text('Uds.', 78, tableHeaderY)
-  doc.text('Proveedor', 100, tableHeaderY)
+  doc.text('SKU', 100, tableHeaderY)
   doc.text('Precio Unitario', 130, tableHeaderY)
   doc.text('Precio', 170, tableHeaderY, { align: 'right' })
 
@@ -207,11 +239,14 @@ export async function generateReceipt(orderCode) {
   order.lines.forEach((line) => {
     const unitPrice = priceFormatter(line.unitPriceWithTax, order.currencyCode)
     const lineTotal = priceFormatter(line.linePriceWithTax, order.currencyCode)
-    const provider = line.productVariant.customFields?.provider || 'N/A'
+    const sku = line.productVariant.sku || 'N/A'
 
     const rowY = currentY + 5
     // If the product name is very long, split it to size so it won't overflow
-    const splittedName = doc.splitTextToSize(line.productVariant.name, 50)
+    const splittedName = doc.splitTextToSize(
+      line.productVariant.name,
+      50
+    ) as string[]
 
     // Print name (multi-line if needed)
     let tempY = rowY
@@ -220,10 +255,10 @@ export async function generateReceipt(orderCode) {
       tempY += 4
     })
 
-    // We only print quantity, provider, and prices on the first line
+    // We only print quantity, SKU, and prices on the first line
     // but if the name took multiple lines, we shift them accordingly
     doc.text(String(line.quantity), 78, rowY)
-    doc.text(provider, 100, rowY)
+    doc.text(sku, 100, rowY)
     doc.text(unitPrice, 130, rowY)
     doc.text(lineTotal, 170, rowY, { align: 'right' })
 
