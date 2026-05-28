@@ -15,6 +15,7 @@ import { vendureFetchSSR } from '@/libs/vendure/vendureFetchSSR'
 import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
 import DownloadReceipt from './download-button'
 import { priceFormatter } from '@/utils/price-formatter'
+import RefreshCart from './refresh-cart'
 
 export default async function ConfirmationPage({
   params,
@@ -70,6 +71,7 @@ export default async function ConfirmationPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <RefreshCart />
       {/* Success Banner */}
       <div className="mb-8 text-center">
         <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">

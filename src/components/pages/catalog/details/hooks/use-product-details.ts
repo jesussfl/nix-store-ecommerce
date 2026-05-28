@@ -64,10 +64,8 @@ export function useProductDetails({
 
   // Fetch the active order on mount
   useEffect(() => {
-    if (!isLoading) {
-      fetchActiveOrder()
-    }
-  }, [isLoading, fetchActiveOrder])
+    void fetchActiveOrder()
+  }, [fetchActiveOrder])
 
   // Fetch current stock level when variant changes
   useEffect(() => {

@@ -22,10 +22,21 @@ import {
 } from '@/libs/queries/account'
 import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
 import { vendureFetch } from '@/libs/vendure'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { createContainer } from 'unstated-next'
 
 const asActiveOrder = (order: unknown) => order as ActiveOrderFragment
+const cartOrderStates = new Set(['AddingItems', 'ArrangingPayment'])
+
+const asCartOrder = (order: unknown) => {
+  const activeOrder = order ? asActiveOrder(order) : null
+
+  if (!activeOrder?.active || !cartOrderStates.has(activeOrder.state)) {
+    return null
+  }
+
+  return activeOrder
+}
 
 const translateCouponMessage = (message: string) => {
   const invalidCode = message.match(/Coupon code "(.+)" is not valid/i)?.[1]
@@ -77,9 +88,9 @@ const useCartContainer = createContainer(() => {
     useState<GetCustomerOrdersQuery['activeCustomer']>()
   const open = () => setOpen(true)
   const close = () => setOpen(false)
+  const clearActiveOrder = useCallback(() => setActiveOrder(null), [])
 
-  const fetchActiveOrder = async () => {
-    if (!isLoading) return
+  const fetchActiveOrder = useCallback(async () => {
     setIsLoading(true)
     try {
       const [
@@ -94,20 +105,26 @@ const useCartContainer = createContainer(() => {
         }),
       ])
 
-      if (order?.activeOrder) {
-        setActiveOrder(asActiveOrder(order.activeOrder))
+      if (orderError) {
+        console.error(orderError)
+      } else {
+        setActiveOrder(asCartOrder(order?.activeOrder))
+      }
+
+      if (customerError) {
+        console.error(customerError)
       }
 
       setCurrentCustomer(customer?.activeCustomer)
       setIsLogged(!!customer?.activeCustomer?.id)
 
-      return order?.activeOrder ? asActiveOrder(order.activeOrder) : null
+      return asCartOrder(order?.activeOrder)
     } catch (e) {
       console.error(e)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   const addToCart = async (id: string, q: number, o?: boolean) => {
     setActiveOrder(
@@ -480,6 +497,7 @@ const useCartContainer = createContainer(() => {
     removeCouponCode,
     removeFromCart,
     fetchActiveOrder,
+    clearActiveOrder,
     adjustOrderLine,
     isOpen,
     open,

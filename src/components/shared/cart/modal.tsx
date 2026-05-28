@@ -70,9 +70,8 @@ export default function CartModal({ bcvPrice }: { bcvPrice: number }) {
   }>({})
 
   useEffect(() => {
-    if (!isLoading) return
-    fetchActiveOrder()
-  }, [fetchActiveOrder, isLoading])
+    void fetchActiveOrder()
+  }, [fetchActiveOrder])
 
   // Cargar los niveles de stock cuando se abre el modal y cuando cambia el pedido activo
   useEffect(() => {
