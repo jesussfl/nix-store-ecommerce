@@ -457,13 +457,13 @@ export default function OrderSummary({
                 <Input
                   value={couponCode}
                   onChange={(event) => {
-                    setCouponCode(event.target.value.toUpperCase())
+                    setCouponCode(event.target.value)
                     setCouponError(null)
                     setCouponMessage(null)
                   }}
                   placeholder="Cupón"
                   startIcon={Tag}
-                  className="h-10 bg-white uppercase"
+                  className="h-10 bg-white"
                   disabled={isOrderLoading}
                 />
                 <Button
