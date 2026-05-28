@@ -68,11 +68,13 @@ type Asset implements Node {
   focalPoint: Coordinate
   height: Int!
   id: ID!
+  languageCode: LanguageCode!
   mimeType: String!
   name: String!
   preview: String!
   source: String!
   tags: [Tag!]!
+  translations: [AssetTranslation!]!
   type: AssetType!
   updatedAt: DateTime!
   width: Int!
@@ -81,6 +83,14 @@ type Asset implements Node {
 type AssetList implements PaginatedList {
   items: [Asset!]!
   totalItems: Int!
+}
+
+type AssetTranslation {
+  createdAt: DateTime!
+  id: ID!
+  languageCode: LanguageCode!
+  name: String!
+  updatedAt: DateTime!
 }
 
 enum AssetType {
@@ -174,6 +184,7 @@ type Collection implements Node {
   parent: Collection
   parentId: ID!
   position: Int!
+  productVariantCount: Int!
   productVariants(options: ProductVariantListOptions): ProductVariantList!
   slug: String!
   translations: [CollectionTranslation!]!
@@ -196,6 +207,7 @@ input CollectionFilterParameter {
   name: StringOperators
   parentId: IDOperators
   position: NumberOperators
+  productVariantCount: NumberOperators
   slug: StringOperators
   updatedAt: DateOperators
 }
@@ -237,6 +249,7 @@ input CollectionSortParameter {
   name: SortOrder
   parentId: SortOrder
   position: SortOrder
+  productVariantCount: SortOrder
   slug: SortOrder
   updatedAt: SortOrder
 }
@@ -1204,6 +1217,7 @@ enum HistoryEntryType {
   ORDER_CANCELLATION
   ORDER_COUPON_APPLIED
   ORDER_COUPON_REMOVED
+  ORDER_CURRENCY_UPDATED
   ORDER_CUSTOMER_UPDATED
   ORDER_FULFILLMENT
   ORDER_FULFILLMENT_TRANSITION
@@ -1775,6 +1789,8 @@ type Mutation {
   requestUpdateCustomerEmailAddress(newEmailAddress: String!, password: String!): RequestUpdateCustomerEmailAddressResult!
   """Resets a Customer's password based on the provided token"""
   resetPassword(password: String!, token: String!): ResetPasswordResult!
+  """Sets the currency code for the active Order"""
+  setCurrencyCodeForOrder(currencyCode: CurrencyCode!): UpdateOrderItemsResult!
   """
   Set the Customer for the Order. Required only if the Customer is not currently logged in
   """
@@ -2323,6 +2339,8 @@ enum Permission {
   Authenticated
   """Grants permission to create Administrator"""
   CreateAdministrator
+  """Grants permission to create ApiKey"""
+  CreateApiKey
   """Grants permission to create Asset"""
   CreateAsset
   """Grants permission to create Products, Facets, Assets, Collections"""
@@ -2369,6 +2387,8 @@ enum Permission {
   CreateZone
   """Grants permission to delete Administrator"""
   DeleteAdministrator
+  """Grants permission to delete ApiKey"""
+  DeleteApiKey
   """Grants permission to delete Asset"""
   DeleteAsset
   """Grants permission to delete Products, Facets, Assets, Collections"""
@@ -2419,6 +2439,8 @@ enum Permission {
   Public
   """Grants permission to read Administrator"""
   ReadAdministrator
+  """Grants permission to read ApiKey"""
+  ReadApiKey
   """Grants permission to read Asset"""
   ReadAsset
   """Grants permission to read Products, Facets, Assets, Collections"""
@@ -2467,6 +2489,8 @@ enum Permission {
   SuperAdmin
   """Grants permission to update Administrator"""
   UpdateAdministrator
+  """Grants permission to update ApiKey"""
+  UpdateApiKey
   """Grants permission to update Asset"""
   UpdateAsset
   """Grants permission to update Products, Facets, Assets, Collections"""
@@ -2597,6 +2621,8 @@ type ProductOptionGroup implements Node {
   languageCode: LanguageCode!
   name: String!
   options: [ProductOption!]!
+  """The number of products that use this option group"""
+  productCount: Int!
   translations: [ProductOptionGroupTranslation!]!
   updatedAt: DateTime!
 }
@@ -2954,7 +2980,9 @@ type RoleList implements PaginatedList {
 
 input SearchInput {
   collectionId: ID
+  collectionIds: [ID!]
   collectionSlug: String
+  collectionSlugs: [String!]
   facetValueFilters: [FacetValueFilterInput!]
   groupByProduct: Boolean
   inStock: Boolean

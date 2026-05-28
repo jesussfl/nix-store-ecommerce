@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"yarn generate --watch\"",
+    "dev": "concurrently \"next dev\" \"yarn generate:watch\"",
     "dev2": "next dev",
     "build": "DISABLE_ESLINT_PLUGIN=true next build",
     "build:strict": "next build",
@@ -12,6 +12,7 @@
     "lint": "eslint src",
     "codegen": "graphql-codegen --config codegen.ts",
     "generate": "graphql-codegen",
+    "generate:watch": "node ./codegen.watch.js",
     "prestart": "yarn generate",
     "predev": "yarn generate"
   },
@@ -90,6 +91,7 @@
     "@graphql-codegen/introspection": "^4.0.3",
     "@graphql-codegen/schema-ast": "^4.1.0",
     "@parcel/watcher": "^2.4.1",
+    "chokidar": "^3.5.4",
     "@types/bcryptjs": "^2.4.6",
     "@types/lodash": "^4.17.0",
     "@types/lodash.debounce": "^4.0.9",
