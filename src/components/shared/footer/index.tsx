@@ -17,6 +17,7 @@ import { HorizontalDivider } from '../divider'
 
 export default function Footer() {
   const t = useTranslations('homepage.footer')
+  const currentYear = new Date().getFullYear()
 
   return (
     <footer className="mt-24 max-w-[120rem] px-4 md:px-8">
@@ -70,8 +71,18 @@ export default function Footer() {
         </div>
         <HorizontalDivider className="my-8" />
         <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
-          <p>© 2024 Nix Store - Todos los derechos reservados</p>
-          <p>Sitio desarrollado por: @Jesuss_dev</p>
+          <p>© {currentYear} Nix Store - Todos los derechos reservados</p>
+          <p>
+            Sitio desarrollado por:{' '}
+            <a
+              href="https://www.instagram.com/jesuss_ui/"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="underline transition-colors hover:text-primary"
+            >
+              @jesuss_ui
+            </a>
+          </p>
           <Button
             variant="ghost"
             size="sm"
@@ -93,7 +104,7 @@ function SocialButton({
   label,
 }: {
   href: string
-  icon: JSX.Element
+  icon: React.ReactNode
   label: string
 }) {
   return (
