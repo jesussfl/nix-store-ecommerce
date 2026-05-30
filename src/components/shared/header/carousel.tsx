@@ -9,8 +9,6 @@ import {
   type CarouselApi,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from '@/components/shared/carousel'
 import { cn } from '@/libs/utils'
 
@@ -76,8 +74,6 @@ export function CarouselPlugin() {
           ))}
         </CarouselContent>
 
-        <CarouselPrevious className="left-3 top-1/2 z-10 hidden h-8 w-8 -translate-y-1/2 translate-x-0 border-white/20 bg-black/45 text-white shadow-lg backdrop-blur hover:bg-black/70 disabled:opacity-0 md:flex lg:left-4" />
-        <CarouselNext className="right-3 top-1/2 z-10 hidden h-8 w-8 -translate-y-1/2 translate-x-0 border-white/20 bg-black/45 text-white shadow-lg backdrop-blur hover:bg-black/70 disabled:opacity-0 md:flex lg:right-4" />
       </Carousel>
 
       <div className="flex items-center justify-center gap-2">
