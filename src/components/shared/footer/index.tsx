@@ -55,10 +55,6 @@ export default function Footer() {
           <div>
             <H6 className="mb-4">{t('customer-service')}</H6>
             <nav className="flex flex-col space-y-2">
-              <Link href="/faq" className="hover:underline">
-                Preguntas Frecuentes
-              </Link>
-
               <Link href="/terms" className="hover:underline">
                 Nuestras políticas de la tienda
               </Link>
