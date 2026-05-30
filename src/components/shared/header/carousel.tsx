@@ -76,8 +76,8 @@ export function CarouselPlugin() {
           ))}
         </CarouselContent>
 
-        <CarouselPrevious className="left-3 top-1/2 z-10 -translate-y-1/2 translate-x-0 border-white/20 bg-black/45 text-white shadow-lg backdrop-blur hover:bg-black/70 disabled:opacity-0 sm:left-4" />
-        <CarouselNext className="right-3 top-1/2 z-10 -translate-y-1/2 translate-x-0 border-white/20 bg-black/45 text-white shadow-lg backdrop-blur hover:bg-black/70 disabled:opacity-0 sm:right-4" />
+        <CarouselPrevious className="left-3 top-1/2 z-10 hidden h-8 w-8 -translate-y-1/2 translate-x-0 border-white/20 bg-black/45 text-white shadow-lg backdrop-blur hover:bg-black/70 disabled:opacity-0 md:flex lg:left-4" />
+        <CarouselNext className="right-3 top-1/2 z-10 hidden h-8 w-8 -translate-y-1/2 translate-x-0 border-white/20 bg-black/45 text-white shadow-lg backdrop-blur hover:bg-black/70 disabled:opacity-0 md:flex lg:right-4" />
       </Carousel>
 
       <div className="flex items-center justify-center gap-2">
