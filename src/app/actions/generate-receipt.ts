@@ -376,7 +376,7 @@ export async function generateReceipt(
   doc.setFontSize(10)
   doc.text('¡Gracias por tu compra!', 105, footerY + 5, { align: 'center' })
   doc.text(
-    '0412 3761604 | @nixstore.mcy | Maracay, edo. Aragua',
+    '0412 3761604 | @nixstore.ve | Maracay, edo. Aragua',
     105,
     footerY + 10,
     {

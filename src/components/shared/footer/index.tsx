@@ -33,7 +33,7 @@ export default function Footer() {
             <H5 className="mt-4">{t('slogan')}</H5>
             <div className="mt-6 flex gap-4">
               <SocialButton
-                href="https://www.instagram.com/nixstore.mcy/?hl=es"
+                href="https://www.instagram.com/nixstore.ve/?hl=es"
                 icon={<RiInstagramLine />}
                 label="Instagram"
               />

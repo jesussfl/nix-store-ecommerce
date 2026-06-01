@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/shared/card/card'
-import { Button, buttonVariants } from '@/components/shared/button'
+import { buttonVariants } from '@/components/shared/button'
 import type { GetStorefrontNewsQuery } from '@/graphql/graphql'
 import Link from 'next/link'
 import { cn } from '@/libs/utils'
@@ -41,6 +41,7 @@ const fallbackSlides = [
     summary: 'Nuevos diseños de collares elegantes y modernos.',
     ctaText: 'Ver más',
     ctaLink: null,
+    sortOrder: 1,
   },
   {
     id: 'fallback-pulseras',
@@ -49,6 +50,7 @@ const fallbackSlides = [
     summary: 'Pulseras artesanales con materiales sostenibles.',
     ctaText: 'Ver más',
     ctaLink: null,
+    sortOrder: 2,
   },
   {
     id: 'fallback-franelas',
@@ -57,25 +59,22 @@ const fallbackSlides = [
     summary: 'Colección de franelas con estampados únicos y coloridos.',
     ctaText: 'Ver más',
     ctaLink: null,
+    sortOrder: 3,
   },
-]
-
-type LatestNewsItem = {
-  id: string
-  title: string
-  image: string
-  summary: string
-  ctaText?: string | null
-  ctaLink?: string | null
-}
-
+] satisfies LatestNewsSlide[]
 type LatestNewsProps = {
   items?: GetStorefrontNewsQuery['storefrontNews']
 }
+type LatestNewsItem = GetStorefrontNewsQuery['storefrontNews'][number]
+type LatestNewsSlide = Pick<
+  LatestNewsItem,
+  'id' | 'title' | 'summary' | 'ctaText' | 'ctaLink' | 'sortOrder'
+> & {
+  image: string
+}
 
 const vendureAssetBaseUrl =
-  process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN ||
-  'http://localhost:3000'
+  process.env.NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN || 'http://localhost:3000'
 
 const resolveNewsImage = (image?: string | null) => {
   if (!image) return '/assets/slideshow/slideshow1.png'
@@ -88,16 +87,19 @@ const resolveNewsImage = (image?: string | null) => {
 export const LatestNews = ({ items = [] }: LatestNewsProps) => {
   const t = useTranslations('homepage.latest-news-section')
   const [openDialog, setOpenDialog] = useState<number | null>(null)
-  const slides: LatestNewsItem[] =
+  const slides: LatestNewsSlide[] =
     items.length > 0
-      ? items.map((item) => ({
-        id: item.id,
-        title: item.title,
-        image: resolveNewsImage(item.imageAsset?.preview),
-        summary: item.summary,
-        ctaText: item.ctaText,
-        ctaLink: item.ctaLink,
-      }))
+      ? [...items]
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((item) => ({
+            id: item.id,
+            title: item.title,
+            image: resolveNewsImage(item.imageAsset?.preview),
+            summary: item.summary,
+            ctaText: item.ctaText,
+            ctaLink: item.ctaLink,
+            sortOrder: item.sortOrder,
+          }))
       : fallbackSlides
 
   return (
@@ -110,14 +112,15 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
       >
         <CarouselContent className="-ml-3 sm:-ml-4 md:-ml-6">
           {slides.map((slide, index) => (
-            <CarouselItem key={slide.id} className="basis-[85%] sm:basis-1/2 lg:basis-1/3 pl-3 sm:pl-4 md:pl-6">
-              <Card className="flex h-full flex-col overflow-hidden rounded-xl border border-border/40 shadow-sm transition-all duration-300 hover:shadow-md md:rounded-2xl">
+            <CarouselItem
+              key={slide.id}
+              className="basis-[85%] pl-3 sm:basis-1/2 sm:pl-4 md:pl-6 lg:basis-1/3"
+            >
+              <Card className="border-border/40 flex h-full flex-col overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md md:rounded-2xl">
                 <CardHeader className="p-0">
                   <AlertDialog
                     open={openDialog === index}
-                    onOpenChange={(open) =>
-                      setOpenDialog(open ? index : null)
-                    }
+                    onOpenChange={(open) => setOpenDialog(open ? index : null)}
                   >
                     <AlertDialogTrigger asChild>
                       <AspectRatio
@@ -157,14 +160,22 @@ export const LatestNews = ({ items = [] }: LatestNewsProps) => {
                   </AlertDialog>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col justify-start p-4 md:p-5">
-                  <CardTitle className="mb-2 text-lg font-bold leading-tight text-gray-800 md:mb-3 md:text-xl">{slide.title}</CardTitle>
+                  <CardTitle className="mb-2 text-lg font-bold leading-tight text-gray-800 md:mb-3 md:text-xl">
+                    {slide.title}
+                  </CardTitle>
                   <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
                     {slide.summary}
                   </p>
                 </CardContent>
                 <CardFooter className="px-4 pb-4 pt-0 md:px-5 md:pb-5">
                   {slide.ctaLink ? (
-                    <Link href={slide.ctaLink} className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'w-full')} >
+                    <Link
+                      href={slide.ctaLink}
+                      className={cn(
+                        buttonVariants({ variant: 'outline', size: 'lg' }),
+                        'w-full'
+                      )}
+                    >
                       {slide.ctaText}
                     </Link>
                   ) : null}
