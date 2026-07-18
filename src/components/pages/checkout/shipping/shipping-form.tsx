@@ -55,7 +55,7 @@ export default function ShippingFields() {
           rules={{ required: 'Este campo es obligatorio' }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tipo de Envío</FormLabel>
+              <FormLabel>Modalidad de entrega o envío</FormLabel>
               <Select
                 onValueChange={(value: 'national' | 'delivery' | 'personal') =>
                   handleDeliveryOptionChange(value)
@@ -69,12 +69,17 @@ export default function ShippingFields() {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="national">
-                    Envío nacional (Cobro a destino)
+                    Envío Nacional: MRW, Zoom, Tealca, Liberty Express (cobro a
+                    destino).
                   </SelectItem>
                   <SelectItem value="delivery">
-                    Delivery (Solo zonas de Maracay)
+                    Delivery: Maracay, Turmero, Palo Negro, El Limón, entre
+                    otros (costo dependiendo de la distancia)
                   </SelectItem>
-                  <SelectItem value="personal">Entregas en persona</SelectItem>
+                  <SelectItem value="personal">
+                    Entrega personal o pickup: Maracay (gratis en zonas y
+                    horarios establecidos).
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

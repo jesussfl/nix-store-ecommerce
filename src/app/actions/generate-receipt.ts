@@ -223,9 +223,8 @@ export async function generateReceipt(
   const tableHeaderY = currentY + 5
   doc.text('Descripción', 22, tableHeaderY)
   doc.text('Uds.', 78, tableHeaderY)
-  doc.text('SKU', 100, tableHeaderY)
-  doc.text('Precio Unitario', 130, tableHeaderY)
-  doc.text('Precio', 170, tableHeaderY, { align: 'right' })
+  doc.text('Precio Unitario', 120, tableHeaderY)
+  doc.text('Precio', 165, tableHeaderY, { align: 'right' })
 
   currentY += 8
 
@@ -239,8 +238,6 @@ export async function generateReceipt(
   order.lines.forEach((line) => {
     const unitPrice = priceFormatter(line.unitPriceWithTax, order.currencyCode)
     const lineTotal = priceFormatter(line.linePriceWithTax, order.currencyCode)
-    const sku = line.productVariant.sku || 'N/A'
-
     const rowY = currentY + 5
     // If the product name is very long, split it to size so it won't overflow
     const splittedName = doc.splitTextToSize(
@@ -255,12 +252,10 @@ export async function generateReceipt(
       tempY += 4
     })
 
-    // We only print quantity, SKU, and prices on the first line
-    // but if the name took multiple lines, we shift them accordingly
+    // Print quantity and prices on the first line; SKU column removed
     doc.text(String(line.quantity), 78, rowY)
-    doc.text(sku, 100, rowY)
-    doc.text(unitPrice, 130, rowY)
-    doc.text(lineTotal, 170, rowY, { align: 'right' })
+    doc.text(unitPrice, 120, rowY)
+    doc.text(lineTotal, 165, rowY, { align: 'right' })
 
     // The next row starts where the largest multi-line block ended
     const lineHeightUsed = Math.max(tempY - rowY, 4) // at least 4 if name is short
@@ -338,31 +333,7 @@ export async function generateReceipt(
 
   currentY += 12
 
-  // ----------------------
-  // COMENTARIOS
-  // ----------------------
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
-  doc.setTextColor(primaryPurple)
-  doc.text('Comentarios', 20, currentY)
-  currentY += 6
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(10)
-  doc.setTextColor(0, 0, 0)
-
-  const comments = [
-    'El plazo de llegada ha sido ajustado como resultado de los recientes cambios en los procesos aduaneros y está',
-    'sujeto a modificaciones por factores externos que escapan a nuestro control. La nota de entrega puede sufrir',
-    'modificaciones en caso de que se añadan nuevos productos, se realicen pagos al saldo pendiente (si lo hay)',
-    'o ante cualquier otro cambio.',
-  ]
-  comments.forEach((line) => {
-    doc.text(line, 20, currentY)
-    currentY += 5
-  })
-
-  currentY += 10
+  // (Comentarios section removed)
 
   // ----------------------
   // FOOTER (Black)

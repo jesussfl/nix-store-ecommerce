@@ -68,11 +68,7 @@ export const PERSONAL_DELIVERIES_LOCATIONS = [
     exact_address: 'Entrada Principal, Av. Bolívar.',
     schedule: '4:15pm - 4:25pm (Lunes, miércoles y Sabados)',
   },
-  {
-    name: 'Parque Aragua',
-    exact_address: 'Panadería Marapan',
-    schedule: '4:30pm - 4:45pm (Lunes, miércoles y Sabados)',
-  },
+
   {
     name: 'Las Américas',
     exact_address: 'Entrada Principal',
@@ -84,18 +80,7 @@ export const PERSONAL_DELIVERIES_LOCATIONS = [
     schedule: '3pm - 3:10pm (Lunes, miércoles y Sabados)',
   },
   {
-    name: 'Terminal de Pasajeros',
-    exact_address:
-      'Entrada de la Avenida Fuerzas Aéreas, donde está Krispy Donuts (antiguo McDonalds)',
-    schedule: '5:20pm - 5:30pm (Lunes, miércoles y Sabados)',
-  },
-  {
-    name: 'Los Aviadores',
-    exact_address: 'Entrada Pronto ',
-    schedule: '6pm - 6:15pm (Lunes, miércoles y Sabados)',
-  },
-  {
-    name: 'Fundación Mendoza (Todos los días)',
+    name: 'Urb. Fundación Mendoza (pick up)',
     exact_address: 'Entrada Principal',
     schedule: 'Avisar por WhatsApp',
   },

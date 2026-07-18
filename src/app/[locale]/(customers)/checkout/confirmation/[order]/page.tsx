@@ -53,14 +53,16 @@ export default async function ConfirmationPage({
   }
 
   // Extract "lote" info for "Plazo de llegada"
-  const orderCustomFields = (order as {
-    customFields?: {
-      lote?: {
-        name?: string
-        description?: string
+  const orderCustomFields = (
+    order as {
+      customFields?: {
+        lote?: {
+          name?: string
+          description?: string
+        }
       }
     }
-  }).customFields
+  ).customFields
   const loteName = orderCustomFields?.lote?.name ?? ''
   const loteDescription = orderCustomFields?.lote?.description ?? ''
 
@@ -84,10 +86,16 @@ export default async function ConfirmationPage({
           Número de pedido: <span className="font-medium">{order.code}</span>
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-          <Link href="/" className={cn(buttonVariants({ variant: 'default', size: 'lg' }))}>
+          <Link
+            href="/"
+            className={cn(buttonVariants({ variant: 'default', size: 'lg' }))}
+          >
             Ir al Inicio
           </Link>
-          <Link href="/catalog" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>
+          <Link
+            href="/catalog"
+            className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
+          >
             Seguir Comprando
           </Link>
         </div>
@@ -156,7 +164,6 @@ export default async function ConfirmationPage({
           </CardContent>
         </Card>
 
-        {/* Detalles de Envío */}
         <Card className="md:col-span-2 lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -165,18 +172,38 @@ export default async function ConfirmationPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {order.shippingLines.map((line) => (
-                <div key={line.shippingMethod.id}>
-                  <p className="font-medium">{line.shippingMethod.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {line.shippingMethod.description}
-                  </p>
-                  <p className="mt-1 font-medium">
-                    {priceFormatter(line.priceWithTax, order.currencyCode)}
-                  </p>
-                </div>
-              ))}
+            <div className="space-y-2 text-sm">
+              <p>
+                Estamos procesando tu pedido. Si tienes alguna duda, no dudes
+                en contactarnos a nuestro WhatsApp:
+              </p>
+              <p>
+                <Link
+                  href="https://wa.me/XXXXXXXXXXX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-600 font-medium"
+                >
+                  WhatsApp
+                </Link>
+              </p>
+
+              <p className="font-medium mt-2">Detalles importantes:</p>
+
+              <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                <li>
+                  Te contactaremos al número proporcionado una vez tu pedido
+                  haya sido confirmado.
+                </li>
+                <li>
+                  Si es un producto en disponibilidad inmediata, se coordinará
+                  la forma de entrega.
+                </li>
+                <li>
+                  Si es un producto por encargo, puedes hacer seguimiento de
+                  tu pedido a través de nuestro WhatsApp.
+                </li>
+              </ul>
             </div>
           </CardContent>
         </Card>
@@ -209,7 +236,10 @@ export default async function ConfirmationPage({
                       Cantidad: {line.quantity}
                     </p>
                     <p className="mt-1 font-medium">
-                      {priceFormatter(line.linePriceWithTax, order.currencyCode)}
+                      {priceFormatter(
+                        line.linePriceWithTax,
+                        order.currencyCode
+                      )}
                     </p>
                   </div>
                 </div>
@@ -248,7 +278,9 @@ export default async function ConfirmationPage({
                 )}
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span>{priceFormatter(order.totalWithTax, order.currencyCode)}</span>
+                  <span>
+                    {priceFormatter(order.totalWithTax, order.currencyCode)}
+                  </span>
                 </div>
               </div>
 
@@ -265,28 +297,13 @@ export default async function ConfirmationPage({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Restan</span>
-                      <span>{priceFormatter(partialRemaining, order.currencyCode)}</span>
+                      <span>
+                        {priceFormatter(partialRemaining, order.currencyCode)}
+                      </span>
                     </div>
                   </div>
                 </>
               )}
-            </div>
-
-            <Separator className="my-4" />
-
-            {/* Comentarios, matching PDF disclaimers */}
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>
-                El plazo de llegada ha sido ajustado como resultado de los
-                recientes cambios en los procesos aduaneros y está sujeto a
-                modificaciones por factores externos que escapan a nuestro
-                control.
-              </p>
-              <p>
-                La nota de entrega puede sufrir modificaciones en caso de que se
-                añadan nuevos productos, se realicen pagos al saldo pendiente
-                (si lo hay) o ante cualquier otro cambio.
-              </p>
             </div>
 
             <Separator className="my-4" />
