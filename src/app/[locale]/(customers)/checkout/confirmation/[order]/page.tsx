@@ -174,23 +174,23 @@ export default async function ConfirmationPage({
           <CardContent>
             <div className="space-y-2 text-sm">
               <p>
-                Estamos procesando tu pedido. Si tienes alguna duda, no dudes
-                en contactarnos a nuestro WhatsApp:
+                Estamos procesando tu pedido. Si tienes alguna duda, no dudes en
+                contactarnos a nuestro WhatsApp:
               </p>
               <p>
                 <Link
                   href="https://wa.me/XXXXXXXXXXX"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-600 font-medium"
+                  className="font-medium text-green-600"
                 >
                   WhatsApp
                 </Link>
               </p>
 
-              <p className="font-medium mt-2">Detalles importantes:</p>
+              <p className="mt-2 font-medium">Detalles importantes:</p>
 
-              <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+              <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
                 <li>
                   Te contactaremos al número proporcionado una vez tu pedido
                   haya sido confirmado.
@@ -200,8 +200,8 @@ export default async function ConfirmationPage({
                   la forma de entrega.
                 </li>
                 <li>
-                  Si es un producto por encargo, puedes hacer seguimiento de
-                  tu pedido a través de nuestro WhatsApp.
+                  Si es un producto por encargo, puedes hacer seguimiento de tu
+                  pedido a través de nuestro WhatsApp.
                 </li>
               </ul>
             </div>
