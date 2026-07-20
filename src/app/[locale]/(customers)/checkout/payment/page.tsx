@@ -11,7 +11,7 @@ import { GetBCVPrice } from '@/utils/get-bcv-price'
 export default async function PaymentPage() {
   const bcvPrice = await GetBCVPrice()
   return (
-    <div className="mt-4 space-y-4 sm:mt-6 md:mx-24">
+    <div className="mx-auto w-full max-w-6xl px-4 mt-4 space-y-4 sm:mt-6">
       <div className="grid items-start gap-6 md:grid-cols-2">
         <Card className="shadow-none">
           <CardHeader>

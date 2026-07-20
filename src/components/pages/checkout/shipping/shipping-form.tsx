@@ -48,7 +48,7 @@ export default function ShippingFields() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4 p-2">
+      <div className="space-y-4">
         <FormField
           control={control}
           name="shippingDetails.shippingType"
@@ -63,11 +63,11 @@ export default function ShippingFields() {
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="[&>span]:line-clamp-1 [&>span]:text-left">
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="max-h-60 w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)] overflow-y-auto">
                   <SelectItem value="national">
                     Envío Nacional: MRW, Zoom, Tealca, Liberty Express (cobro a
                     destino).

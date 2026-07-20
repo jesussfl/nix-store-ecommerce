@@ -213,11 +213,12 @@ export default function PaymentForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <PaymentFields />
-        <div className="flex justify-between">
-          <div className="flex space-x-2">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+          <div className="flex flex-col gap-2 sm:flex-row sm:space-x-2 sm:space-y-0">
             <Button
               type="button"
               variant={'destructive'}
+              className="w-full sm:w-auto"
               disabled={form.formState.isSubmitting}
               onClick={cancelOrder}
             >
@@ -226,6 +227,7 @@ export default function PaymentForm() {
             <Button
               type="button"
               variant={'outline'}
+              className="w-full sm:w-auto"
               disabled={form.formState.isSubmitting}
               onClick={backToShipping}
             >
@@ -235,6 +237,7 @@ export default function PaymentForm() {
 
           <Button
             type="submit"
+            className="w-full sm:w-auto"
             disabled={
               form.formState.isSubmitting || !form.formState.isValid
             }

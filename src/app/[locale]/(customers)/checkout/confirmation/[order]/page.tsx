@@ -16,6 +16,7 @@ import { GET_ORDER_BY_CODE } from '@/libs/queries/order'
 import DownloadReceipt from './download-button'
 import { priceFormatter } from '@/utils/price-formatter'
 import RefreshCart from './refresh-cart'
+import { RiWhatsappLine } from '@remixicon/react'
 
 export default async function ConfirmationPage({
   params,
@@ -101,7 +102,7 @@ export default async function ConfirmationPage({
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Detalles del Cliente */}
         <Card className="md:col-span-1 lg:col-span-1">
           <CardHeader>
@@ -136,34 +137,6 @@ export default async function ConfirmationPage({
           </CardContent>
         </Card>
 
-        {/* Plazo de Llegada */}
-        <Card className="md:col-span-1 lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Plazo de Llegada
-            </CardTitle>
-            {loteName && (
-              <CardDescription>
-                <span className="text-sm font-medium">{loteName}</span>
-              </CardDescription>
-            )}
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {loteDescription && (
-                <p className="text-sm text-muted-foreground">
-                  {loteDescription}
-                </p>
-              )}
-              {/* <p className="text-xs text-muted-foreground">
-                De cuatro a seis semanas aprox. (de mediados a finales de
-                octubre).
-              </p> */}
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className="md:col-span-2 lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -176,16 +149,6 @@ export default async function ConfirmationPage({
               <p>
                 Estamos procesando tu pedido. Si tienes alguna duda, no dudes en
                 contactarnos a nuestro WhatsApp:
-              </p>
-              <p>
-                <Link
-                  href="https://wa.me/XXXXXXXXXXX"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-green-600"
-                >
-                  WhatsApp
-                </Link>
               </p>
 
               <p className="mt-2 font-medium">Detalles importantes:</p>
@@ -204,6 +167,15 @@ export default async function ConfirmationPage({
                   pedido a través de nuestro WhatsApp.
                 </li>
               </ul>
+              <p>
+                <Link
+                  href="https://wa.me/+584123761604"
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-button-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_36px_rgba(100,30,200,0.22)] transition-transform duration-200 hover:-translate-y-1"
+                >
+                  <RiWhatsappLine className="h-5 w-5" />
+                  Whatsapp
+                </Link>
+              </p>
             </div>
           </CardContent>
         </Card>

@@ -123,45 +123,47 @@ export async function generateReceipt(
   doc.text(`Fecha de emisión: ${emitDate}`, 135, 18)
   doc.text(`N° de Pedido: ${order.code}`, 135, 23)
 
-  // We'll track separate Y positions for left and right columns
+  // We'll track Y position for left column
   let leftColumnY = 42
-  let rightColumnY = 42
 
   // ---------------------------------
-  // DATOS DEL CLIENTE (Left column)
+  // DATOS DEL CLIENTE
   // ---------------------------------
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
+  doc.setFontSize(11)
   doc.setTextColor(primaryPurple)
-  doc.text('Datos del cliente', 20, leftColumnY)
+  doc.text('DATOS DEL CLIENTE', 20, leftColumnY)
   leftColumnY += 6
 
-  doc.setFont('helvetica', 'normal')
   doc.setFontSize(10)
-  doc.setTextColor(0, 0, 0)
 
   // Nombre y Apellido
-  leftColumnY = drawMultiLineText(
-    doc,
-    `Nombre y Apellido: ${order.customer?.firstName ?? ''} ${order.customer?.lastName ?? ''}`,
-    20,
-    leftColumnY,
-    90 // max width for left column
-  )
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(80, 80, 80)
+  doc.text('Nombre y Apellido:', 20, leftColumnY)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(0, 0, 0)
+  doc.text(`${order.customer?.firstName ?? ''} ${order.customer?.lastName ?? ''}`, 58, leftColumnY)
+  leftColumnY += 5
 
   // Teléfono
   if (order.customer?.phoneNumber) {
-    leftColumnY = drawMultiLineText(
-      doc,
-      `Teléfono: ${order.customer.phoneNumber}`,
-      20,
-      leftColumnY,
-      90
-    )
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(80, 80, 80)
+    doc.text('Teléfono:', 20, leftColumnY)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(0, 0, 0)
+    doc.text(order.customer.phoneNumber, 58, leftColumnY)
+    leftColumnY += 5
   }
 
   // Dirección de envío
-  // Combine the relevant address fields in one string
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(80, 80, 80)
+  doc.text('Dirección de envío:', 20, leftColumnY)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(0, 0, 0)
+
   const addressString = [
     order.shippingAddress?.streetLine1 ?? '',
     order.shippingAddress?.streetLine2 ?? '',
@@ -174,43 +176,20 @@ export async function generateReceipt(
 
   leftColumnY = drawMultiLineText(
     doc,
-    `Dirección de envío: ${addressString}`,
-    20,
+    addressString,
+    58,
     leftColumnY,
-    90
-  )
-
-  // Add a bit of space after
-  leftColumnY += 5
-
-  // ---------------------------------
-  // PLAZO DE LLEGADA (Right column)
-  // ---------------------------------
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
-  doc.setTextColor(primaryPurple)
-  doc.text('Plazo de llegada', 130, rightColumnY)
-  rightColumnY += 6
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(10)
-  doc.setTextColor(0, 0, 0)
-
-  const shippingDetails = order.shippingLines
-    .map((line) => line.shippingMethod.description || line.shippingMethod.name)
-    .filter(Boolean)
-    .join(' ')
-
-  rightColumnY = drawMultiLineText(
-    doc,
-    shippingDetails || 'Según el método de envío seleccionado.',
-    130,
-    rightColumnY,
-    60
+    132
   )
 
   // Final Y after columns
-  let currentY = Math.max(leftColumnY, rightColumnY) + 5
+  let currentY = leftColumnY + 5
+
+  // Column X Coordinates
+  const colDescX = 22
+  const colQtyX = 110
+  const colUnitPriceX = 155
+  const colTotalX = 188
 
   // ------------------------------------------------
   // TABLE HEADERS: Descripción | Uds. | SKU...
@@ -221,10 +200,10 @@ export async function generateReceipt(
 
   drawRect(20, currentY, 170, 8, primaryPurple)
   const tableHeaderY = currentY + 5
-  doc.text('Descripción', 22, tableHeaderY)
-  doc.text('Uds.', 78, tableHeaderY)
-  doc.text('Precio Unitario', 120, tableHeaderY)
-  doc.text('Precio', 165, tableHeaderY, { align: 'right' })
+  doc.text('Descripción', colDescX, tableHeaderY)
+  doc.text('Uds.', colQtyX, tableHeaderY, { align: 'center' })
+  doc.text('Precio Unitario', colUnitPriceX, tableHeaderY, { align: 'right' })
+  doc.text('Precio', colTotalX, tableHeaderY, { align: 'right' })
 
   currentY += 8
 
@@ -242,20 +221,20 @@ export async function generateReceipt(
     // If the product name is very long, split it to size so it won't overflow
     const splittedName = doc.splitTextToSize(
       line.productVariant.name,
-      50
+      78
     ) as string[]
 
     // Print name (multi-line if needed)
     let tempY = rowY
     splittedName.forEach((txt) => {
-      doc.text(txt, 22, tempY)
+      doc.text(txt, colDescX, tempY)
       tempY += 4
     })
 
     // Print quantity and prices on the first line; SKU column removed
-    doc.text(String(line.quantity), 78, rowY)
-    doc.text(unitPrice, 120, rowY)
-    doc.text(lineTotal, 165, rowY, { align: 'right' })
+    doc.text(String(line.quantity), colQtyX, rowY, { align: 'center' })
+    doc.text(unitPrice, colUnitPriceX, rowY, { align: 'right' })
+    doc.text(lineTotal, colTotalX, rowY, { align: 'right' })
 
     // The next row starts where the largest multi-line block ended
     const lineHeightUsed = Math.max(tempY - rowY, 4) // at least 4 if name is short
@@ -264,16 +243,18 @@ export async function generateReceipt(
     drawHorizontalLine(20, currentY, 190)
   })
 
-  currentY += 5
+  currentY += 8
 
   // ----------------------
-  // DETALLES DE PAGO
+  // DETALLES DE PAGO & TOTALS
   // ----------------------
+  const sectionY = currentY
+
+  // Left side: Detalles de pago
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
+  doc.setFontSize(11)
   doc.setTextColor(primaryPurple)
-  doc.text('Detalles de pago', 20, currentY)
-  currentY += 6
+  doc.text('DETALLES DE PAGO', 20, sectionY)
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(10)
@@ -287,51 +268,48 @@ export async function generateReceipt(
   doc.text(
     `Abonado: ${priceFormatter(partialPaid, order.currencyCode)}`,
     20,
-    currentY
+    sectionY + 7
   )
-  currentY += 5
   doc.text(
     `Restan: ${priceFormatter(partialRemaining, order.currencyCode)}`,
     20,
-    currentY
+    sectionY + 13
   )
 
-  // Right side totals
-  let summaryY = currentY - 5
-  const rightX = 150
+  // Right side: Totals
+  const rightLabelX = 140
+  const rightValueX = 188
 
-  doc.text('SUBTOTAL:', rightX, summaryY)
+  doc.text('Subtotal:', rightLabelX, sectionY)
   doc.text(
     priceFormatter(order.subTotalWithTax, order.currencyCode),
-    rightX + 40,
-    summaryY,
+    rightValueX,
+    sectionY,
     { align: 'right' }
   )
-  summaryY += 5
 
-  doc.text('Descuento:', rightX, summaryY)
+  doc.text('Descuento:', rightLabelX, sectionY + 7)
   const totalDiscount =
     order.discounts?.reduce((acc, d) => acc + d.amountWithTax, 0) || 0
   doc.text(
     priceFormatter(totalDiscount, order.currencyCode),
-    rightX + 40,
-    summaryY,
+    rightValueX,
+    sectionY + 7,
     { align: 'right' }
   )
-  summaryY += 5
 
   doc.setFont('helvetica', 'bold')
-  doc.text('TOTAL:', rightX, summaryY)
+  doc.text('TOTAL:', rightLabelX, sectionY + 13)
   doc.text(
     priceFormatter(order.totalWithTax, order.currencyCode),
-    rightX + 40,
-    summaryY,
+    rightValueX,
+    sectionY + 13,
     { align: 'right' }
   )
 
   doc.setFont('helvetica', 'normal')
 
-  currentY += 12
+  currentY = sectionY + 25
 
   // (Comentarios section removed)
 
