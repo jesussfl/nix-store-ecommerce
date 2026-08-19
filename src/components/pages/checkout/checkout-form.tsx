@@ -59,42 +59,33 @@ type EligibleShippingMethod = {
   description?: string | null
 }
 
-const normalizeShippingText = (value?: string | null) =>
-  (value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-
-const getShippingSearchTerms = (shippingType: ShippingType) => {
-  switch (shippingType) {
-    case 'delivery':
-      return ['delivery', 'domicilio', 'local', 'maracay']
-    case 'personal':
-      return ['personal', 'retiro', 'pickup', 'recoger', 'tienda']
-    case 'national':
-      return ['nacional', 'envio', 'cobro destino', 'mrw', 'zoom', 'tealca']
-  }
+/**
+ * The storefront's `shippingType` values map 1:1 onto the ShippingMethod codes
+ * configured in Vendure (delivery / national / personal). Matching on the code
+ * keeps the customer's choice authoritative.
+ *
+ * This used to fall back to `methods[0]` whenever exactly one method was
+ * eligible, which silently charged a pickup order for national shipping, and
+ * otherwise guessed via substring matching on name/description — where the
+ * 'national' term "envio" also matched the delivery method "Envío a domicilio".
+ */
+const SHIPPING_METHOD_CODE: Record<ShippingType, string> = {
+  delivery: 'delivery',
+  national: 'national',
+  personal: 'personal',
 }
 
 const findMatchingShippingMethod = (
   shippingType: ShippingType,
   methods: EligibleShippingMethod[]
 ) => {
-  const eligibleMethods = methods
+  const wantedCode = SHIPPING_METHOD_CODE[shippingType]
 
-  if (eligibleMethods.length === 1) {
-    return eligibleMethods[0]
-  }
-
-  const searchTerms = getShippingSearchTerms(shippingType)
-
-  return eligibleMethods.find((method) => {
-    const haystack = normalizeShippingText(
-      `${method.code} ${method.name} ${method.description || ''}`
-    )
-
-    return searchTerms.some((term) => haystack.includes(term))
-  })
+  // No fallback on purpose: if the chosen method is not eligible for this
+  // address we must surface that, never quietly bill a different one.
+  return methods.find(
+    (method) => (method.code || '').trim().toLowerCase() === wantedCode
+  )
 }
 
 export default function ShippingForm({ bcvPrice }: { bcvPrice: number }) {
@@ -190,7 +181,7 @@ export default function ShippingForm({ bcvPrice }: { bcvPrice: number }) {
         title: 'Error',
         description:
           shippingMethodsError ||
-          'No encontramos un método de envío válido para esta dirección. Revisa los datos e inténtalo de nuevo.',
+          'El método de envío que elegiste no está disponible para esta dirección. Revisa los datos o elige otro método.',
         variant: 'destructive',
       })
       return
