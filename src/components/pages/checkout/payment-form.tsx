@@ -127,8 +127,24 @@ export default function PaymentForm() {
     const isAmountInBS =
       values.paymentDetails.paymentMethod === 'pago-movil' ||
       values.paymentDetails.paymentMethod === 'transferencia'
+
+    // GetBCVPrice returns 0 when the rate service fails. Without this guard the
+    // division below yields Infinity and the customer is told their amount is
+    // invalid, which sends them off to "fix" a perfectly good payment.
+    if (isAmountInBS && (!bcvDolar || !Number.isFinite(bcvDolar))) {
+      toast({
+        title: 'Error',
+        description:
+          'No se pudo obtener la tasa de cambio. Intenta de nuevo en unos momentos.',
+        variant: 'destructive',
+      })
+      return
+    }
+    // Keep cents: the admin partial-payment handler compares this against
+    // `initialPercentage`% of the order total, so rounding to whole dollars
+    // can push a legitimate payment below the threshold and reject it.
     const amount = isAmountInBS
-      ? Math.round(Number(values.paymentDetails.totalPaid) / bcvDolar)
+      ? Math.round((Number(values.paymentDetails.totalPaid) / bcvDolar) * 100) / 100
       : Number(values.paymentDetails.totalPaid)
 
     if (!Number.isFinite(amount) || amount <= 0) {

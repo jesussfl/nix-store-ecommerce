@@ -97,7 +97,7 @@ const findMatchingShippingMethod = (
   })
 }
 
-export default function ShippingForm() {
+export default function ShippingForm({ bcvPrice }: { bcvPrice: number }) {
   const { isLogged, isLoading, activeOrder, isOrderLoading, setShippingMethod } =
     useCart()
   const router = useRouter()
@@ -248,7 +248,7 @@ export default function ShippingForm() {
         >
           Continuar al Pago
         </Button>
-        <MobileBottomBar bcvPrice={3}>
+        <MobileBottomBar bcvPrice={bcvPrice}>
           <Button
             type="submit"
             className="ml-auto"

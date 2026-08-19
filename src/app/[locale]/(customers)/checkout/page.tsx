@@ -19,7 +19,7 @@ export default async function CheckoutPage() {
             <CardTitle>Datos de envío</CardTitle>
           </CardHeader>
           <CardContent>
-            <ShippingForm />
+            <ShippingForm bcvPrice={bcvPrice} />
           </CardContent>
         </Card>
         <Card className="hidden h-auto shadow-none sm:block">
