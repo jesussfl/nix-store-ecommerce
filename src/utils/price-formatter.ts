@@ -1,37 +1,33 @@
 import { CurrencyCode } from '@/graphql/graphql'
 
 type CurrencyLocaleMap = Partial<Record<CurrencyCode, string>>
-type CurrencyOverrideMap = Partial<Record<CurrencyCode, CurrencyCode>>
 
+/**
+ * The catalog is priced in USD in Vendure and the storefront displays USD.
+ *
+ * `es-VE` is used for USD so the thousands/decimal separators match the Bs
+ * badge rendered next to it (`$1.234,50` alongside `Bs.S 957.042,50`), and
+ * `narrowSymbol` keeps the `$` instead of the `USD` prefix that `symbol`
+ * produces in this locale. VES renders identically under both settings.
+ */
 const APP_CURRENCY_LOCALES: CurrencyLocaleMap = {
+  [CurrencyCode.USD]: 'es-VE',
+  [CurrencyCode.VES]: 'es-VE',
   [CurrencyCode.EUR]: 'de-DE',
   [CurrencyCode.PLN]: 'pl-PL',
   [CurrencyCode.CZK]: 'cs-CZ',
-  [CurrencyCode.VES]: 'es-VE',
-}
-
-const APP_DISPLAY_CURRENCY_OVERRIDES: CurrencyOverrideMap = {
-  [CurrencyCode.USD]: CurrencyCode.EUR,
 }
 
 export const APP_CURRENCY_CONFIG = {
-  defaultCurrency: CurrencyCode.EUR,
-  fallbackLocale: 'de-DE',
+  defaultCurrency: CurrencyCode.USD,
+  fallbackLocale: 'es-VE',
   locales: APP_CURRENCY_LOCALES,
-  displayCurrencyOverrides: APP_DISPLAY_CURRENCY_OVERRIDES,
 }
 
 export function getDisplayCurrencyCode(
   currencyCode: CurrencyCode | string | null | undefined
 ) {
-  if (!currencyCode) {
-    return APP_CURRENCY_CONFIG.defaultCurrency
-  }
-
-  return (
-    APP_CURRENCY_CONFIG.displayCurrencyOverrides[currencyCode as CurrencyCode] ??
-    currencyCode
-  )
+  return currencyCode || APP_CURRENCY_CONFIG.defaultCurrency
 }
 
 function getCurrencyLocale(currencyCode: CurrencyCode | string) {
@@ -53,7 +49,7 @@ export function formatMoney(
 
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currencyDisplay: 'symbol',
+    currencyDisplay: 'narrowSymbol',
     currency: normalizedCode,
   }).format(value)
 }

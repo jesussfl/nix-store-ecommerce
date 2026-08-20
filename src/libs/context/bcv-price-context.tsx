@@ -27,7 +27,7 @@ const useCartContainer = createContainer(() => {
     if (!isLoading) return
     setIsLoading(true)
     try {
-      const data = await fetch('https://ve.dolarapi.com/v1/euros', {
+      const data = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', {
         method: 'GET',
         cache: 'force-cache',
         next: {
@@ -35,7 +35,7 @@ const useCartContainer = createContainer(() => {
         },
       }).then((res) => res.json())
 
-      // API returns an array; index 0 is the official rate
+      // Official BCV USD rate; see `@/utils/get-bcv-price` for the shape notes
       setBcvPrice((Array.isArray(data) ? data[0]?.promedio : data?.promedio) || 0)
     } catch (e) {
       console.error(e)

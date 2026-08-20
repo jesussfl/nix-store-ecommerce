@@ -8,8 +8,8 @@ export type ProductCardInfo = {
   id: string
   name: string
   image: string | undefined
-  priceInEUR: string
-  lastPriceInEUR: number
+  priceFormatted: string
+  lastPrice: number
   type: string
   slug: string
   variantId: string
@@ -40,7 +40,7 @@ export const SingleProduct = ({ product }: Props) => {
             </CardTitle>
             <div className="mt-1 flex w-full flex-1 items-end justify-between gap-2">
               <p className="whitespace-nowrap text-xs font-bold leading-none text-primary sm:text-sm">
-                {product.priceInEUR}
+                {product.priceFormatted}
               </p>
               {product.priceInBs && (
                 <Badge
