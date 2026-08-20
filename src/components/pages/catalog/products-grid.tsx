@@ -49,6 +49,7 @@ export const ProductsGrid = async ({
             priceWithTax,
             currencyCode,
             productAsset,
+            inStock,
           } = product
           const priceValue =
             'value' in priceWithTax
@@ -73,6 +74,7 @@ export const ProductsGrid = async ({
             slug: product.slug,
             variantId: product.productVariantId,
             priceInBs: priceValueInBs,
+            inStock,
           }
           return <SingleProduct key={productId} product={formattedProduct} />
         })}

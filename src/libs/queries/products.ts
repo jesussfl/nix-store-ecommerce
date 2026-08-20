@@ -137,6 +137,7 @@ export const SEARCH_PRODUCTS = graphql(`
         productVariantId
         productVariantName
         currencyCode
+        inStock
       }
     }
   }

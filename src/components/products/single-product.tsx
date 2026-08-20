@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Card, CardContent, CardTitle } from '@/components/shared/card/card'
 import { Badge } from '@/components/shared/badge'
+import { cn } from '@/libs/utils'
 import { HoverImage } from './hover-image'
 
 export type ProductCardInfo = {
@@ -14,6 +15,13 @@ export type ProductCardInfo = {
   slug: string
   variantId: string
   priceInBs: string
+  /**
+   * Saleable stock, from the search index (`stockOnHand - stockAllocated`
+   * against the variant's out-of-stock threshold). Optional so callers that
+   * do not query `inStock` keep the card's default "available" rendering
+   * instead of falsely marking everything as sold out.
+   */
+  inStock?: boolean
 }
 
 type Props = {
@@ -21,11 +29,34 @@ type Props = {
 }
 
 export const SingleProduct = ({ product }: Props) => {
+  const isOutOfStock = product.inStock === false
+
   return (
-    <Link href={`/catalog/details/${product.slug}`} passHref className="block h-full">
+    <Link
+      href={`/catalog/details/${product.slug}`}
+      passHref
+      className="block h-full"
+    >
       <Card className="group flex h-full cursor-pointer flex-col gap-3 rounded-xl border border-border/40 p-2 shadow-sm transition-all duration-300 hover:border-primary hover:shadow-md md:rounded-2xl md:p-3">
         <CardContent className="relative flex flex-1 flex-col items-start gap-3 p-0">
-          <HoverImage imageUrl={product.image} productName={product.name} />
+          <div
+            className={cn(
+              'w-full transition-opacity',
+              isOutOfStock && 'opacity-60 grayscale'
+            )}
+          >
+            <HoverImage imageUrl={product.image} productName={product.name} />
+          </div>
+          {isOutOfStock && (
+            <Badge
+              variant="destructive"
+              className="absolute left-2 top-2 z-20 rounded-full px-2 py-1"
+            >
+              <span className="text-[0.6rem] font-semibold uppercase tracking-wide">
+                Agotado
+              </span>
+            </Badge>
+          )}
           <Badge
             variant="secondary"
             className="right-2 top-2 z-10 rounded-full bg-black/80 px-2 py-1 text-white md:absolute md:inline"

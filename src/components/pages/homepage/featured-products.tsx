@@ -65,8 +65,14 @@ function formatProductData(
   const facets =
     facetValueNames.filter((facet) => specialBadges.includes(facet.code)) || []
 
-  const { productId, productName, priceWithTax, currencyCode, productAsset } =
-    product
+  const {
+    productId,
+    productName,
+    priceWithTax,
+    currencyCode,
+    productAsset,
+    inStock,
+  } = product
   const priceValue =
     'value' in priceWithTax
       ? `${priceFormatter(priceWithTax.value, currencyCode)}`
@@ -90,6 +96,7 @@ function formatProductData(
     slug: product.slug,
     variantId: product.productVariantId,
     priceInBs: priceValueInBs,
+    inStock,
   }
 }
 
