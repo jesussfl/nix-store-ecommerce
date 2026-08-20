@@ -4,7 +4,7 @@ import { NixAnimation } from './nix-animation'
 
 const CoolSection = async () => {
   return (
-    <div className="max-w-screen my-4 flex flex-col items-center justify-center overflow-hidden py-8 md:my-24 md:overflow-visible">
+    <div className="my-4 flex w-full flex-col items-center justify-center overflow-hidden py-8 md:my-12 md:overflow-x-clip md:overflow-y-visible">
       <NixAnimation
         direction="left"
         speed="slow"

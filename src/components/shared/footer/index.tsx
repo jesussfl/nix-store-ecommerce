@@ -20,7 +20,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mt-24 max-w-[120rem] px-4 md:px-8">
+    <footer className="mx-auto mt-24 max-w-[120rem] px-4 md:px-8">
       <div className="rounded-lg border border-border bg-footer-texture bg-cover bg-left bg-no-repeat p-6 md:p-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col items-center text-center md:items-start md:text-left">
