@@ -26,7 +26,7 @@ import {
 } from '@/components/shared/tabs/tabs'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { useBcvRate } from '@/libs/context/bcv-price-context'
 import { useEffect, useState } from 'react'
 
 interface PaymentMethod {
@@ -47,9 +47,11 @@ const formatPhoneInputValue = (value: string, dialCode?: string) => {
     return `+${dialCode}`
   }
 
-  const parts = [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7)].filter(
-    Boolean
-  )
+  const parts = [
+    digits.slice(0, 4),
+    digits.slice(4, 7),
+    digits.slice(7),
+  ].filter(Boolean)
 
   return `+${dialCode}-${parts.join('-')}`
 }
@@ -102,17 +104,13 @@ const PAYMENT_METHODS: Record<PaymentMethodKey, PaymentMethod> = {
 
 export default function PaymentFields() {
   const { control, watch } = useFormContext()
-  const [bcvPrice, setBcvPrice] = useState(0)
+  // Same rate as OrderSummary's Bs total and PaymentForm's submit
+  // conversion (see BcvRateProvider in checkout/payment/page.tsx) — never
+  // fetched independently here.
+  const { rateInfo } = useBcvRate()
+  const bcvPrice = rateInfo?.rate || 0
   const [usdConverted, setUsdConverted] = useState('')
   const totalPaid = watch('paymentDetails.totalPaid')
-  useEffect(() => {
-    const getBCVPrice = async () => {
-      const price = await GetBCVPrice()
-      setBcvPrice(price)
-    }
-
-    getBCVPrice()
-  }, [])
 
   useEffect(() => {
     if (!bcvPrice || !totalPaid) return
@@ -234,7 +232,9 @@ export default function PaymentFields() {
                       {...field}
                       masks={{ ve: '....-...-....' }}
                       onChange={(value: string, data: any) => {
-                        field.onChange(formatPhoneInputValue(value, data?.dialCode))
+                        field.onChange(
+                          formatPhoneInputValue(value, data?.dialCode)
+                        )
                       }}
                       countryCodeEditable={false}
                       disableCountryGuess

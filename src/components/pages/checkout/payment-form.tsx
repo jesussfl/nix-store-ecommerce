@@ -15,7 +15,10 @@ import { ADD_PAYMENT_TO_ORDER } from '@/libs/queries/payment'
 import { useToast } from '@/components/shared/toast/use-toast'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
 import { paymentDetailsSchema } from '@/utils/schemas/payment'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { useBcvRate } from '@/libs/context/bcv-price-context'
+import { BcvRate } from '@/libs/bcv/types'
+import { CurrencyCode } from '@/graphql/graphql'
+import { priceFormatterFromMajor } from '@/utils/price-formatter'
 
 const formSchema = z.object({
   paymentDetails: paymentDetailsSchema,
@@ -51,6 +54,7 @@ const getResultMessage = (result: unknown, fallback: string) => {
 
 export default function PaymentForm() {
   const { isLogged, isLoading, activeOrder } = useCart()
+  const { rateInfo, refresh, pendingChange, acknowledgeChange } = useBcvRate()
   const router = useRouter()
   const { toast } = useToast()
   const isOrderEmpty = activeOrder?.lines.length === 0
@@ -123,12 +127,45 @@ export default function PaymentForm() {
     window.location.href = '/'
   }
   const onSubmit = async (values: FormSchema) => {
-    const bcvDolar = await GetBCVPrice()
     const isAmountInBS =
       values.paymentDetails.paymentMethod === 'pago-movil' ||
       values.paymentDetails.paymentMethod === 'transferencia'
 
-    // GetBCVPrice returns 0 when the rate service fails. Without this guard the
+    // Bs payments must use a rate no older than what the customer has been
+    // looking at on this page. Refresh right before submitting so a rate
+    // that changed while this tab was open doesn't silently convert their
+    // Bs amount at a stale rate.
+    let bcvRateUsed: BcvRate | null = rateInfo
+
+    if (isAmountInBS) {
+      const freshRate = await refresh()
+      // If the refresh failed, keep the rate the customer has been seeing.
+      if (freshRate) bcvRateUsed = freshRate
+
+      // `pendingChange` covers both this refresh and any earlier background
+      // refresh (tab focus) that updated the rate without warning.
+      const change =
+        freshRate && rateInfo && rateInfo.rate !== freshRate.rate
+          ? { from: pendingChange?.from ?? rateInfo, to: freshRate }
+          : pendingChange
+
+      if (change) {
+        const newBsTotal =
+          ((activeOrder?.totalWithTax ?? 0) / 100) * change.to.rate
+
+        acknowledgeChange()
+        toast({
+          title: 'La tasa del BCV cambió',
+          description: `La tasa pasó de ${priceFormatterFromMajor(change.from.rate, CurrencyCode.VES)} a ${priceFormatterFromMajor(change.to.rate, CurrencyCode.VES)} por dólar. El nuevo total a pagar es ${priceFormatterFromMajor(newBsTotal, CurrencyCode.VES)}. Revisa el monto antes de continuar.`,
+          variant: 'destructive',
+        })
+        return
+      }
+    }
+
+    const bcvDolar = bcvRateUsed?.rate || 0
+
+    // rate: 0 means the rate service failed. Without this guard the
     // division below yields Infinity and the customer is told their amount is
     // invalid, which sends them off to "fix" a perfectly good payment.
     if (isAmountInBS && (!bcvDolar || !Number.isFinite(bcvDolar))) {
@@ -144,7 +181,8 @@ export default function PaymentForm() {
     // `initialPercentage`% of the order total, so rounding to whole dollars
     // can push a legitimate payment below the threshold and reject it.
     const amount = isAmountInBS
-      ? Math.round((Number(values.paymentDetails.totalPaid) / bcvDolar) * 100) / 100
+      ? Math.round((Number(values.paymentDetails.totalPaid) / bcvDolar) * 100) /
+        100
       : Number(values.paymentDetails.totalPaid)
 
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -162,21 +200,22 @@ export default function PaymentForm() {
         input: {
           method: values.paymentDetails.paymentMethod,
 
-          metadata:
-            values.paymentDetails.paymentMethod === 'pago-movil' ||
-            values.paymentDetails.paymentMethod === 'transferencia'
-              ? {
-                  referencia: values.paymentDetails.reference,
-                  monto: amount,
-                  'fecha de pago': values.paymentDetails.date,
-                  telefono: values.paymentDetails.phone,
-                }
-              : {
-                  monto: amount,
-                  'fecha de pago': values.paymentDetails.date,
-                  referencia: values.paymentDetails.reference,
-                  telefono: values.paymentDetails.phone,
-                },
+          metadata: isAmountInBS
+            ? {
+                referencia: values.paymentDetails.reference,
+                monto: amount,
+                'fecha de pago': values.paymentDetails.date,
+                telefono: values.paymentDetails.phone,
+                tasa: bcvRateUsed?.rate ?? 0,
+                'fecha valor': bcvRateUsed?.valueDate ?? '',
+                fuente: bcvRateUsed?.source ?? 'dolarapi',
+              }
+            : {
+                monto: amount,
+                'fecha de pago': values.paymentDetails.date,
+                referencia: values.paymentDetails.reference,
+                telefono: values.paymentDetails.phone,
+              },
         },
       },
     })
@@ -195,12 +234,14 @@ export default function PaymentForm() {
       return
     }
 
-    const { data: transitionData, error: transitionError } = await vendureFetch({
-      query: TRANSITION_ORDER_STATE,
-      variables: {
-        state: 'ValidatingPayment',
-      },
-    })
+    const { data: transitionData, error: transitionError } = await vendureFetch(
+      {
+        query: TRANSITION_ORDER_STATE,
+        variables: {
+          state: 'ValidatingPayment',
+        },
+      }
+    )
 
     const transitionResult = transitionData?.transitionOrderToState
 
@@ -229,7 +270,7 @@ export default function PaymentForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <PaymentFields />
-        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 sm:flex-row sm:space-x-2 sm:space-y-0">
             <Button
               type="button"
@@ -254,9 +295,7 @@ export default function PaymentForm() {
           <Button
             type="submit"
             className="w-full sm:w-auto"
-            disabled={
-              form.formState.isSubmitting || !form.formState.isValid
-            }
+            disabled={form.formState.isSubmitting || !form.formState.isValid}
           >
             Finalizar Pedido
           </Button>

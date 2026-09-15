@@ -1,31 +1,47 @@
-/**
- * Returns the bolívar conversion rate used across the storefront.
- *
- * This is the official BCV USD rate (`/v1/dolares/oficial`), matching the USD
- * the catalog is priced and displayed in. It previously used the official EURO
- * rate (`/v1/euros`) while prices were displayed as euros; both were switched
- * together, so display currency and Bs conversion stay consistent.
- *
- * Every Bs price in the catalog, cart, checkout and order summary is derived
- * from this value, and the same value converts the customer's Bs payment back
- * to USD in `payment-form.tsx`. Keep all of them on this one function so
- * display and payment never diverge.
- *
- * The `/dolares/oficial` endpoint returns a single object; the previous
- * `/euros` endpoint returned an array whose index 0 was `fuente: "oficial"`.
- * Both shapes are handled. Returns 0 on failure — callers must treat 0 as
- * "rate unavailable" and must not divide by it.
- */
-export const GetBCVPrice = async () => {
-  try {
-    const data = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', {
-      method: 'GET',
-      next: { revalidate: 3600 },
-    }).then((res) => res.json())
+import { BcvRate } from '@/libs/bcv/types'
 
-    return (Array.isArray(data) ? data[0]?.promedio : data?.promedio) || 0
-  } catch (error) {
-    console.error('Error fetching Bs conversion rate:', error)
-    return 0
+/**
+ * Client-safe accessors for the bolívar conversion rate used across the
+ * storefront.
+ *
+ * The rate itself now comes from `@/libs/bcv/rate.server` (`getBcvRate`):
+ * primarily bcv.org.ve, falling back to the official BCV USD rate from
+ * `ve.dolarapi.com/v1/dolares/oficial`, selected by the candidate whose
+ * "Fecha Valor" is the latest date not in the future (see that module for
+ * the full selection rule). That module touches `node:https` and must never
+ * be imported here or from any other client-importable file.
+ *
+ * These functions only fetch `/api/bcv-rate`, so they are safe to call from
+ * Client Components. Server Components must import `getBcvRate` from
+ * `@/libs/bcv/rate.server` directly instead of calling these (never
+ * HTTP-calling the app's own API from a Server Component).
+ *
+ * `GetBCVRateInfo` returns `null` when the fetch itself fails (network
+ * error, bad response). `GetBCVPrice` collapses that, and a `rate: 0`
+ * response, to `0` for backwards compatibility. Callers must treat `0` as
+ * "rate unavailable" and never divide by it.
+ */
+export const GetBCVRateInfo = async (): Promise<BcvRate | null> => {
+  if (typeof window === 'undefined') {
+    console.error(
+      'GetBCVRateInfo() was called outside the browser. Server components ' +
+        'must import getBcvRate from @/libs/bcv/rate.server instead.'
+    )
+    return null
   }
+
+  try {
+    const response = await fetch('/api/bcv-rate', { cache: 'no-store' })
+    if (!response.ok) return null
+
+    return (await response.json()) as BcvRate
+  } catch (error) {
+    console.error('Error fetching BCV rate info:', error)
+    return null
+  }
+}
+
+export const GetBCVPrice = async (): Promise<number> => {
+  const rateInfo = await GetBCVRateInfo()
+  return rateInfo?.rate || 0
 }

@@ -15,7 +15,7 @@ import { vendureFetch } from '@/libs/vendure'
 import { SEARCH_PRODUCTS } from '@/libs/queries/products'
 import { priceFormatter } from '@/utils/price-formatter'
 import { CurrencyCode, SearchProductsQuery } from '@/graphql/graphql'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { getBcvRate } from '@/libs/bcv/rate.server'
 
 // Utility to fetch and handle product data
 async function fetchProducts(collectionSlug: string) {
@@ -131,7 +131,7 @@ const ProductCarousel = ({
 // Carousel sections with unique slugs and titles
 export const ImmediatelyAvailableProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-disponibilidad-inmediata')
-  const bcvPrice = await GetBCVPrice()
+  const { rate: bcvPrice } = await getBcvRate()
   if (!productsData || productsData.items.length === 0) return null
 
   const t = await getTranslations('homepage')
@@ -149,7 +149,7 @@ export const ImmediatelyAvailableProductsSection = async () => {
 export const CustomMadeProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-por-encargo')
   if (!productsData || productsData.items.length === 0) return null
-  const bcvPrice = await GetBCVPrice()
+  const { rate: bcvPrice } = await getBcvRate()
 
   const t = await getTranslations('homepage')
   const products = productsData.items.map((product) =>
@@ -166,7 +166,7 @@ export const CustomMadeProductsSection = async () => {
 export const CustomizedProductsSection = async () => {
   const productsData = await fetchProducts('carrusel-personalizados')
   if (!productsData || productsData.items.length === 0) return null
-  const bcvPrice = await GetBCVPrice()
+  const { rate: bcvPrice } = await getBcvRate()
   const t = await getTranslations('homepage')
   const products = productsData.items.map((product) =>
     formatProductData(product, productsData.facetValues, bcvPrice)

@@ -19,7 +19,7 @@ import { Order } from '@/graphql/graphql'
 import { vendureFetch } from '@/libs/vendure'
 import { ADD_ADDITIONAL_PAYMENT_TO_ORDER } from '@/libs/queries/payment'
 import { TRANSITION_ORDER_STATE } from '@/libs/queries/order'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { GetBCVRateInfo } from '@/utils/get-bcv-price'
 import { paymentDetailsSchema } from '@/utils/schemas/payment'
 import { z } from 'zod'
 import { useToast } from '@/components/shared/toast/use-toast'
@@ -65,7 +65,8 @@ export const AdditionalPaymentModal = ({
       return
     }
 
-    const bcvDolar = await GetBCVPrice()
+    const bcvRateInfo = await GetBCVRateInfo()
+    const bcvDolar = bcvRateInfo?.rate || 0
     if (!bcvDolar || isNaN(bcvDolar)) {
       toast({
         title: 'Error',
@@ -107,6 +108,13 @@ export const AdditionalPaymentModal = ({
           monto: amount, // En decimal
           'fecha de pago': values.paymentDetails.date,
           telefono: values.paymentDetails.phone,
+          ...(isAmountInBS
+            ? {
+                tasa: bcvRateInfo?.rate ?? 0,
+                'fecha valor': bcvRateInfo?.valueDate ?? '',
+                fuente: bcvRateInfo?.source ?? 'dolarapi',
+              }
+            : {}),
         },
       },
     })

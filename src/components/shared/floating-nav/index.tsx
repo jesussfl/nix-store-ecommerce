@@ -13,7 +13,7 @@ import { NavbarCollections } from './collections-bar'
 import { getLocale } from 'next-intl/server'
 import { cn } from '@/libs/utils'
 import { NavbarProvider } from './navbar.context'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { getBcvRate } from '@/libs/bcv/rate.server'
 
 export type Menu = {
   title: string
@@ -79,7 +79,7 @@ function NavbarMenu() {
 }
 
 async function NavbarActions() {
-  const bcvPrice = await GetBCVPrice()
+  const { rate: bcvPrice } = await getBcvRate()
   return (
     <div className="flex shrink-0 items-center justify-end gap-2">
       <Search className="hidden md:inline" />

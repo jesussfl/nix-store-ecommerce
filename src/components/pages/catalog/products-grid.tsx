@@ -5,14 +5,14 @@ import { CurrencyCode, SearchProductsQuery } from '@/graphql/graphql'
 import { priceFormatter } from '@/utils/price-formatter'
 import { RiEmotionSadLine, RiWhatsappLine } from '@remixicon/react'
 import { Filters } from './filter-card'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { getBcvRate } from '@/libs/bcv/rate.server'
 
 export const ProductsGrid = async ({
   results,
 }: {
   results: SearchProductsQuery['search']
 }) => {
-  const bcvPrice = await GetBCVPrice()
+  const { rate: bcvPrice } = await getBcvRate()
 
   return (
     <div className="flex flex-col items-start md:flex-row md:px-4">

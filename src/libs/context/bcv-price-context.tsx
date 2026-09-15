@@ -1,62 +1,86 @@
 'use client'
-import {
-  ActiveOrderFragment,
-  CreateAddressInput,
-  GetActiveCustomerQuery,
-  SetOrderShippingAddressMutationVariables,
-} from '@/graphql/graphql'
-import { GET_ACTIVE_CUSTOMER } from '@/libs/queries/account'
-import { GET_ACTIVE_ORDER } from '@/libs/queries/order'
-import { vendureFetch } from '@/libs/vendure'
-import { useState } from 'react'
+
+/**
+ * Holds the single BCV rate used across the checkout payment step, so the
+ * order total shown in `OrderSummary`, the conversion hint in
+ * `PaymentFields`, and the Bs->USD conversion in `PaymentForm.onSubmit`
+ * never diverge (see the "Currency (BCV)" section of CLAUDE.md).
+ *
+ * Initialized from a server-fetched `BcvRate` (see
+ * `checkout/payment/page.tsx`). `refresh()` re-fetches `/api/bcv-rate` and
+ * only updates the rate when it comes back with `rate > 0`; a failed or
+ * unavailable refresh keeps the previously displayed rate. Also refreshes
+ * on tab focus/visibility, throttled so a user tabbing back and forth
+ * cannot spam the endpoint.
+ */
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createContainer } from 'unstated-next'
+import { BcvRate } from '@/libs/bcv/types'
+import { GetBCVRateInfo } from '@/utils/get-bcv-price'
 
-const useCartContainer = createContainer(() => {
-  const [activeOrder, setActiveOrder] = useState<ActiveOrderFragment | null>()
-  const [bcvPrice, setBcvPrice] = useState(0)
-  const [currentCustomer, setCurrentCustomer] =
-    useState<GetActiveCustomerQuery['activeCustomer']>()
-  const [isLogged, setIsLogged] = useState(false)
-  const [isOpen, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+const REFRESH_THROTTLE_MS = 60 * 1000
 
-  const open = () => setOpen(true)
-  const close = () => setOpen(false)
+type RateChange = { from: BcvRate; to: BcvRate }
 
-  const fetchActiveOrder = async () => {
-    if (!isLoading) return
-    setIsLoading(true)
-    try {
-      const data = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', {
-        method: 'GET',
-        cache: 'force-cache',
-        next: {
-          revalidate: 5,
-        },
-      }).then((res) => res.json())
+const useBcvRateContainer = createContainer((initialRate?: BcvRate | null) => {
+  const [rateInfo, setRateInfo] = useState<BcvRate | null>(initialRate ?? null)
+  // A rate change the customer has not been warned about yet. Set by any
+  // refresh (background focus/visibility or pre-submit) so a silent
+  // background update can never slip a new rate past the submit warning.
+  const [pendingChange, setPendingChange] = useState<RateChange | null>(null)
+  const currentRate = useRef<BcvRate | null>(initialRate ?? null)
+  const lastRefreshAt = useRef(0)
+  const inFlight = useRef<Promise<BcvRate | null> | null>(null)
 
-      // Official BCV USD rate; see `@/utils/get-bcv-price` for the shape notes
-      setBcvPrice((Array.isArray(data) ? data[0]?.promedio : data?.promedio) || 0)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setIsLoading(false)
+  const refresh = useCallback((): Promise<BcvRate | null> => {
+    // Share an in-flight refresh instead of returning null, so a submit that
+    // races a focus refresh still sees the fresh rate.
+    if (inFlight.current) return inFlight.current
+
+    inFlight.current = GetBCVRateInfo()
+      .then((next) => {
+        lastRefreshAt.current = Date.now()
+        if (!next || next.rate <= 0) return null
+
+        const previous = currentRate.current
+        if (previous && previous.rate > 0 && previous.rate !== next.rate) {
+          setPendingChange((change) => ({
+            from: change?.from ?? previous,
+            to: next,
+          }))
+        }
+
+        currentRate.current = next
+        setRateInfo(next)
+        return next
+      })
+      .finally(() => {
+        inFlight.current = null
+      })
+
+    return inFlight.current
+  }, [])
+
+  const acknowledgeChange = useCallback(() => setPendingChange(null), [])
+
+  useEffect(() => {
+    const maybeRefresh = () => {
+      if (document.visibilityState !== 'visible') return
+      if (Date.now() - lastRefreshAt.current < REFRESH_THROTTLE_MS) return
+      refresh()
     }
-  }
 
-  return {
-    isLogged,
-    activeOrder,
-    cart: activeOrder,
+    document.addEventListener('visibilitychange', maybeRefresh)
+    window.addEventListener('focus', maybeRefresh)
 
-    fetchActiveOrder,
-    isOpen,
-    open,
-    close,
-    isLoading,
-    currentCustomer,
-  }
+    return () => {
+      document.removeEventListener('visibilitychange', maybeRefresh)
+      window.removeEventListener('focus', maybeRefresh)
+    }
+  }, [refresh])
+
+  return { rateInfo, refresh, pendingChange, acknowledgeChange }
 })
 
-export const useCart = useCartContainer.useContainer
-export const CartProvider = useCartContainer.Provider
+export const useBcvRate = useBcvRateContainer.useContainer
+export const BcvRateProvider = useBcvRateContainer.Provider

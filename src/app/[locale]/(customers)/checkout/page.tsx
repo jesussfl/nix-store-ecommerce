@@ -6,10 +6,10 @@ import {
 } from '@/components/shared/card/card'
 import ShippingForm from '@/components/pages/checkout/checkout-form'
 import OrderSummary from '@/components/pages/checkout/order-summary'
-import { GetBCVPrice } from '@/utils/get-bcv-price'
+import { getBcvRate } from '@/libs/bcv/rate.server'
 
 export default async function CheckoutPage() {
-  const bcvPrice = await GetBCVPrice()
+  const { rate: bcvPrice } = await getBcvRate()
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 mt-4 space-y-4 sm:mt-6">
