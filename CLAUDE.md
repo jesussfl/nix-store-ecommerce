@@ -1,0 +1,63 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+Next.js 16 (App Router, React 19) storefront for **Nix Store**, backed by a separate **Vendure** server (shop-api over GraphQL). Spanish-only, Venezuelan market: catalog prices are in USD and are also shown in bolívares (Bs) at the official BCV rate. Package manager is **yarn**.
+
+## Commands
+
+```bash
+yarn dev            # runs codegen once (predev), then next dev + codegen watcher concurrently
+yarn dev2           # next dev only, no codegen
+yarn build          # next build with ESLint disabled
+yarn build:strict   # next build with ESLint enabled
+yarn lint           # eslint src
+yarn generate       # regenerate src/graphql/ and schema.graphql from the live Vendure schema
+```
+
+There is no test runner. `next.config.js` sets `typescript.ignoreBuildErrors: true`, so builds do not catch type errors. Run `npx tsc --noEmit` to typecheck.
+
+Codegen introspects a **running** Vendure shop-api (`$NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN/shop-api`, otherwise the production Railway URL or `http://localhost:3000/shop-api`). `yarn dev` and `yarn start` fail at the pre-hook if that endpoint is unreachable. In that case, use `yarn dev2`.
+
+## Architecture
+
+### GraphQL / Vendure data layer
+- Write documents with `graphql()` from `@/graphql` in `src/libs/queries/*.ts` and `src/libs/mutations/*.ts`. Codegen scans `src/**/*.{ts,tsx}` and emits typed `TypedDocumentString`s into `src/graphql/` (generated, do not edit). `Money` is typed as `number`. Rerun codegen after adding or changing a document.
+- `src/libs/vendure/index.ts` → `vendureFetch`: for Client Components. In the browser it POSTs to the same-origin proxy `/api/vendure`. On the server it calls Vendure directly. It sends `?languageCode=` and a `vendure-token` header, both set to the language code.
+- `src/app/api/vendure/route.ts`: proxy that forwards the `Cookie` header to Vendure and relays `Set-Cookie` back. Session and auth are **cookie-based only**, with no bearer tokens.
+- `src/libs/vendure/vendureFetchSSR.ts` → `vendureFetchSSR`: for server components. It forwards request cookies, defaults to `cache: 'force-cache'`, and supports `tags`/`revalidate`.
+- `src/libs/vendure/config.ts` → `getVendureDomain()` resolves the backend host (`VENDURE_ADMIN_DOMAIN` → `NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN` → env-based fallback). New Vendure asset hosts must also be allowed in `next.config.js` `images.remotePatterns`.
+
+### Routing & i18n
+- All customer routes live under `src/app/[locale]/(customers)/`. `src/proxy.ts` is the next-intl middleware (Next 16's replacement for `middleware.ts`).
+- `src/i18n/routing.ts`: the only locale is `es`, with `localePrefix: 'as-needed'`. A `pathnames` map rewrites Spanish public URLs to internal paths (`/catalogo` → `/catalog`, `/catalogo/detalles/[productSlug]`, and others). Use `Link`/`redirect`/`useRouter` from `@/i18n/routing`, not from `next/*`.
+- Messages are in the root `messages/`. `src/i18n/request.tsx` uses `es.json` as the base and merges locale overrides on top. Default time zone is `America/Caracas`.
+
+### State
+- `src/components/cart/cart-context.tsx` (`unstated-next`): active order, current customer, login state, and the cart drawer. Every cart and checkout mutation goes through it via `vendureFetch`, with optimistic updates that roll back through `fetchActiveOrder()`.
+- `src/libs/context/bcv-price-context.tsx`: a separate container that holds `bcvPrice`.
+
+### Currency (BCV) — money invariants
+- `src/utils/get-bcv-price.ts` (`GetBCVPrice`) is the single source of the **USD** official rate (`ve.dolarapi.com/v1/dolares/oficial`, revalidated hourly). It returns `0` on failure. Callers must treat `0` as "rate unavailable" and never divide by it.
+- Never hardcode a rate. Pass the server-fetched rate down (checkout pages fetch it in the RSC and pass it as a prop).
+- Bs→USD payment conversion rounds to **cents** (`Math.round(x * 100) / 100`). Rounding to whole dollars can push a valid partial payment below the backend's `initialPercentage` threshold.
+- Format prices with `src/utils/price-formatter.ts` (`es-VE`, `narrowSymbol`).
+
+### Checkout
+Flow: `checkout/page.tsx` (shipping) → `checkout/payment/page.tsx` → `checkout/confirmation/[order]/page.tsx`. The route files are thin RSC wrappers around `src/components/pages/checkout/*`.
+- Shipping methods are selected **strictly by Vendure `ShippingMethod.code`** (`SHIPPING_METHOD_CODE` in `checkout-form.tsx` maps `delivery`/`national`/`personal`). Never fall back to the first method or a fuzzy match: that can bill a pickup order as national shipping.
+- Submit sets the shipping address, then the shipping method, then transitions the order to `ArrangingPayment`.
+- The PDF receipt comes from the server action `src/app/actions/generate-receipt.ts` (jsPDF).
+
+### Components & conventions
+- `src/components/shared/<name>/`: shadcn/ui-style primitives (`components.json`).
+- `src/components/pages/<page>/`: page-specific composed components used by thin route files.
+- Path aliases: `@/*` → `src/*`, `@public/*` → `public/*`.
+- Prettier: no semicolons, single quotes, 2 spaces, `es5` trailing commas, Tailwind class sorting.
+- `eslint.config.mjs` **ignores** `src/components/shared/cart/`, `src/components/pages/checkout/`, and `src/libs/queries/product.ts`, so lint gives no coverage for the money-critical checkout/cart code. Review changes there carefully.
+
+## Environment
+
+`NEXT_PUBLIC_VENDURE_ADMIN_DOMAIN` / `VENDURE_ADMIN_DOMAIN` (Vendure host), `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_ITEMS_PER_PAGE`. See `.env.example`.

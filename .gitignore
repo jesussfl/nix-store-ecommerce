@@ -47,3 +47,5 @@ next-env.d.ts
 # backups
 /public/backups
 /public/archived
+# agent skill registry
+/.atl/
